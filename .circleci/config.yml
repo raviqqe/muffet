@@ -9,7 +9,10 @@ jobs:
 
       - run:
           name: Lint
-          command: gometalinter ./...
+          command: |
+            go get -u github.com/alecthomas/gometalinter
+            gometalinter --install
+            gometalinter ./...
 
       - run:
           name: Build
