@@ -1,0 +1,20 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: golang
+    working_directory: /go/src/github.com/raviqqe/arane
+    steps:
+      - checkout
+
+      - run:
+          name: Lint
+          command: gometalinter ./...
+
+      - run:
+          name: Build
+          command: go build
+
+      - run:
+          name: Test
+          command: go test
