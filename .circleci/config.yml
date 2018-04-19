@@ -3,7 +3,7 @@ jobs:
   build:
     docker:
       - image: golang
-    working_directory: /go/src/github.com/raviqqe/arane
+    working_directory: /go/src/github.com/raviqqe/muffet
     steps:
       - checkout
 
