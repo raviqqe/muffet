@@ -74,34 +74,53 @@ func (c Checker) checkPage(p Page, ps chan Page) {
 		return
 	}
 
-	ss, es := []string{}, []string{}
+	sc, ec := make(chan string, 256), make(chan string, 256)
+	w := sync.WaitGroup{}
 
 	for _, n := range scrape.FindAll(n, func(n *html.Node) bool {
 		return n.DataAtom == atom.A
 	}) {
-		u, err := url.Parse(scrape.Attr(n, "href"))
+		w.Add(1)
 
-		if err != nil {
-			es = append(es, err.Error())
-			continue
-		}
+		go func(n *html.Node) {
+			u, err := url.Parse(scrape.Attr(n, "href"))
 
-		if !u.IsAbs() {
-			u = c.rootURL.ResolveReference(u)
-		}
-
-		p, err := fetch(u.String())
-
-		if err == nil {
-			ss = append(ss, fmt.Sprintf("%s is alive", u.String()))
-
-			if _, exist := c.doneURLs.LoadOrStore(u.String(), nil); !exist && u.Hostname() == c.rootURL.Hostname() {
-				ps <- p
+			if err != nil {
+				ec <- err.Error()
+				return
 			}
-		} else {
-			es = append(es, err.Error())
-		}
+
+			if !u.IsAbs() {
+				u = c.rootURL.ResolveReference(u)
+			}
+
+			p, err := fetch(u.String())
+
+			if err == nil {
+				sc <- fmt.Sprintf("%s is alive", u.String())
+
+				if _, exist := c.doneURLs.LoadOrStore(u.String(), nil); !exist && u.Hostname() == c.rootURL.Hostname() {
+					ps <- p
+				}
+			} else {
+				ec <- err.Error()
+			}
+
+			w.Done()
+		}(n)
 	}
 
-	c.results <- NewResult(p.URL(), ss, es)
+	w.Wait()
+
+	c.results <- NewResult(p.URL(), stringChannelToSlice(sc), stringChannelToSlice(ec))
+}
+
+func stringChannelToSlice(sc <-chan string) []string {
+	ss := make([]string, 0, len(sc))
+
+	for i := 0; i < len(sc); i++ {
+		ss = append(ss, <-sc)
+	}
+
+	return ss
 }
