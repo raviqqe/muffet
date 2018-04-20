@@ -18,6 +18,11 @@ func NewResultWithError(u string, err error) Result {
 	return NewResult(u, nil, []string{err.Error()})
 }
 
+// IsError returns true if a result contains some errors and false otherwise.
+func (r Result) IsError() bool {
+	return len(r.errorMessages) != 0
+}
+
 // String is a method required for Stringer interface.
 func (r Result) String() string {
 	ss := make([]string, 0, len(r.successMessages))

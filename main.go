@@ -24,8 +24,16 @@ func main() {
 
 	go c.Check()
 
+	b := false
+
 	for r := range c.Results() {
 		printToStderr(r)
+
+		b = b && r.IsError()
+	}
+
+	if b {
+		os.Exit(1)
 	}
 }
 
