@@ -38,7 +38,7 @@ func main() {
 }
 
 func getArgs() (map[string]interface{}, error) {
-	usage := `Muffet, the web repairman
+	usage := `Muffet, the web repairgirl
 
 Usage:
 	muffet <url>
