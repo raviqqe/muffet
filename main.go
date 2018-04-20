@@ -3,19 +3,17 @@ package main
 import (
 	"fmt"
 	"os"
-
-	"github.com/docopt/docopt-go"
 )
 
 func main() {
-	args, err := getArgs()
+	args, err := getArguments()
 
 	if err != nil {
 		printToStderr(err)
 		os.Exit(1)
 	}
 
-	c, err := NewChecker(args["<url>"].(string), newFetcher())
+	c, err := NewChecker(newFetcher(args.concurrency), args.url, args.concurrency)
 
 	if err != nil {
 		printToStderr(err)
@@ -35,24 +33,6 @@ func main() {
 	if b {
 		os.Exit(1)
 	}
-}
-
-func getArgs() (map[string]interface{}, error) {
-	usage := `Muffet, the web repairgirl
-
-Usage:
-	muffet <url>
-
-Options:
-	-h, --help  Show this help.`
-
-	args, err := docopt.ParseArgs(usage, os.Args[1:], "0.1.0")
-
-	if err != nil {
-		return nil, err
-	}
-
-	return args, nil
 }
 
 func printToStderr(x interface{}) {

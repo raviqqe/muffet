@@ -20,15 +20,16 @@ var validSchemes = map[string]struct{}{
 
 // Checker represents a web page checker.
 type Checker struct {
-	fetcher  Fetcher
-	rootPage Page
-	rootURL  *url.URL
-	results  chan Result
-	doneURLs *sync.Map
+	fetcher     Fetcher
+	rootPage    Page
+	rootURL     *url.URL
+	results     chan Result
+	doneURLs    *sync.Map
+	concurrency int
 }
 
 // NewChecker creates a new checker.
-func NewChecker(s string, f Fetcher) (Checker, error) {
+func NewChecker(f Fetcher, s string, c int) (Checker, error) {
 	p, err := f.Fetch(s)
 
 	if err != nil {
@@ -41,7 +42,7 @@ func NewChecker(s string, f Fetcher) (Checker, error) {
 		return Checker{}, err
 	}
 
-	return Checker{f, p, u, make(chan Result, 256), &sync.Map{}}, nil
+	return Checker{f, p, u, make(chan Result, c), &sync.Map{}, c}, nil
 }
 
 // Results returns a reference to results of web page checks.
@@ -51,7 +52,7 @@ func (c Checker) Results() <-chan Result {
 
 // Check start checking web pages recursively from a root page.
 func (c Checker) Check() {
-	ps := make(chan Page, 256)
+	ps := make(chan Page, c.concurrency)
 	ps <- c.rootPage
 
 	w := sync.WaitGroup{}
@@ -89,12 +90,14 @@ func (c Checker) checkPage(p Page, ps chan Page) {
 		return
 	}
 
-	sc, ec := make(chan string, 256), make(chan string, 256)
+	ns := scrape.FindAll(n, func(n *html.Node) bool {
+		return n.DataAtom == atom.A
+	})
+
+	sc, ec := make(chan string, len(ns)), make(chan string, len(ns))
 	w := sync.WaitGroup{}
 
-	for _, n := range scrape.FindAll(n, func(n *html.Node) bool {
-		return n.DataAtom == atom.A
-	}) {
+	for _, n := range ns {
 		w.Add(1)
 
 		go func(n *html.Node) {

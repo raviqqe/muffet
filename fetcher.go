@@ -8,8 +8,8 @@ type Fetcher struct {
 }
 
 // newFetcher creates a new web page fetcher.
-func newFetcher() Fetcher {
-	return Fetcher{newSemaphore(512)}
+func newFetcher(c int) Fetcher {
+	return Fetcher{newSemaphore(c)}
 }
 
 // Fetch fetches a web page.
