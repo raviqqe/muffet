@@ -29,21 +29,19 @@ func (r Result) IsError() bool {
 
 // String is a method required for Stringer interface.
 func (r Result) String() string {
-	ss := make([]string, 0, len(r.successMessages))
-
-	for _, s := range r.successMessages {
-		ss = append(ss, formatMessage(color.GreenString("OK"), s))
-	}
-
-	es := make([]string, 0, len(r.errorMessages))
-
-	for _, s := range r.errorMessages {
-		es = append(es, formatMessage(color.RedString("ERROR"), s))
-	}
-
-	return strings.Join(append(append([]string{color.YellowString(r.url)}, ss...), es...), "\n")
+	return strings.Join(
+		append(append([]string{color.YellowString(r.url)},
+			formatMessages(color.GreenString("OK"), r.successMessages)...),
+			formatMessages(color.RedString("ERROR"), r.errorMessages)...),
+		"\n")
 }
 
-func formatMessage(s, t string) string {
-	return strings.Join([]string{"\t", s, "\t", t}, "")
+func formatMessages(prefix string, ss []string) []string {
+	ts := make([]string, 0, len(ss))
+
+	for _, s := range ss {
+		ts = append(ts, strings.Join([]string{"\t", prefix, "\t", s}, ""))
+	}
+
+	return ts
 }
