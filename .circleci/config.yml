@@ -24,5 +24,16 @@ jobs:
           command: go build
 
       - run:
-          name: Test
+          name: Unit Test
           command: go test
+
+      - run:
+          name: Integration Test
+          command: |
+            ./muffet https://coel-lang.org
+            ./muffet https://raviqqe.com
+            ./muffet -c 1 https://coel-lang.org
+            ./muffet --concurrency 1 https://coel-lang.org
+            ./muffet -c 1 https://raviqqe.com
+            ./muffet --concurrency 1 https://raviqqe.com
+            ./muffet --help
