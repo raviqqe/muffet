@@ -27,7 +27,9 @@ func main() {
 	for r := range c.Results() {
 		printToStderr(r)
 
-		b = b && r.IsError()
+		if r.IsError() {
+			b = true
+		}
 	}
 
 	if b {

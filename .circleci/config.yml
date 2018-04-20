@@ -37,3 +37,4 @@ jobs:
             ./muffet -c 1 https://raviqqe.com
             ./muffet --concurrency 1 https://raviqqe.com
             ./muffet --help
+            ! ./muffet https://www.hackthissite.org
