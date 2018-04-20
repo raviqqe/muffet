@@ -1,6 +1,10 @@
 package main
 
-import "strings"
+import (
+	"strings"
+
+	"github.com/fatih/color"
+)
 
 // Result represents a summarized result of web page check.
 type Result struct {
@@ -28,14 +32,18 @@ func (r Result) String() string {
 	ss := make([]string, 0, len(r.successMessages))
 
 	for _, s := range r.successMessages {
-		ss = append(ss, "\tOK:\t"+s)
+		ss = append(ss, formatMessage(color.GreenString("OK"), s))
 	}
 
 	es := make([]string, 0, len(r.errorMessages))
 
-	for _, e := range r.errorMessages {
-		es = append(es, "\tERROR:\t"+e)
+	for _, s := range r.errorMessages {
+		es = append(es, formatMessage(color.RedString("ERROR"), s))
 	}
 
-	return strings.Join(append(append([]string{r.url}, ss...), es...), "\n")
+	return strings.Join(append(append([]string{color.YellowString(r.url)}, ss...), es...), "\n")
+}
+
+func formatMessage(s, t string) string {
+	return strings.Join([]string{"\t", s, "\t", t}, "")
 }
