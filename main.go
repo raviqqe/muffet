@@ -15,7 +15,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	c, err := NewChecker(args["<url>"].(string))
+	c, err := NewChecker(args["<url>"].(string), newFetcher())
 
 	if err != nil {
 		printToStderr(err)

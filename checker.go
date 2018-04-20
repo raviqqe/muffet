@@ -13,6 +13,7 @@ import (
 
 // Checker represents a web page checker.
 type Checker struct {
+	fetcher  Fetcher
 	rootPage Page
 	rootURL  *url.URL
 	results  chan Result
@@ -20,8 +21,8 @@ type Checker struct {
 }
 
 // NewChecker creates a new checker.
-func NewChecker(s string) (Checker, error) {
-	p, err := fetch(s)
+func NewChecker(s string, f Fetcher) (Checker, error) {
+	p, err := f.Fetch(s)
 
 	if err != nil {
 		return Checker{}, err
@@ -33,7 +34,7 @@ func NewChecker(s string) (Checker, error) {
 		return Checker{}, err
 	}
 
-	return Checker{p, u, make(chan Result, 256), &sync.Map{}}, nil
+	return Checker{f, p, u, make(chan Result, 256), &sync.Map{}}, nil
 }
 
 // Results returns a reference to results of web page checks.
@@ -101,7 +102,7 @@ func (c Checker) checkPage(p Page, ps chan Page) {
 				u = r.ResolveReference(u)
 			}
 
-			p, err := fetch(u.String())
+			p, err := c.fetcher.Fetch(u.String())
 
 			if err == nil {
 				sc <- fmt.Sprintf("%s is alive", u.String())
