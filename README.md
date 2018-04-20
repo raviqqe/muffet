@@ -15,7 +15,6 @@ recursively.
   - HTML syntax check
   - URL validation
   - Link connectivity
-  - Misspelling detection (not implemented yet)
 
 ## Installation
 
