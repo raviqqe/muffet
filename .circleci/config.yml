@@ -8,11 +8,16 @@ jobs:
       - checkout
 
       - run:
-          name: Lint
+          name: Dependencies
           command: |
             go get -u github.com/alecthomas/gometalinter
+            go get -d -t ./...
+
+      - run:
+          name: Lint
+          command: |
             gometalinter --install
-            gometalinter ./...
+            gometalinter --disable vetshadow ./...
 
       - run:
           name: Build
