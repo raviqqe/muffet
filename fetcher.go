@@ -1,8 +1,6 @@
 package main
 
-import (
-	"net/http"
-)
+import "github.com/valyala/fasthttp"
 
 // Fetcher represents a web page fetcher.
 type Fetcher struct {
@@ -19,11 +17,11 @@ func (f Fetcher) Fetch(u string) (Page, error) {
 	f.connectionSemaphore.Request()
 	defer f.connectionSemaphore.Release()
 
-	r, err := http.Get(u)
+	_, b, err := fasthttp.Get(nil, u)
 
 	if err != nil {
 		return Page{}, err
 	}
 
-	return newPage(u, r.Body), nil
+	return newPage(u, b), nil
 }

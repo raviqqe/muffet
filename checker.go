@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
 	"net/url"
 	"sync"
@@ -74,7 +75,7 @@ func (c Checker) Check() {
 
 // Check web pages recursively from the root.
 func (c Checker) checkPage(p Page, ps chan Page) {
-	n, err := html.Parse(p.Body())
+	n, err := html.Parse(bytes.NewReader(p.Body()))
 
 	if err != nil {
 		c.results <- NewResultWithError(p.URL(), err)

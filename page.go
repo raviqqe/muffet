@@ -1,17 +1,13 @@
 package main
 
-import (
-	"io"
-)
-
 // Page represents a web page fetched already.
 type Page struct {
 	url  string
-	body io.Reader
+	body []byte
 }
 
 // newPage creates a new web page.
-func newPage(u string, b io.Reader) Page {
+func newPage(u string, b []byte) Page {
 	return Page{u, b}
 }
 
@@ -21,6 +17,6 @@ func (p Page) URL() string {
 }
 
 // Body returns a body reader of a fetched page.
-func (p Page) Body() io.Reader {
+func (p Page) Body() []byte {
 	return p.body
 }
