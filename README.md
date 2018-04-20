@@ -7,6 +7,16 @@
 Muffet is a web site linter which scrapes and inspects all pages in a domain
 recursively.
 
+## Features
+
+- Massive speed
+- Colored outputs
+- Different types of linting
+  - HTML syntax check
+  - URL validation
+  - Link connectivity
+  - Misspelling detection (not implemented yet)
+
 ## Installation
 
 ```
