@@ -11,6 +11,12 @@ import (
 	"golang.org/x/net/html/atom"
 )
 
+var validSchemes = map[string]struct{}{
+	"":      struct{}{},
+	"http":  struct{}{},
+	"https": struct{}{},
+}
+
 // Checker represents a web page checker.
 type Checker struct {
 	fetcher  Fetcher
@@ -91,10 +97,16 @@ func (c Checker) checkPage(p Page, ps chan Page) {
 		w.Add(1)
 
 		go func(n *html.Node) {
+			defer w.Done()
+
 			u, err := url.Parse(scrape.Attr(n, "href"))
 
 			if err != nil {
 				ec <- err.Error()
+				return
+			}
+
+			if _, ok := validSchemes[u.Scheme]; !ok {
 				return
 			}
 
@@ -116,8 +128,6 @@ func (c Checker) checkPage(p Page, ps chan Page) {
 			} else {
 				ec <- err.Error()
 			}
-
-			w.Done()
 		}(n)
 	}
 
