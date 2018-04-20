@@ -74,6 +74,13 @@ func (c Checker) checkPage(p Page, ps chan Page) {
 		return
 	}
 
+	r, err := url.Parse(p.URL())
+
+	if err != nil {
+		c.results <- NewResultWithError(p.URL(), err)
+		return
+	}
+
 	sc, ec := make(chan string, 256), make(chan string, 256)
 	w := sync.WaitGroup{}
 
@@ -91,13 +98,16 @@ func (c Checker) checkPage(p Page, ps chan Page) {
 			}
 
 			if !u.IsAbs() {
-				u = c.rootURL.ResolveReference(u)
+				u = r.ResolveReference(u)
 			}
 
 			p, err := fetch(u.String())
 
 			if err == nil {
 				sc <- fmt.Sprintf("%s is alive", u.String())
+
+				u.Fragment = ""
+				u.RawQuery = ""
 
 				if _, exist := c.doneURLs.LoadOrStore(u.String(), nil); !exist && u.Hostname() == c.rootURL.Hostname() {
 					ps <- p
