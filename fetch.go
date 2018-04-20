@@ -5,6 +5,8 @@ import (
 	"net/http"
 )
 
+var connectionSemaphore = newSemaphore(512)
+
 // Page represents a web page fetched already.
 type Page struct {
 	url  string
@@ -22,6 +24,9 @@ func (p Page) Body() io.Reader {
 }
 
 func fetch(u string) (Page, error) {
+	connectionSemaphore.Request()
+	defer connectionSemaphore.Release()
+
 	r, err := http.Get(u)
 
 	if err != nil {
