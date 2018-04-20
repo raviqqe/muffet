@@ -25,7 +25,7 @@ go get -u github.com/raviqqe/muffet
 ## Usage
 
 ```
-muffet https://your.cool.web.site
+muffet https://shady.bakery.hotland
 ```
 
 For more information, see `muffet --help`.
