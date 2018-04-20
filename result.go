@@ -6,7 +6,7 @@ import (
 	"github.com/fatih/color"
 )
 
-// Result represents a summarized result of web page check.
+// Result represents a summarized result of a web page check.
 type Result struct {
 	url                            string
 	successMessages, errorMessages []string
