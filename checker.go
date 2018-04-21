@@ -18,12 +18,10 @@ var validSchemes = map[string]struct{}{
 }
 
 type checker struct {
-	fetcher     fetcher
-	rootPage    page
-	hostname    string
-	results     chan result
-	donePages   concurrentStringSet
-	concurrency int
+	fetcher   fetcher
+	rootPage  page
+	results   chan result
+	donePages concurrentStringSet
 }
 
 func newChecker(s string, c int) (checker, error) {
@@ -34,7 +32,7 @@ func newChecker(s string, c int) (checker, error) {
 		return checker{}, err
 	}
 
-	return checker{f, *p, p.URL().Hostname(), make(chan result, c), newConcurrentStringSet(), c}, nil
+	return checker{f, *p, make(chan result, c), newConcurrentStringSet()}, nil
 }
 
 func (c checker) Results() <-chan result {
@@ -89,7 +87,7 @@ func (c checker) checkPage(p page) {
 			if err == nil {
 				sc <- fmt.Sprintf("link is alive (%v)", u)
 
-				if p != nil && !c.donePages.Add(p.URL().String()) && p.URL().Hostname() == c.hostname {
+				if p != nil && !c.donePages.Add(p.URL().String()) && p.URL().Hostname() == c.rootPage.URL().Hostname() {
 					v.Add(1)
 
 					go func() {
