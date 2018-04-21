@@ -13,7 +13,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	c, err := newChecker(newFetcher(args.concurrency), args.url, args.concurrency)
+	c, err := newChecker(args.url, args.concurrency)
 
 	if err != nil {
 		printToStderr(err)
