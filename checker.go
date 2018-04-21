@@ -27,16 +27,14 @@ type checker struct {
 }
 
 func newChecker(s string, c int) (checker, error) {
-	var p page
-
 	f := newFetcher(c)
-	err := f.Fetch(s, func(q page) { p = q })
+	p, err := f.Fetch(s)
 
 	if err != nil {
 		return checker{}, err
 	}
 
-	return checker{f, p, p.URL().Hostname(), make(chan result, c), newConcurrentStringSet(), c}, nil
+	return checker{f, *p, p.URL().Hostname(), make(chan result, c), newConcurrentStringSet(), c}, nil
 }
 
 func (c checker) Results() <-chan result {
@@ -44,38 +42,12 @@ func (c checker) Results() <-chan result {
 }
 
 func (c checker) Check() {
-	ps := make(chan page, c.concurrency)
-	ps <- c.rootPage
-
-	v := sync.WaitGroup{}
-	v.Add(1)
-	w := sync.WaitGroup{}
-
-	go func() {
-		first := true
-
-		for p := range ps {
-			w.Add(1)
-
-			go func(p page) {
-				c.checkPage(p, ps)
-				w.Done()
-			}(p)
-
-			if first {
-				first = false
-				v.Done()
-			}
-		}
-	}()
-
-	v.Wait()
-	w.Wait()
+	c.checkPage(c.rootPage)
 
 	close(c.results)
 }
 
-func (c checker) checkPage(p page, ps chan<- page) {
+func (c checker) checkPage(p page) {
 	n, err := html.Parse(bytes.NewReader(p.Body()))
 
 	if err != nil {
@@ -88,6 +60,7 @@ func (c checker) checkPage(p page, ps chan<- page) {
 	})
 
 	sc, ec := make(chan string, len(ns)), make(chan string, len(ns))
+	v := sync.WaitGroup{}
 	w := sync.WaitGroup{}
 
 	for _, n := range ns {
@@ -111,14 +84,19 @@ func (c checker) checkPage(p page, ps chan<- page) {
 				u = p.URL().ResolveReference(u)
 			}
 
-			err = c.fetcher.Fetch(u.String(), func(p page) {
-				if !c.donePages.Add(p.URL().String()) && p.URL().Hostname() == c.hostname {
-					ps <- p
-				}
-			})
+			p, err := c.fetcher.Fetch(u.String())
 
 			if err == nil {
 				sc <- fmt.Sprintf("link is alive (%v)", u)
+
+				if p != nil && !c.donePages.Add(p.URL().String()) && p.URL().Hostname() == c.hostname {
+					v.Add(1)
+
+					go func() {
+						c.checkPage(*p)
+						v.Done()
+					}()
+				}
 			} else {
 				ec <- fmt.Sprintf("%v (%v)", err, u)
 			}
@@ -128,6 +106,8 @@ func (c checker) checkPage(p page, ps chan<- page) {
 	w.Wait()
 
 	c.results <- newResult(p.URL().String(), stringChannelToSlice(sc), stringChannelToSlice(ec))
+
+	v.Wait()
 }
 
 func stringChannelToSlice(sc <-chan string) []string {

@@ -16,11 +16,11 @@ func newFetcher(c int) fetcher {
 	return fetcher{newSemaphore(c), &sync.Map{}}
 }
 
-func (f fetcher) Fetch(u string, h func(page)) error {
+func (f fetcher) Fetch(u string) (*page, error) {
 	if err, ok := f.cache.Load(u); ok && err == nil {
-		return nil
+		return nil, nil
 	} else if ok {
-		return err.(error)
+		return nil, err.(error)
 	}
 
 	f.connectionSemaphore.Request()
@@ -30,16 +30,13 @@ func (f fetcher) Fetch(u string, h func(page)) error {
 	f.cache.Store(u, err)
 
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	if s/100 != 2 {
-		return fmt.Errorf("invalid status code %v", s)
+		return nil, fmt.Errorf("invalid status code %v", s)
 	}
 
-	if h != nil {
-		h(newPage(u, b))
-	}
-
-	return nil
+	p := newPage(u, b)
+	return &p, nil
 }

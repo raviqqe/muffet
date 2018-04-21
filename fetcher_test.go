@@ -11,7 +11,7 @@ func TestNewFetcher(t *testing.T) {
 }
 
 func TestFetcherFetchError(t *testing.T) {
-	err := newFetcher(1).Fetch("https://google.com/non/existent/path", nil)
+	_, err := newFetcher(1).Fetch("https://google.com/non/existent/path")
 
 	assert.NotNil(t, err)
 }
