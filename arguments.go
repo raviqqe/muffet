@@ -19,7 +19,7 @@ Usage:
 	muffet [-c <concurrency>] <url>
 
 Options:
-	-c, --concurrency <concurrency>  Roughly maximum number of concurrent open files. [default: 512]
+	-c, --concurrency <concurrency>  Roughly maximum number of concurrent open files. [default: 1000]
 	-h, --help  Show this help.`
 
 	args, err := docopt.ParseArgs(usage, os.Args[1:], "0.1.0")
