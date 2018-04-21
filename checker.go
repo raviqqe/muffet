@@ -24,7 +24,7 @@ type Checker struct {
 	rootPage    Page
 	rootURL     *url.URL
 	results     chan Result
-	doneURLs    *sync.Map
+	donePages   concurrentStringSet
 	concurrency int
 }
 
@@ -42,7 +42,7 @@ func NewChecker(f Fetcher, s string, c int) (Checker, error) {
 		return Checker{}, err
 	}
 
-	return Checker{f, p, u, make(chan Result, c), &sync.Map{}, c}, nil
+	return Checker{f, p, u, make(chan Result, c), newConcurrentStringSet(), c}, nil
 }
 
 // Results returns a reference to results of web page checks.
@@ -126,7 +126,7 @@ func (c Checker) checkPage(p Page, ps chan Page) {
 				u.Fragment = ""
 				u.RawQuery = ""
 
-				if _, exist := c.doneURLs.LoadOrStore(u.String(), nil); !exist && u.Hostname() == c.rootURL.Hostname() {
+				if !c.donePages.Add(u.String()) && u.Hostname() == c.rootURL.Hostname() {
 					ps <- p
 				}
 			} else {
