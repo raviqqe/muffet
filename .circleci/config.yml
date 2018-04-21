@@ -31,22 +31,19 @@ jobs:
           name: Integration Test
           command: |
             ./muffet https://coel-lang.org
-            ./muffet https://raviqqe.com
             ! ./muffet https://www.hackthissite.org
 
             ./muffet -c 1 https://coel-lang.org
             ./muffet --concurrency 1 https://coel-lang.org
-            ./muffet -c 1 https://raviqqe.com
-            ./muffet --concurrency 1 https://raviqqe.com
 
             ./muffet --help
 
-            ./muffet -v https://raviqqe.com 2>&1 | grep OK
-            ./muffet --verbose https://raviqqe.com 2>&1 | grep OK
-            ! ./muffet https://raviqqe.com 2>&1 | grep OK
+            ./muffet -v https://coel-lang.org 2>&1 | grep OK
+            ./muffet --verbose https://coel-lang.org 2>&1 | grep OK
+            ! ./muffet https://coel-lang.org 2>&1 | grep OK
 
             ./muffet -v https://coel-lang.org 2>&1 | sort > foo.txt
             ./muffet -v https://coel-lang.org 2>&1 | sort > bar.txt
             diff foo.txt bar.txt
 
-            ! ./muffet https://raviqqe.com 2>&1 | grep .
+            ! ./muffet https://coel-lang.org 2>&1 | grep .
