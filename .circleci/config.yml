@@ -32,9 +32,12 @@ jobs:
           command: |
             ./muffet https://coel-lang.org
             ./muffet https://raviqqe.com
+            ! ./muffet https://www.hackthissite.org
             ./muffet -c 1 https://coel-lang.org
             ./muffet --concurrency 1 https://coel-lang.org
             ./muffet -c 1 https://raviqqe.com
             ./muffet --concurrency 1 https://raviqqe.com
             ./muffet --help
-            ! ./muffet https://www.hackthissite.org
+            ./muffet -v https://raviqqe.com 2>&1 | grep OK
+            ./muffet --verbose https://raviqqe.com 2>&1 | grep OK
+            ! ./muffet https://raviqqe.com 2>&1 | grep OK

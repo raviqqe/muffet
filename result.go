@@ -27,11 +27,17 @@ func (r Result) IsError() bool {
 	return len(r.errorMessages) != 0
 }
 
-// String is a method required for Stringer interface.
-func (r Result) String() string {
+// String turns a result into informational string.
+func (r Result) String(v bool) string {
+	ss := []string(nil)
+
+	if v {
+		ss = formatMessages(color.GreenString("OK"), r.successMessages)
+	}
+
 	return strings.Join(
 		append(append([]string{color.YellowString(r.url)},
-			formatMessages(color.GreenString("OK"), r.successMessages)...),
+			ss...),
 			formatMessages(color.RedString("ERROR"), r.errorMessages)...),
 		"\n")
 }

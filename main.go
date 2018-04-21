@@ -25,7 +25,7 @@ func main() {
 	b := false
 
 	for r := range c.Results() {
-		printToStderr(r)
+		printToStderr(r.String(args.verbose))
 
 		if r.IsError() {
 			b = true
