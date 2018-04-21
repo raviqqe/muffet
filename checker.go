@@ -20,27 +20,23 @@ var validSchemes = map[string]struct{}{
 type checker struct {
 	fetcher     fetcher
 	rootPage    page
-	rootURL     *url.URL
+	hostname    string
 	results     chan result
 	donePages   concurrentStringSet
 	concurrency int
 }
 
 func newChecker(s string, c int) (checker, error) {
+	var p page
+
 	f := newFetcher(c)
-	p, err := f.Fetch(s)
+	err := f.Fetch(s, func(q page) { p = q })
 
 	if err != nil {
 		return checker{}, err
 	}
 
-	u, err := url.Parse(s)
-
-	if err != nil {
-		return checker{}, err
-	}
-
-	return checker{f, p, u, make(chan result, c), newConcurrentStringSet(), c}, nil
+	return checker{f, p, p.URL().Hostname(), make(chan result, c), newConcurrentStringSet(), c}, nil
 }
 
 func (c checker) Results() <-chan result {
@@ -115,14 +111,14 @@ func (c checker) checkPage(p page, ps chan<- page) {
 				u = p.URL().ResolveReference(u)
 			}
 
-			p, err := c.fetcher.Fetch(u.String())
+			err = c.fetcher.Fetch(u.String(), func(p page) {
+				if !c.donePages.Add(p.URL().String()) && p.URL().Hostname() == c.hostname {
+					ps <- p
+				}
+			})
 
 			if err == nil {
 				sc <- fmt.Sprintf("link is alive (%v)", u)
-
-				if !c.donePages.Add(p.URL().String()) && u.Hostname() == c.rootURL.Hostname() {
-					ps <- p
-				}
 			} else {
 				ec <- fmt.Sprintf("%v (%v)", err, u)
 			}
