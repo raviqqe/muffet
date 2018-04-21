@@ -4,7 +4,7 @@
 [![Go Report Card](https://goreportcard.com/badge/github.com/raviqqe/muffet?style=flat-square)](https://goreportcard.com/report/github.com/raviqqe/muffet)
 [![License](https://img.shields.io/github/license/raviqqe/muffet.svg?style=flat-square)](LICENSE)
 
-Muffet is a web site linter which scrapes and inspects all pages in a domain
+Muffet is a website linter which scrapes and inspects all pages in a domain
 recursively.
 
 ## Features
