@@ -41,3 +41,6 @@ jobs:
             ./muffet -v https://raviqqe.com 2>&1 | grep OK
             ./muffet --verbose https://raviqqe.com 2>&1 | grep OK
             ! ./muffet https://raviqqe.com 2>&1 | grep OK
+            ./muffet -v https://coel-lang.org 2>&1 | sort > foo.txt
+            ./muffet -v https://coel-lang.org 2>&1 | sort > bar.txt
+            diff foo.txt bar.txt
