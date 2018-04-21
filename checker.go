@@ -26,8 +26,8 @@ type checker struct {
 	concurrency int
 }
 
-func newChecker(s string, c int) (checker, error) {
-	f := newFetcher(c)
+func newChecker(s string, c, n int) (checker, error) {
+	f := newFetcher(c, n)
 	p, err := f.Fetch(s)
 
 	if err != nil {
