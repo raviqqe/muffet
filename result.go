@@ -1,6 +1,7 @@
 package main
 
 import (
+	"sort"
 	"strings"
 
 	"github.com/fatih/color"
@@ -43,6 +44,8 @@ func formatMessages(prefix string, ss []string) []string {
 	for _, s := range ss {
 		ts = append(ts, strings.Join([]string{"\t", prefix, "\t", s}, ""))
 	}
+
+	sort.Strings(ts)
 
 	return ts
 }
