@@ -9,15 +9,13 @@ func main() {
 	args, err := getArguments()
 
 	if err != nil {
-		printToStderr(err)
-		os.Exit(1)
+		fail(err)
 	}
 
 	c, err := newChecker(args.url, args.concurrency, args.connectionsPerHost)
 
 	if err != nil {
-		printToStderr(err)
-		os.Exit(1)
+		fail(err)
 	}
 
 	go c.Check()
@@ -26,7 +24,7 @@ func main() {
 
 	for r := range c.Results() {
 		if !r.OK() || args.verbose {
-			printToStderr(r.String(args.verbose))
+			fmt.Println(r.String(args.verbose))
 		}
 
 		if !r.OK() {
@@ -39,6 +37,7 @@ func main() {
 	}
 }
 
-func printToStderr(x interface{}) {
+func fail(x interface{}) {
 	fmt.Fprintln(os.Stderr, x)
+	os.Exit(1)
 }

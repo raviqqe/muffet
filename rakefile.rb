@@ -28,15 +28,15 @@ task integration_test: :build do
 
   sh './muffet --help'
 
-  sh './muffet -v http://localhost:8080 2>&1 | grep OK'
-  sh './muffet --verbose http://localhost:8080 2>&1 | grep OK'
-  sh '! ./muffet http://localhost:8080 2>&1 | grep OK'
+  sh './muffet -v http://localhost:8080 | grep OK'
+  sh './muffet --verbose http://localhost:8080 | grep OK'
+  sh '! ./muffet http://localhost:8080 | grep OK'
 
-  sh './muffet -v http://localhost:8080 2>&1 | sort > /tmp/muffet_1.txt'
-  sh './muffet -v http://localhost:8080 2>&1 | sort > /tmp/muffet_2.txt'
+  sh './muffet -v http://localhost:8080 | sort > /tmp/muffet_1.txt'
+  sh './muffet -v http://localhost:8080 | sort > /tmp/muffet_2.txt'
   sh 'diff /tmp/muffet_1.txt /tmp/muffet_2.txt'
 
-  sh '! ./muffet http://localhost:8080 2>&1 | grep .'
+  sh '! ./muffet http://localhost:8080 | grep .'
 end
 
 task :serve do
