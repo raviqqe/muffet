@@ -13,7 +13,7 @@ task :build do
 end
 
 task :unit_test do
-  sh 'go test'
+  sh 'go test -covermode atomic -coverprofile coverage.txt'
 end
 
 task integration_test: :build do

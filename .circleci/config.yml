@@ -31,6 +31,11 @@ jobs:
           command: rake unit_test
 
       - run:
+          name: Coverage report
+          command: |
+            bash <(curl -s https://codecov.io/bash)
+
+      - run:
           name: Integration Test
           command: |
             rake serve
