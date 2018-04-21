@@ -25,7 +25,9 @@ func main() {
 	b := false
 
 	for r := range c.Results() {
-		printToStderr(r.String(args.verbose))
+		if !r.OK() || args.verbose {
+			printToStderr(r.String(args.verbose))
+		}
 
 		if !r.OK() {
 			b = true
