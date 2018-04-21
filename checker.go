@@ -79,7 +79,7 @@ func (c checker) Check() {
 	close(c.results)
 }
 
-func (c checker) checkPage(p page, ps chan page) {
+func (c checker) checkPage(p page, ps chan<- page) {
 	n, err := html.Parse(bytes.NewReader(p.Body()))
 
 	if err != nil {
