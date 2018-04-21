@@ -75,14 +75,7 @@ func (c checker) checkPage(p page, ps chan page) {
 	n, err := html.Parse(bytes.NewReader(p.Body()))
 
 	if err != nil {
-		c.results <- newResultWithError(p.URL(), err)
-		return
-	}
-
-	r, err := url.Parse(p.URL())
-
-	if err != nil {
-		c.results <- newResultWithError(p.URL(), err)
+		c.results <- newResultWithError(p.URL().String(), err)
 		return
 	}
 
@@ -111,7 +104,7 @@ func (c checker) checkPage(p page, ps chan page) {
 			}
 
 			if !u.IsAbs() {
-				u = r.ResolveReference(u)
+				u = p.URL().ResolveReference(u)
 			}
 
 			p, err := c.fetcher.Fetch(u.String())
@@ -119,10 +112,7 @@ func (c checker) checkPage(p page, ps chan page) {
 			if err == nil {
 				sc <- fmt.Sprintf("link is alive (%v)", u)
 
-				u.Fragment = ""
-				u.RawQuery = ""
-
-				if !c.donePages.Add(u.String()) && u.Hostname() == c.rootURL.Hostname() {
+				if !c.donePages.Add(p.URL().String()) && u.Hostname() == c.rootURL.Hostname() {
 					ps <- p
 				}
 			} else {
@@ -133,7 +123,7 @@ func (c checker) checkPage(p page, ps chan page) {
 
 	w.Wait()
 
-	c.results <- newResult(p.URL(), stringChannelToSlice(sc), stringChannelToSlice(ec))
+	c.results <- newResult(p.URL().String(), stringChannelToSlice(sc), stringChannelToSlice(ec))
 }
 
 func stringChannelToSlice(sc <-chan string) []string {
