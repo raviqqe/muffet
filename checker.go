@@ -85,7 +85,7 @@ func (c checker) checkPage(p page) {
 			p, err := c.fetcher.Fetch(u.String())
 
 			if err == nil {
-				sc <- fmt.Sprintf("link is alive (%v)", u)
+				sc <- u.String()
 
 				if p != nil && !c.donePages.Add(p.URL().String()) && p.URL().Hostname() == c.rootPage.URL().Hostname() {
 					v.Add(1)
@@ -96,7 +96,7 @@ func (c checker) checkPage(p page) {
 					}()
 				}
 			} else {
-				ec <- fmt.Sprintf("%v (%v)", err, u)
+				ec <- fmt.Sprintf("%v (%v)", u, err)
 			}
 		}(n)
 	}
