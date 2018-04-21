@@ -5,17 +5,15 @@
 [![Go Report Card](https://goreportcard.com/badge/github.com/raviqqe/muffet?style=flat-square)](https://goreportcard.com/report/github.com/raviqqe/muffet)
 [![License](https://img.shields.io/github/license/raviqqe/muffet.svg?style=flat-square)](LICENSE)
 
-Muffet is a website linter which scrapes and inspects all pages in a domain
-recursively.
+Muffet is a website link checker which scrapes and inspects all pages in a
+domain recursively.
 
 ## Features
 
 - Massive speed
 - Colored outputs
-- Different types of linting
-  - HTML syntax check
-  - URL validation
-  - Link connectivity
+- Link connectivity test
+- HTML/URL syntax test
 
 ## Installation
 
