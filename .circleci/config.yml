@@ -12,7 +12,7 @@ jobs:
           command: |
             apt -y update --fix-missing
             apt -y upgrade
-            apt -y install python3 rake
+            apt -y install rake
 
       - run:
           name: Dependencies

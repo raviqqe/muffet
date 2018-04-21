@@ -40,11 +40,7 @@ task integration_test: :build do
 end
 
 task :serve do
-  cd 'test/valid' do
-    sh 'python3 -m http.server 8080 &'
-  end
-
-  cd 'test/dead_link' do
-    sh 'python3 -m http.server 8888 &'
+  [['test/valid', 8080], ['test/dead_link', 8888]].each do |args|
+    sh "ruby -run -e httpd #{args[0]} -p #{args[1]} &"
   end
 end
