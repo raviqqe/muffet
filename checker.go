@@ -13,9 +13,9 @@ import (
 )
 
 var validSchemes = map[string]struct{}{
-	"":      struct{}{},
-	"http":  struct{}{},
-	"https": struct{}{},
+	"":      {},
+	"http":  {},
+	"https": {},
 }
 
 type checker struct {
