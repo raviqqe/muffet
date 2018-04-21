@@ -137,7 +137,7 @@ func (c checker) checkPage(p page, ps chan<- page) {
 func stringChannelToSlice(sc <-chan string) []string {
 	ss := make([]string, 0, len(sc))
 
-	for i := 0; i < len(sc); i++ {
+	for i := 0; i < cap(ss); i++ {
 		ss = append(ss, <-sc)
 	}
 
