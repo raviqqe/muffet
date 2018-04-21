@@ -121,7 +121,7 @@ func (c Checker) checkPage(p Page, ps chan Page) {
 			p, err := c.fetcher.Fetch(u.String())
 
 			if err == nil {
-				sc <- fmt.Sprintf("%s is alive", u.String())
+				sc <- fmt.Sprintf("link is alive (%v)", u)
 
 				u.Fragment = ""
 				u.RawQuery = ""
@@ -130,7 +130,7 @@ func (c Checker) checkPage(p Page, ps chan Page) {
 					ps <- p
 				}
 			} else {
-				ec <- err.Error()
+				ec <- fmt.Sprintf("%v (%v)", err, u)
 			}
 		}(n)
 	}
