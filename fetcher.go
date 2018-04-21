@@ -8,17 +8,12 @@ import (
 )
 
 type fetcher struct {
-	client              fasthttp.Client
 	connectionSemaphore semaphore
 	cache               *sync.Map
 }
 
-func newFetcher(c, n int) fetcher {
-	return fetcher{
-		fasthttp.Client{MaxConnsPerHost: n},
-		newSemaphore(c),
-		&sync.Map{},
-	}
+func newFetcher(c int) fetcher {
+	return fetcher{newSemaphore(c), &sync.Map{}}
 }
 
 func (f fetcher) Fetch(u string) (*page, error) {
@@ -31,7 +26,7 @@ func (f fetcher) Fetch(u string) (*page, error) {
 	f.connectionSemaphore.Request()
 	defer f.connectionSemaphore.Release()
 
-	s, b, err := f.client.Get(nil, u)
+	s, b, err := fasthttp.Get(nil, u)
 	f.cache.Store(u, err)
 
 	if err != nil {

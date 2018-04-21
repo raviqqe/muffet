@@ -23,9 +23,6 @@ task integration_test: :build do
   sh './muffet -c 1 http://localhost:8080'
   sh './muffet --concurrency 1 http://localhost:8080'
 
-  sh './muffet -n 1 http://localhost:8080'
-  sh './muffet --connections-per-host 1 http://localhost:8080'
-
   sh './muffet --help'
 
   sh './muffet -v http://localhost:8080 | grep OK'
