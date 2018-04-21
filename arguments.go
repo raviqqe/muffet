@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"os"
 	"strconv"
 
 	"github.com/docopt/docopt-go"
@@ -28,7 +27,7 @@ Options:
 	-n, --connections-per-host <connections>  Maximum number of concurrent connections per host. [default: %v]
 	-v, --verbose  Show successful results too.`, fasthttp.DefaultMaxConnsPerHost)
 
-	args, err := docopt.ParseArgs(usage, os.Args[1:], "0.1.0")
+	args, err := docopt.ParseArgs(usage, nil, "0.1.0")
 
 	if err != nil {
 		return arguments{}, err
