@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"net/url"
 	"sync"
-	"time"
 
 	"github.com/yhat/scrape"
 	"golang.org/x/net/html"
@@ -52,9 +51,13 @@ func (c checker) Check() {
 	ps := make(chan page, c.concurrency)
 	ps <- c.rootPage
 
+	v := sync.WaitGroup{}
+	v.Add(1)
 	w := sync.WaitGroup{}
 
 	go func() {
+		first := true
+
 		for p := range ps {
 			w.Add(1)
 
@@ -62,10 +65,15 @@ func (c checker) Check() {
 				c.checkPage(p, ps)
 				w.Done()
 			}(p)
+
+			if first {
+				first = false
+				v.Done()
+			}
 		}
 	}()
 
-	time.Sleep(10 * time.Millisecond)
+	v.Wait()
 	w.Wait()
 
 	close(c.results)
