@@ -19,8 +19,8 @@ func newResultWithError(u string, err error) result {
 	return newResult(u, nil, []string{err.Error()})
 }
 
-func (r result) IsError() bool {
-	return len(r.errorMessages) != 0
+func (r result) OK() bool {
+	return len(r.errorMessages) == 0
 }
 
 func (r result) String(v bool) string {
