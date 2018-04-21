@@ -18,41 +18,37 @@ var validSchemes = map[string]struct{}{
 	"https": struct{}{},
 }
 
-// Checker represents a web page checker.
-type Checker struct {
-	fetcher     Fetcher
-	rootPage    Page
+type checker struct {
+	fetcher     fetcher
+	rootPage    page
 	rootURL     *url.URL
-	results     chan Result
+	results     chan result
 	donePages   concurrentStringSet
 	concurrency int
 }
 
-// NewChecker creates a new checker.
-func NewChecker(f Fetcher, s string, c int) (Checker, error) {
+func newChecker(f fetcher, s string, c int) (checker, error) {
 	p, err := f.Fetch(s)
 
 	if err != nil {
-		return Checker{}, err
+		return checker{}, err
 	}
 
 	u, err := url.Parse(s)
 
 	if err != nil {
-		return Checker{}, err
+		return checker{}, err
 	}
 
-	return Checker{f, p, u, make(chan Result, c), newConcurrentStringSet(), c}, nil
+	return checker{f, p, u, make(chan result, c), newConcurrentStringSet(), c}, nil
 }
 
-// Results returns a reference to results of web page checks.
-func (c Checker) Results() <-chan Result {
+func (c checker) Results() <-chan result {
 	return c.results
 }
 
-// Check start checking web pages recursively from a root page.
-func (c Checker) Check() {
-	ps := make(chan Page, c.concurrency)
+func (c checker) Check() {
+	ps := make(chan page, c.concurrency)
 	ps <- c.rootPage
 
 	w := sync.WaitGroup{}
@@ -61,7 +57,7 @@ func (c Checker) Check() {
 		for p := range ps {
 			w.Add(1)
 
-			go func(p Page) {
+			go func(p page) {
 				c.checkPage(p, ps)
 				w.Done()
 			}(p)
@@ -74,19 +70,18 @@ func (c Checker) Check() {
 	close(c.results)
 }
 
-// Check web pages recursively from the root.
-func (c Checker) checkPage(p Page, ps chan Page) {
+func (c checker) checkPage(p page, ps chan page) {
 	n, err := html.Parse(bytes.NewReader(p.Body()))
 
 	if err != nil {
-		c.results <- NewResultWithError(p.URL(), err)
+		c.results <- newResultWithError(p.URL(), err)
 		return
 	}
 
 	r, err := url.Parse(p.URL())
 
 	if err != nil {
-		c.results <- NewResultWithError(p.URL(), err)
+		c.results <- newResultWithError(p.URL(), err)
 		return
 	}
 
@@ -137,7 +132,7 @@ func (c Checker) checkPage(p Page, ps chan Page) {
 
 	w.Wait()
 
-	c.results <- NewResult(p.URL(), stringChannelToSlice(sc), stringChannelToSlice(ec))
+	c.results <- newResult(p.URL(), stringChannelToSlice(sc), stringChannelToSlice(ec))
 }
 
 func stringChannelToSlice(sc <-chan string) []string {

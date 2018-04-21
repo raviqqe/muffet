@@ -2,25 +2,22 @@ package main
 
 import "github.com/valyala/fasthttp"
 
-// Fetcher represents a web page fetcher.
-type Fetcher struct {
+type fetcher struct {
 	connectionSemaphore semaphore
 }
 
-// newFetcher creates a new web page fetcher.
-func newFetcher(c int) Fetcher {
-	return Fetcher{newSemaphore(c)}
+func newFetcher(c int) fetcher {
+	return fetcher{newSemaphore(c)}
 }
 
-// Fetch fetches a web page.
-func (f Fetcher) Fetch(u string) (Page, error) {
+func (f fetcher) Fetch(u string) (page, error) {
 	f.connectionSemaphore.Request()
 	defer f.connectionSemaphore.Release()
 
 	_, b, err := fasthttp.Get(nil, u)
 
 	if err != nil {
-		return Page{}, err
+		return page{}, err
 	}
 
 	return newPage(u, b), nil

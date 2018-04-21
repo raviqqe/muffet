@@ -6,29 +6,24 @@ import (
 	"github.com/fatih/color"
 )
 
-// Result represents a summarized result of a web page check.
-type Result struct {
+type result struct {
 	url                            string
 	successMessages, errorMessages []string
 }
 
-// NewResult creates a new result.
-func NewResult(u string, ss, es []string) Result {
-	return Result{u, ss, es}
+func newResult(u string, ss, es []string) result {
+	return result{u, ss, es}
 }
 
-// NewResultWithError creates a new result with a single error.
-func NewResultWithError(u string, err error) Result {
-	return NewResult(u, nil, []string{err.Error()})
+func newResultWithError(u string, err error) result {
+	return newResult(u, nil, []string{err.Error()})
 }
 
-// IsError returns true if a result contains some errors and false otherwise.
-func (r Result) IsError() bool {
+func (r result) IsError() bool {
 	return len(r.errorMessages) != 0
 }
 
-// String turns a result into informational string.
-func (r Result) String(v bool) string {
+func (r result) String(v bool) string {
 	ss := []string(nil)
 
 	if v {
