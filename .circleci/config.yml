@@ -8,42 +8,30 @@ jobs:
       - checkout
 
       - run:
-          name: Dependencies
+          name: Setup
           command: |
-            go get -u github.com/alecthomas/gometalinter
-            go get -d -t ./...
+            apt -y update --fix-missing
+            apt -y upgrade
+            apt -y install python3 rake
+
+      - run:
+          name: Dependencies
+          command: rake deps
 
       - run:
           name: Lint
-          command: |
-            gometalinter --install
-            gometalinter --disable vetshadow ./...
+          command: rake lint
 
       - run:
           name: Build
-          command: go build
+          command: rake build
 
       - run:
           name: Unit Test
-          command: go test
+          command: rake unit_test
 
       - run:
           name: Integration Test
           command: |
-            ./muffet https://coel-lang.org
-            ! ./muffet https://www.hackthissite.org
-
-            ./muffet -c 1 https://coel-lang.org
-            ./muffet --concurrency 1 https://coel-lang.org
-
-            ./muffet --help
-
-            ./muffet -v https://coel-lang.org 2>&1 | grep OK
-            ./muffet --verbose https://coel-lang.org 2>&1 | grep OK
-            ! ./muffet https://coel-lang.org 2>&1 | grep OK
-
-            ./muffet -v https://coel-lang.org 2>&1 | sort > foo.txt
-            ./muffet -v https://coel-lang.org 2>&1 | sort > bar.txt
-            diff foo.txt bar.txt
-
-            ! ./muffet https://coel-lang.org 2>&1 | grep .
+            rake serve
+            rake integration_test
