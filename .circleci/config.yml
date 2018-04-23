@@ -39,4 +39,5 @@ jobs:
           name: Integration Test
           command: |
             rake serve
+            sleep 1
             rake integration_test
