@@ -19,7 +19,7 @@ Usage:
 	muffet [-c <concurrency>] [-v] <url>
 
 Options:
-	-c, --concurrency <concurrency>  Roughly maximum number of concurrent HTTP connections. [default: 1000]
+	-c, --concurrency <concurrency>  Roughly maximum number of concurrent HTTP connections. [default: 512]
 	-h, --help  Show this help.
 	-v, --verbose  Show successful results too.`
 
