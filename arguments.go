@@ -1,19 +1,13 @@
 package main
 
 import (
+	"os"
 	"strconv"
 
 	"github.com/docopt/docopt-go"
 )
 
-type arguments struct {
-	concurrency int
-	url         string
-	verbose     bool
-}
-
-func getArguments() (arguments, error) {
-	usage := `Muffet, the web repairgirl
+const usage = `Muffet, the web repairgirl
 
 Usage:
 	muffet [-c <concurrency>] [-v] <url>
@@ -23,7 +17,18 @@ Options:
 	-h, --help  Show this help.
 	-v, --verbose  Show successful results too.`
 
-	args, err := docopt.ParseArgs(usage, nil, "0.1.0")
+type arguments struct {
+	concurrency int
+	url         string
+	verbose     bool
+}
+
+func getArguments(ss []string) (arguments, error) {
+	if ss == nil {
+		ss = os.Args[1:]
+	}
+
+	args, err := docopt.ParseArgs(usage, ss, "0.1.0")
 
 	if err != nil {
 		return arguments{}, err

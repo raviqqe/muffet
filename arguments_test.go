@@ -1,0 +1,18 @@
+package main
+
+import (
+	"testing"
+)
+
+func TestGetArguments(t *testing.T) {
+	for _, ss := range [][]string{
+		{"https://foo.com"},
+		{"-c", "1", "https://foo.com"},
+		{"--concurrency", "1", "https://foo.com"},
+		{"-c", "foo", "https://foo.com"},
+		{"-v", "https://foo.com"},
+		{"--verbose", "https://foo.com"},
+	} {
+		getArguments(ss)
+	}
+}
