@@ -8,15 +8,13 @@
 [![asciicast](https://asciinema.org/a/177605.png)](https://asciinema.org/a/177605)
 
 Muffet is a website link checker which scrapes and inspects all pages in a
-domain recursively.
+website recursively.
 
 ## Features
 
 - Massive speed
 - Colored outputs
-- Link connectivity test
-  - Supported tags: `a`, `img`, `link`
-- HTML/URL syntax test
+- Different tags support (`a`, `img`, `link`)
 
 ## Installation
 
