@@ -5,7 +5,7 @@
 [![Go Report Card](https://goreportcard.com/badge/github.com/raviqqe/muffet?style=flat-square)](https://goreportcard.com/report/github.com/raviqqe/muffet)
 [![License](https://img.shields.io/github/license/raviqqe/muffet.svg?style=flat-square)](LICENSE)
 
-[![asciicast](https://asciinema.org/a/177605.png)](https://asciinema.org/a/177605)
+[![asciicast](https://asciinema.org/a/177814.png)](https://asciinema.org/a/177814)
 
 Muffet is a website link checker which scrapes and inspects all pages in a
 website recursively.
