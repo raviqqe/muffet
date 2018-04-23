@@ -6,6 +6,48 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestNewChecker(t *testing.T) {
+	_, err := newChecker(rootURL, 1)
+	assert.Nil(t, err)
+}
+
+func TestNewCheckerError(t *testing.T) {
+	_, err := newChecker(":", 1)
+	assert.NotNil(t, err)
+}
+
+func TestCheckerCheck(t *testing.T) {
+	c, _ := newChecker(rootURL, 1)
+
+	go c.Check()
+
+	for r := range c.Results() {
+		assert.True(t, r.OK())
+	}
+}
+
+func TestCheckerCheckPage(t *testing.T) {
+	c, _ := newChecker(rootURL, 256)
+
+	p, err := c.fetcher.Fetch(existentURL)
+	assert.Nil(t, err)
+
+	go c.checkPage(*p)
+
+	assert.True(t, (<-c.Results()).OK())
+}
+
+func TestCheckerCheckPageError(t *testing.T) {
+	c, _ := newChecker(rootURL, 256)
+
+	p, err := c.fetcher.Fetch(erroneousURL)
+	assert.Nil(t, err)
+
+	go c.checkPage(*p)
+
+	assert.False(t, (<-c.Results()).OK())
+}
+
 func TestStringChannelToSlice(t *testing.T) {
 	for _, c := range []struct {
 		channel chan string
