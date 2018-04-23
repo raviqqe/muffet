@@ -32,14 +32,15 @@ func (f fetcher) Fetch(u string) (*page, error) {
 	defer f.connectionSemaphore.Release()
 
 	s, b, err := f.client.Get(nil, u)
+
+	if err == nil && s/100 != 2 {
+		err = fmt.Errorf("invalid status code %v", s)
+	}
+
 	f.cache.Store(u, err)
 
 	if err != nil {
 		return nil, err
-	}
-
-	if s/100 != 2 {
-		return nil, fmt.Errorf("invalid status code %v", s)
 	}
 
 	p := newPage(u, b)
