@@ -19,7 +19,8 @@ var validSchemes = map[string]struct{}{
 
 type checker struct {
 	fetcher   fetcher
-	rootPage  page
+	daemons   daemons
+	hostname  string
 	results   chan result
 	donePages concurrentStringSet
 }
@@ -32,7 +33,17 @@ func newChecker(s string, c int) (checker, error) {
 		return checker{}, err
 	}
 
-	return checker{f, *p, make(chan result, c), newConcurrentStringSet()}, nil
+	ch := checker{
+		f,
+		newDaemons(c),
+		p.URL().Hostname(),
+		make(chan result, c),
+		newConcurrentStringSet(),
+	}
+
+	ch.daemons.Add(func() { ch.checkPage(*p) })
+
+	return ch, nil
 }
 
 func (c checker) Results() <-chan result {
@@ -40,7 +51,7 @@ func (c checker) Results() <-chan result {
 }
 
 func (c checker) Check() {
-	c.checkPage(c.rootPage)
+	c.daemons.Run()
 
 	close(c.results)
 }
@@ -58,7 +69,6 @@ func (c checker) checkPage(p page) {
 	})
 
 	sc, ec := make(chan string, len(ns)), make(chan string, len(ns))
-	v := sync.WaitGroup{}
 	w := sync.WaitGroup{}
 
 	for _, n := range ns {
@@ -87,13 +97,10 @@ func (c checker) checkPage(p page) {
 			if err == nil {
 				sc <- u.String()
 
-				if p != nil && !c.donePages.Add(p.URL().String()) && p.URL().Hostname() == c.rootPage.URL().Hostname() {
-					v.Add(1)
-
-					go func() {
+				if p != nil && !c.donePages.Add(p.URL().String()) && p.URL().Hostname() == c.hostname {
+					c.daemons.Add(func() {
 						c.checkPage(*p)
-						v.Done()
-					}()
+					})
 				}
 			} else {
 				ec <- fmt.Sprintf("%v (%v)", u, err)
@@ -104,8 +111,6 @@ func (c checker) checkPage(p page) {
 	w.Wait()
 
 	c.results <- newResult(p.URL().String(), stringChannelToSlice(sc), stringChannelToSlice(ec))
-
-	v.Wait()
 }
 
 func stringChannelToSlice(sc <-chan string) []string {
