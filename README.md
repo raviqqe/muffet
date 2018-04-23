@@ -15,6 +15,7 @@ domain recursively.
 - Massive speed
 - Colored outputs
 - Link connectivity test
+  - Supported tags: `a`, `img`, `link`
 - HTML/URL syntax test
 
 ## Installation

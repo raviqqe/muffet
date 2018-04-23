@@ -17,6 +17,12 @@ var validSchemes = map[string]struct{}{
 	"https": {},
 }
 
+var atomToAttribute = map[atom.Atom]string{
+	atom.A:    "href",
+	atom.Img:  "src",
+	atom.Link: "href",
+}
+
 type checker struct {
 	fetcher   fetcher
 	daemons   daemons
@@ -65,7 +71,8 @@ func (c checker) checkPage(p page) {
 	}
 
 	ns := scrape.FindAll(n, func(n *html.Node) bool {
-		return n.DataAtom == atom.A
+		_, ok := atomToAttribute[n.DataAtom]
+		return ok
 	})
 
 	sc, ec := make(chan string, len(ns)), make(chan string, len(ns))
@@ -77,7 +84,7 @@ func (c checker) checkPage(p page) {
 		go func(n *html.Node) {
 			defer w.Done()
 
-			u, err := url.Parse(scrape.Attr(n, "href"))
+			u, err := url.Parse(scrape.Attr(n, atomToAttribute[n.DataAtom]))
 
 			if err != nil {
 				ec <- err.Error()
@@ -96,14 +103,14 @@ func (c checker) checkPage(p page) {
 
 			if err == nil {
 				sc <- u.String()
-
-				if p != nil && !c.donePages.Add(p.URL().String()) && p.URL().Hostname() == c.hostname {
-					c.daemons.Add(func() {
-						c.checkPage(*p)
-					})
-				}
 			} else {
 				ec <- fmt.Sprintf("%v (%v)", u, err)
+			}
+
+			if n.DataAtom == atom.A && p != nil && !c.donePages.Add(p.URL().String()) && p.URL().Hostname() == c.hostname {
+				c.daemons.Add(func() {
+					c.checkPage(*p)
+				})
 			}
 		}(n)
 	}
