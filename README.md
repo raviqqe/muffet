@@ -14,7 +14,7 @@ website recursively.
 
 - Massive speed
 - Colored outputs
-- Different tags support (`a`, `img`, `link`)
+- Different tags support (`a`, `img`, `link`, `script`, etc)
 
 ## Installation
 
