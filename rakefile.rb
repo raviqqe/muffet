@@ -26,6 +26,7 @@ task integration_test: :build do
   sh './muffet --help'
 
   sh './muffet -v http://localhost:8080 | grep OK'
+  sh '[ $(./muffet -v http://localhost:8080 | wc -l) -eq 14 ]'
   sh './muffet --verbose http://localhost:8080 | grep OK'
   sh '! ./muffet http://localhost:8080 | grep OK'
 

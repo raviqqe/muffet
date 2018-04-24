@@ -13,6 +13,7 @@ const existentURL = "http://localhost:8080/foo"
 const nonExistentURL = "http://localhost:8080/bar"
 const erroneousURL = "http://localhost:8080/erroneous"
 const fragmentURL = "http://localhost:8080/fragment"
+const tagsURL = "http://localhost:8080/tags"
 
 type handler struct{}
 
@@ -31,6 +32,23 @@ func (handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		`)))
 	case "/fragment":
 		w.Write([]byte(htmlWithBody(`<a id="foo" href="#foo" />`)))
+	case "/tags":
+		// TODO: Test <frame> tag.
+		w.Write([]byte(htmlWithBody(`
+			<a href="/" />
+			<iframe src="/"></iframe>
+			<img src="/foo.png" />
+			<link href="/" />
+			<script src="/foo.js"></script>
+			<source src="/foo.png" />
+			<track src="/foo.vtt" />
+		`)))
+	case "/foo.js":
+		w.Write(nil)
+	case "/foo.png":
+		w.Write(nil)
+	case "/foo.vtt":
+		w.Write(nil)
 	default:
 		w.WriteHeader(404)
 	}

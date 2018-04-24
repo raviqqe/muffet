@@ -28,6 +28,17 @@ func TestCheckerCheck(t *testing.T) {
 	}
 }
 
+func TestCheckerCheckWithTags(t *testing.T) {
+	c, _ := newChecker(tagsURL, 1)
+
+	go c.Check()
+
+	r := <-c.Results()
+
+	assert.Equal(t, 7, len(r.successMessages))
+	assert.True(t, r.OK())
+}
+
 func TestCheckerCheckPage(t *testing.T) {
 	c, _ := newChecker(rootURL, 256)
 

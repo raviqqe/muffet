@@ -17,9 +17,14 @@ var validSchemes = map[string]struct{}{
 }
 
 var atomToAttribute = map[atom.Atom]string{
-	atom.A:    "href",
-	atom.Img:  "src",
-	atom.Link: "href",
+	atom.A:      "href",
+	atom.Frame:  "src",
+	atom.Iframe: "src",
+	atom.Img:    "src",
+	atom.Link:   "href",
+	atom.Script: "src",
+	atom.Source: "src",
+	atom.Track:  "src",
 }
 
 type checker struct {
@@ -62,7 +67,7 @@ func (c checker) Check() {
 }
 
 func (c checker) checkPage(p page) {
-	ns := scrape.FindAll(p.Body(), func(n *html.Node) bool {
+	ns := scrape.FindAllNested(p.Body(), func(n *html.Node) bool {
 		_, ok := atomToAttribute[n.DataAtom]
 		return ok
 	})
