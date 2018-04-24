@@ -12,6 +12,7 @@ const rootURL = "http://localhost:8080"
 const existentURL = "http://localhost:8080/foo"
 const nonExistentURL = "http://localhost:8080/bar"
 const erroneousURL = "http://localhost:8080/erroneous"
+const fragmentURL = "http://localhost:8080/fragment"
 
 type handler struct{}
 
@@ -26,7 +27,10 @@ func (handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			<a href=":" />
 			<a href="mailto:me@right.here" />
 			<a href="/bar" />
+			<a href="#foo" />
 		`)))
+	case "/fragment":
+		w.Write([]byte(htmlWithBody(`<a id="foo" href="#foo" />`)))
 	default:
 		w.WriteHeader(404)
 	}

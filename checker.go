@@ -1,7 +1,6 @@
 package main
 
 import (
-	"bytes"
 	"fmt"
 	"net/url"
 	"sync"
@@ -63,14 +62,7 @@ func (c checker) Check() {
 }
 
 func (c checker) checkPage(p page) {
-	n, err := html.Parse(bytes.NewReader(p.Body()))
-
-	if err != nil {
-		c.results <- newResultWithError(p.URL().String(), err)
-		return
-	}
-
-	ns := scrape.FindAll(n, func(n *html.Node) bool {
+	ns := scrape.FindAll(p.Body(), func(n *html.Node) bool {
 		_, ok := atomToAttribute[n.DataAtom]
 		return ok
 	})

@@ -16,10 +16,6 @@ func newResult(u string, ss, es []string) result {
 	return result{u, ss, es}
 }
 
-func newResultWithError(u string, err error) result {
-	return newResult(u, nil, []string{err.Error()})
-}
-
 func (r result) OK() bool {
 	return len(r.errorMessages) == 0
 }

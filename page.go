@@ -1,13 +1,17 @@
 package main
 
-import "net/url"
+import (
+	"net/url"
+
+	"golang.org/x/net/html"
+)
 
 type page struct {
 	url  *url.URL
-	body []byte
+	body *html.Node
 }
 
-func newPage(s string, b []byte) page {
+func newPage(s string, n *html.Node) page {
 	u, err := url.Parse(s)
 
 	if err != nil {
@@ -17,13 +21,13 @@ func newPage(s string, b []byte) page {
 	u.Fragment = ""
 	u.RawQuery = ""
 
-	return page{u, b}
+	return page{u, n}
 }
 
 func (p page) URL() *url.URL {
 	return p.url
 }
 
-func (p page) Body() []byte {
+func (p page) Body() *html.Node {
 	return p.body
 }

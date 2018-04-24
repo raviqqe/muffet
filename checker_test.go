@@ -17,12 +17,14 @@ func TestNewCheckerError(t *testing.T) {
 }
 
 func TestCheckerCheck(t *testing.T) {
-	c, _ := newChecker(rootURL, 1)
+	for _, s := range []string{rootURL, fragmentURL} {
+		c, _ := newChecker(s, 1)
 
-	go c.Check()
+		go c.Check()
 
-	for r := range c.Results() {
-		assert.True(t, r.OK())
+		for r := range c.Results() {
+			assert.True(t, r.OK())
+		}
 	}
 }
 

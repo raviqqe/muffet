@@ -1,7 +1,6 @@
 package main
 
 import (
-	"errors"
 	"strings"
 	"testing"
 
@@ -10,10 +9,6 @@ import (
 
 func TestNewResult(t *testing.T) {
 	newResult("https://foo.com", nil, nil)
-}
-
-func TestNewResultWithError(t *testing.T) {
-	newResultWithError("https://foo.com", errors.New(""))
 }
 
 func TestResultOK(t *testing.T) {
