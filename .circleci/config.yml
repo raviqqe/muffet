@@ -53,10 +53,10 @@ jobs:
               tar -xz -C /tmp
               mv /tmp/docker/* /usr/bin
 
-              docker build -t raviqqe/muffet .
+              docker build -t $DOCKER_USER/muffet .
               docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
-              docker push raviqqe/muffet
+              docker push $DOCKER_USER/muffet
               version=$(./muffet --version)
-              docker tag raviqqe/muffet raviqqe/muffet:$version
-              docker push raviqqe/muffet:$version
+              docker tag $DOCKER_USER/muffet $DOCKER_USER/muffet:$version
+              docker push $DOCKER_USER/muffet:$version
             fi
