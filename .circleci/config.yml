@@ -41,3 +41,22 @@ jobs:
             rake serve
             sleep 1
             rake integration_test
+
+      - setup_remote_docker
+
+      - run:
+          name: Docker Image
+          command: |
+            if [ $CIRCLE_BRANCH = master ]
+            then
+              curl -L https://download.docker.com/linux/static/stable/x86_64/docker-17.12.1-ce.tgz |
+              tar -xz -C /tmp
+              mv /tmp/docker/* /usr/bin
+
+              docker build -t raviqqe/muffet .
+              docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
+              docker push raviqqe/muffet
+              version=$(./muffet --version)
+              docker tag raviqqe/muffet raviqqe/muffet:$version
+              docker push raviqqe/muffet:$version
+            fi
