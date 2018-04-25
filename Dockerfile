@@ -2,11 +2,10 @@ FROM golang:alpine
 
 RUN apk apk update && apk upgrade && apk add --no-cache git
 
-RUN mkdir /muffet
-ADD . /muffet/
+ADD . /muffet
 WORKDIR /muffet
 
-RUN go get -d .
-RUN go build -o main .
+RUN go get -d
+RUN go build
 
-ENTRYPOINT ["/muffet/main"]
+ENTRYPOINT ["/muffet/muffet"]
