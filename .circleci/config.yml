@@ -31,7 +31,7 @@ jobs:
           command: rake unit_test
 
       - run:
-          name: Coverage report
+          name: Coverage Report
           command: |
             bash <(curl -s https://codecov.io/bash)
 
