@@ -15,13 +15,15 @@ type fetcher struct {
 	client              *fasthttp.Client
 	connectionSemaphore semaphore
 	cache               *sync.Map
+	ignoreFragments     bool
 }
 
-func newFetcher(c int) fetcher {
+func newFetcher(c int, i bool) fetcher {
 	return fetcher{
 		&fasthttp.Client{MaxConnsPerHost: c},
 		newSemaphore(c),
 		&sync.Map{},
+		i,
 	}
 }
 
@@ -69,7 +71,7 @@ func (f fetcher) fetchHTML(u, id string) (*html.Node, error) {
 		return nil, err
 	}
 
-	if id != "" {
+	if !f.ignoreFragments && id != "" {
 		if _, ok := scrape.Find(n, func(n *html.Node) bool {
 			return scrape.Attr(n, "id") == id
 		}); !ok {

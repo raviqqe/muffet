@@ -12,6 +12,8 @@ func TestGetArguments(t *testing.T) {
 		{"-c", "foo", "https://foo.com"},
 		{"-v", "https://foo.com"},
 		{"--verbose", "https://foo.com"},
+		{"-v", "-f", "https://foo.com"},
+		{"-v", "--ignore-fragments", "https://foo.com"},
 	} {
 		getArguments(ss)
 	}

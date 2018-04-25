@@ -35,8 +35,8 @@ type checker struct {
 	donePages concurrentStringSet
 }
 
-func newChecker(s string, c int) (checker, error) {
-	f := newFetcher(c)
+func newChecker(s string, c int, i bool) (checker, error) {
+	f := newFetcher(c, i)
 	p, err := f.Fetch(s)
 
 	if err != nil {
