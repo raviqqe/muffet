@@ -7,18 +7,18 @@ import (
 )
 
 func TestNewChecker(t *testing.T) {
-	_, err := newChecker(rootURL, 1)
+	_, err := newChecker(rootURL, 1, false)
 	assert.Nil(t, err)
 }
 
 func TestNewCheckerError(t *testing.T) {
-	_, err := newChecker(":", 1)
+	_, err := newChecker(":", 1, false)
 	assert.NotNil(t, err)
 }
 
 func TestCheckerCheck(t *testing.T) {
 	for _, s := range []string{rootURL, fragmentURL} {
-		c, _ := newChecker(s, 1)
+		c, _ := newChecker(s, 1, false)
 
 		go c.Check()
 
@@ -29,7 +29,7 @@ func TestCheckerCheck(t *testing.T) {
 }
 
 func TestCheckerCheckWithTags(t *testing.T) {
-	c, _ := newChecker(tagsURL, 1)
+	c, _ := newChecker(tagsURL, 1, false)
 
 	go c.Check()
 
@@ -40,7 +40,7 @@ func TestCheckerCheckWithTags(t *testing.T) {
 }
 
 func TestCheckerCheckPage(t *testing.T) {
-	c, _ := newChecker(rootURL, 256)
+	c, _ := newChecker(rootURL, 256, false)
 
 	p, err := c.fetcher.Fetch(existentURL)
 	assert.Nil(t, err)
@@ -51,7 +51,7 @@ func TestCheckerCheckPage(t *testing.T) {
 }
 
 func TestCheckerCheckPageError(t *testing.T) {
-	c, _ := newChecker(rootURL, 256)
+	c, _ := newChecker(rootURL, 256, false)
 
 	p, err := c.fetcher.Fetch(erroneousURL)
 	assert.Nil(t, err)

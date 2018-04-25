@@ -14,6 +14,7 @@ const nonExistentURL = "http://localhost:8080/bar"
 const erroneousURL = "http://localhost:8080/erroneous"
 const fragmentURL = "http://localhost:8080/fragment"
 const tagsURL = "http://localhost:8080/tags"
+const nonExistentIDURL = "http://localhost:8080/#non-existent-id"
 
 type handler struct{}
 

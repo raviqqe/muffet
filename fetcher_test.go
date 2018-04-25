@@ -8,11 +8,11 @@ import (
 )
 
 func TestNewFetcher(t *testing.T) {
-	newFetcher(1)
+	newFetcher(1, false)
 }
 
 func TestFetcherCache(t *testing.T) {
-	f := newFetcher(1)
+	f := newFetcher(1, false)
 
 	p, err := f.Fetch(rootURL)
 
@@ -35,8 +35,20 @@ func TestFetcherCache(t *testing.T) {
 	assert.NotNil(t, err)
 }
 
+func TestFetcherFetchIgnoreFragments(t *testing.T) {
+	p, err := newFetcher(1, false).Fetch(nonExistentIDURL)
+
+	assert.Equal(t, (*page)(nil), p)
+	assert.NotNil(t, err)
+
+	p, err = newFetcher(1, true).Fetch(nonExistentIDURL)
+
+	assert.NotEqual(t, (*page)(nil), p)
+	assert.Nil(t, err)
+}
+
 func TestFetcherFetchError(t *testing.T) {
-	f := newFetcher(1)
+	f := newFetcher(1, false)
 
 	for _, s := range []string{nonExistentURL, ":"} {
 		p, err := f.Fetch(s)
@@ -47,7 +59,7 @@ func TestFetcherFetchError(t *testing.T) {
 }
 
 func TestFetcherFetchHTML(t *testing.T) {
-	f := newFetcher(1)
+	f := newFetcher(1, false)
 
 	for _, s := range []string{rootURL, existentURL, fragmentURL, erroneousURL} {
 		n, err := f.fetchHTML(s, "")
@@ -58,7 +70,7 @@ func TestFetcherFetchHTML(t *testing.T) {
 }
 
 func TestFetcherFetchHTMLWithFragment(t *testing.T) {
-	f := newFetcher(1)
+	f := newFetcher(1, false)
 
 	n, err := f.fetchHTML(fragmentURL, "foo")
 	assert.NotEqual(t, (*html.Node)(nil), n)
@@ -70,7 +82,7 @@ func TestFetcherFetchHTMLWithFragment(t *testing.T) {
 }
 
 func TestFetcherFetchHTMLError(t *testing.T) {
-	f := newFetcher(1)
+	f := newFetcher(1, false)
 
 	for _, s := range []string{":", nonExistentURL} {
 		n, err := f.fetchHTML(s, "")
