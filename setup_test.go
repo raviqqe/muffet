@@ -8,17 +8,19 @@ import (
 	"time"
 )
 
-const rootURL = "http://localhost:8080"
-const existentURL = "http://localhost:8080/foo"
-const nonExistentURL = "http://localhost:8080/bar"
-const erroneousURL = "http://localhost:8080/erroneous"
-const fragmentURL = "http://localhost:8080/fragment"
-const tagsURL = "http://localhost:8080/tags"
-const nonExistentIDURL = "http://localhost:8080/#non-existent-id"
-const baseURL = "http://localhost:8080/base"
-const invalidBaseURL = "http://localhost:8080/invalid-base"
-const redirectURL = "http://localhost:8080/redirect"
-const invalidRedirectURL = "http://localhost:8080/invalid-redirect"
+const (
+	rootURL            = "http://localhost:8080"
+	existentURL        = "http://localhost:8080/foo"
+	nonExistentURL     = "http://localhost:8080/bar"
+	erroneousURL       = "http://localhost:8080/erroneous"
+	fragmentURL        = "http://localhost:8080/fragment"
+	tagsURL            = "http://localhost:8080/tags"
+	nonExistentIDURL   = "http://localhost:8080/#non-existent-id"
+	baseURL            = "http://localhost:8080/base"
+	invalidBaseURL     = "http://localhost:8080/invalid-base"
+	redirectURL        = "http://localhost:8080/redirect"
+	invalidRedirectURL = "http://localhost:8080/invalid-redirect"
+)
 
 type handler struct{}
 
