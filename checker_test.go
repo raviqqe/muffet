@@ -1,9 +1,12 @@
 package main
 
 import (
+	"net/url"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"golang.org/x/net/html"
 )
 
 func TestNewChecker(t *testing.T) {
@@ -17,7 +20,7 @@ func TestNewCheckerError(t *testing.T) {
 }
 
 func TestCheckerCheck(t *testing.T) {
-	for _, s := range []string{rootURL, fragmentURL} {
+	for _, s := range []string{rootURL, fragmentURL, baseURL} {
 		c, _ := newChecker(s, 1, false)
 
 		go c.Check()
@@ -51,14 +54,51 @@ func TestCheckerCheckPage(t *testing.T) {
 }
 
 func TestCheckerCheckPageError(t *testing.T) {
-	c, _ := newChecker(rootURL, 256, false)
+	for _, s := range []string{erroneousURL, invalidBaseURL} {
+		c, _ := newChecker(rootURL, 256, false)
 
-	p, err := c.fetcher.Fetch(erroneousURL)
+		p, err := c.fetcher.Fetch(s)
+		assert.Nil(t, err)
+
+		go c.checkPage(*p)
+
+		assert.False(t, (<-c.Results()).OK())
+	}
+}
+
+func TestResolveURLWithAbsoluteURL(t *testing.T) {
+	n, err := html.Parse(strings.NewReader(""))
 	assert.Nil(t, err)
 
-	go c.checkPage(*p)
+	u, err := url.Parse("http://localhost/foo/bar")
+	assert.Nil(t, err)
 
-	assert.False(t, (<-c.Results()).OK())
+	u, err = resolveURL(newPage("http://localhost", n), u)
+	assert.Nil(t, err)
+	assert.Equal(t, "http://localhost/foo/bar", u.String())
+}
+
+func TestResolveURLWithBaseTag(t *testing.T) {
+	n, err := html.Parse(strings.NewReader(`<html><head><base href="/foo/" /></head></html>`))
+	assert.Nil(t, err)
+
+	u, err := url.Parse("bar")
+	assert.Nil(t, err)
+
+	u, err = resolveURL(newPage("http://localhost", n), u)
+	assert.Nil(t, err)
+	assert.Equal(t, "http://localhost/foo/bar", u.String())
+}
+
+func TestResolveURLError(t *testing.T) {
+	n, err := html.Parse(strings.NewReader(`<html><head><base href=":" /></head></html>`))
+	assert.Nil(t, err)
+
+	u, err := url.Parse("bar")
+	assert.Nil(t, err)
+
+	_, err = resolveURL(newPage("http://localhost", n), u)
+	assert.NotNil(t, err)
 }
 
 func TestStringChannelToSlice(t *testing.T) {

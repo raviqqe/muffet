@@ -15,6 +15,8 @@ const erroneousURL = "http://localhost:8080/erroneous"
 const fragmentURL = "http://localhost:8080/fragment"
 const tagsURL = "http://localhost:8080/tags"
 const nonExistentIDURL = "http://localhost:8080/#non-existent-id"
+const baseURL = "http://localhost:8080/base"
+const invalidBaseURL = "http://localhost:8080/invalid-base"
 
 type handler struct{}
 
@@ -49,6 +51,30 @@ func (handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	case "/foo.png":
 		w.Write(nil)
 	case "/foo.vtt":
+		w.Write(nil)
+	case "/base":
+		w.Write([]byte(`
+			<html>
+				<head>
+					<base href="/parent/" />
+				</head>
+				<body>
+					<a href="child" />
+				</body>
+			</html>
+		`))
+	case "/invalid-base":
+		w.Write([]byte(`
+			<html>
+				<head>
+					<base href=":" />
+				</head>
+				<body>
+					<a href="child" />
+				</body>
+			</html>
+		`))
+	case "/parent/child":
 		w.Write(nil)
 	default:
 		w.WriteHeader(404)
