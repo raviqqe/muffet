@@ -20,7 +20,7 @@ func TestNewCheckerError(t *testing.T) {
 }
 
 func TestCheckerCheck(t *testing.T) {
-	for _, s := range []string{rootURL, fragmentURL, baseURL} {
+	for _, s := range []string{rootURL, fragmentURL, baseURL, redirectURL} {
 		c, _ := newChecker(s, 1, false)
 
 		go c.Check()

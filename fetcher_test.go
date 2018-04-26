@@ -4,7 +4,6 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"golang.org/x/net/html"
 )
 
 func TestNewFetcher(t *testing.T) {
@@ -58,38 +57,56 @@ func TestFetcherFetchError(t *testing.T) {
 	}
 }
 
-func TestFetcherFetchHTML(t *testing.T) {
+func TestFetcherFetchPageWithFragment(t *testing.T) {
 	f := newFetcher(1, false)
 
 	for _, s := range []string{rootURL, existentURL, fragmentURL, erroneousURL} {
-		n, err := f.fetchHTML(s, "")
+		p, err := f.fetchPageWithFragment(s, "")
 
-		assert.NotEqual(t, (*html.Node)(nil), n)
+		assert.NotEqual(t, (*page)(nil), p)
 		assert.Nil(t, err)
 	}
 }
 
-func TestFetcherFetchHTMLWithFragment(t *testing.T) {
+func TestFetcherFetchPageWithFragmentWithFragment(t *testing.T) {
 	f := newFetcher(1, false)
 
-	n, err := f.fetchHTML(fragmentURL, "foo")
-	assert.NotEqual(t, (*html.Node)(nil), n)
+	p, err := f.fetchPageWithFragment(fragmentURL, "foo")
+	assert.NotEqual(t, (*page)(nil), p)
 	assert.Nil(t, err)
 
-	n, err = f.fetchHTML(fragmentURL, "bar")
-	assert.Equal(t, (*html.Node)(nil), n)
+	p, err = f.fetchPageWithFragment(fragmentURL, "bar")
+	assert.Equal(t, (*page)(nil), p)
 	assert.NotNil(t, err)
 }
 
-func TestFetcherFetchHTMLError(t *testing.T) {
+func TestFetcherFetchPageWithFragmentError(t *testing.T) {
 	f := newFetcher(1, false)
 
 	for _, s := range []string{":", nonExistentURL} {
-		n, err := f.fetchHTML(s, "")
+		p, err := f.fetchPageWithFragment(s, "")
 
-		assert.Equal(t, (*html.Node)(nil), n)
+		assert.Equal(t, (*page)(nil), p)
 		assert.NotNil(t, err)
 	}
+}
+
+func TestFetcherFetchPage(t *testing.T) {
+	f := newFetcher(1, false)
+
+	for _, s := range []string{rootURL, existentURL, fragmentURL, erroneousURL, redirectURL} {
+		p, err := f.fetchPage(s)
+
+		assert.NotEqual(t, (*page)(nil), p)
+		assert.Nil(t, err)
+	}
+}
+
+func TestFetcherFetchPageWithMissingLocationHeader(t *testing.T) {
+	p, err := newFetcher(1, false).fetchPage(invalidRedirectURL)
+
+	assert.Equal(t, (*page)(nil), p)
+	assert.NotNil(t, err)
 }
 
 func TestSeparateFragment(t *testing.T) {

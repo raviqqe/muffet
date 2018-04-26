@@ -17,6 +17,8 @@ const tagsURL = "http://localhost:8080/tags"
 const nonExistentIDURL = "http://localhost:8080/#non-existent-id"
 const baseURL = "http://localhost:8080/base"
 const invalidBaseURL = "http://localhost:8080/invalid-base"
+const redirectURL = "http://localhost:8080/redirect"
+const invalidRedirectURL = "http://localhost:8080/invalid-redirect"
 
 type handler struct{}
 
@@ -76,6 +78,11 @@ func (handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		`))
 	case "/parent/child":
 		w.Write(nil)
+	case "/redirect":
+		w.Header().Add("Location", "/")
+		w.WriteHeader(300)
+	case "/invalid-redirect":
+		w.WriteHeader(300)
 	default:
 		w.WriteHeader(404)
 	}

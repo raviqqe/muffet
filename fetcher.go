@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
 	"net/url"
 	"sync"
@@ -18,17 +19,17 @@ type fetcher struct {
 	ignoreFragments     bool
 }
 
-func newFetcher(c int, i bool) fetcher {
+func newFetcher(c int, f bool) fetcher {
 	return fetcher{
 		&fasthttp.Client{MaxConnsPerHost: c},
 		newSemaphore(c),
 		&sync.Map{},
-		i,
+		f,
 	}
 }
 
 func (f fetcher) Fetch(s string) (*page, error) {
-	s, id, err := separateFragment(s)
+	s, fr, err := separateFragment(s)
 
 	if err != nil {
 		return nil, err
@@ -40,46 +41,70 @@ func (f fetcher) Fetch(s string) (*page, error) {
 		return nil, err.(error)
 	}
 
-	f.connectionSemaphore.Request()
-	defer f.connectionSemaphore.Release()
+	p, err := f.fetchPageWithFragment(s, fr)
 
-	n, err := f.fetchHTML(s, id)
 	f.cache.Store(s, err)
 
-	if err != nil {
-		return nil, err
-	}
-
-	p := newPage(s, n)
-	return &p, nil
+	return p, err
 }
 
-func (f fetcher) fetchHTML(u, id string) (*html.Node, error) {
-	s, b, err := f.client.Get(nil, u)
+func (f fetcher) fetchPageWithFragment(u, fr string) (*page, error) {
+	p, err := f.fetchPage(u)
 
 	if err != nil {
 		return nil, err
 	}
 
-	if s/100 != 2 {
-		return nil, fmt.Errorf("invalid status code %v", s)
-	}
-
-	n, err := html.Parse(bytes.NewReader(b))
-
-	if err != nil {
-		return nil, err
-	}
-
-	if !f.ignoreFragments && id != "" {
-		if _, ok := scrape.Find(n, func(n *html.Node) bool {
-			return scrape.Attr(n, "id") == id
+	if !f.ignoreFragments && fr != "" {
+		if _, ok := scrape.Find(p.Body(), func(n *html.Node) bool {
+			return scrape.Attr(n, "id") == fr
 		}); !ok {
-			return nil, fmt.Errorf("ID #%v not found", id)
+			return nil, fmt.Errorf("id #%v not found", fr)
 		}
 	}
 
-	return n, nil
+	return p, nil
+}
+
+func (f fetcher) fetchPage(u string) (*page, error) {
+	f.connectionSemaphore.Request()
+	defer f.connectionSemaphore.Release()
+
+	req, res := fasthttp.Request{}, fasthttp.Response{}
+	req.SetRequestURI(u)
+
+redirects:
+	for {
+		err := f.client.Do(&req, &res)
+
+		if err != nil {
+			return nil, err
+		}
+
+		switch res.StatusCode() / 100 {
+		case 2:
+			break redirects
+		case 3:
+			bs := res.Header.Peek("Location")
+
+			if len(bs) == 0 {
+				return nil, errors.New("location header not found")
+			}
+
+			req.SetRequestURIBytes(bs)
+		default:
+			return nil, fmt.Errorf("invalid status code %v", res.StatusCode())
+		}
+	}
+
+	n, err := html.Parse(bytes.NewReader(res.Body()))
+
+	if err != nil {
+		return nil, err
+	}
+
+	p := newPage(req.URI().String(), n)
+	return &p, nil
 }
 
 func separateFragment(s string) (string, string, error) {
@@ -89,8 +114,8 @@ func separateFragment(s string) (string, string, error) {
 		return "", "", err
 	}
 
-	id := u.Fragment
+	f := u.Fragment
 	u.Fragment = ""
 
-	return u.String(), id, nil
+	return u.String(), f, nil
 }
