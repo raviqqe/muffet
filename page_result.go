@@ -7,20 +7,20 @@ import (
 	"github.com/fatih/color"
 )
 
-type result struct {
+type pageResult struct {
 	url                            string
 	successMessages, errorMessages []string
 }
 
-func newResult(u string, ss, es []string) result {
-	return result{u, ss, es}
+func newPageResult(u string, ss, es []string) pageResult {
+	return pageResult{u, ss, es}
 }
 
-func (r result) OK() bool {
+func (r pageResult) OK() bool {
 	return len(r.errorMessages) == 0
 }
 
-func (r result) String(v bool) string {
+func (r pageResult) String(v bool) string {
 	ss := []string(nil)
 
 	if v {

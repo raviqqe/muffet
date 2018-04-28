@@ -31,7 +31,7 @@ type checker struct {
 	fetcher   fetcher
 	daemons   daemons
 	hostname  string
-	results   chan result
+	results   chan pageResult
 	donePages concurrentStringSet
 }
 
@@ -47,7 +47,7 @@ func newChecker(s string, c int, i bool) (checker, error) {
 		f,
 		newDaemons(c),
 		p.URL().Hostname(),
-		make(chan result, c),
+		make(chan pageResult, c),
 		newConcurrentStringSet(),
 	}
 
@@ -56,7 +56,7 @@ func newChecker(s string, c int, i bool) (checker, error) {
 	return ch, nil
 }
 
-func (c checker) Results() <-chan result {
+func (c checker) Results() <-chan pageResult {
 	return c.results
 }
 
@@ -117,7 +117,7 @@ func (c checker) checkPage(p page) {
 
 	w.Wait()
 
-	c.results <- newResult(p.URL().String(), stringChannelToSlice(sc), stringChannelToSlice(ec))
+	c.results <- newPageResult(p.URL().String(), stringChannelToSlice(sc), stringChannelToSlice(ec))
 }
 
 func resolveURL(p page, u *url.URL) (*url.URL, error) {
