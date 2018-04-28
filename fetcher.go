@@ -28,45 +28,52 @@ func newFetcher(c int, f bool) fetcher {
 	}
 }
 
-func (f fetcher) Fetch(s string) (*page, error) {
+func (f fetcher) Fetch(s string) (fetchResult, error) {
 	s, fr, err := separateFragment(s)
 
 	if err != nil {
-		return nil, err
+		return fetchResult{}, err
 	}
 
-	if err, ok := f.cache.Load(s); ok && err == nil {
-		return nil, nil
-	} else if ok {
-		return nil, err.(error)
-	}
-
-	p, err := f.fetchPageWithFragment(s, fr)
-
-	f.cache.Store(s, err)
-
-	return p, err
-}
-
-func (f fetcher) fetchPageWithFragment(u, fr string) (*page, error) {
-	p, err := f.fetchPage(u)
-
-	if err != nil {
-		return nil, err
-	}
-
-	if !f.ignoreFragments && fr != "" {
-		if _, ok := scrape.Find(p.Body(), func(n *html.Node) bool {
-			return scrape.Attr(n, "id") == fr
-		}); !ok {
-			return nil, fmt.Errorf("id #%v not found", fr)
+	if x, ok := f.cache.Load(s); ok {
+		switch x := x.(type) {
+		case fetchResult:
+			return x, nil
+		case error:
+			return fetchResult{}, x
 		}
 	}
 
-	return p, nil
+	r, err := f.sendRequestWithFragment(s, fr)
+
+	if err == nil {
+		f.cache.Store(s, newFetchResult(r.StatusCode()))
+	} else {
+		f.cache.Store(s, err)
+	}
+
+	return r, err
 }
 
-func (f fetcher) fetchPage(u string) (*page, error) {
+func (f fetcher) sendRequestWithFragment(u, fr string) (fetchResult, error) {
+	r, err := f.sendRequest(u)
+
+	if err != nil {
+		return fetchResult{}, err
+	}
+
+	if p, ok := r.Page(); ok && !f.ignoreFragments && fr != "" {
+		if _, ok := scrape.Find(p.Body(), func(n *html.Node) bool {
+			return scrape.Attr(n, "id") == fr
+		}); !ok {
+			return fetchResult{}, fmt.Errorf("id #%v not found", fr)
+		}
+	}
+
+	return r, nil
+}
+
+func (f fetcher) sendRequest(u string) (fetchResult, error) {
 	f.connectionSemaphore.Request()
 	defer f.connectionSemaphore.Release()
 
@@ -78,7 +85,7 @@ redirects:
 		err := f.client.Do(&req, &res)
 
 		if err != nil {
-			return nil, err
+			return fetchResult{}, err
 		}
 
 		switch res.StatusCode() / 100 {
@@ -88,23 +95,22 @@ redirects:
 			bs := res.Header.Peek("Location")
 
 			if len(bs) == 0 {
-				return nil, errors.New("location header not found")
+				return fetchResult{}, errors.New("location header not found")
 			}
 
 			req.SetRequestURIBytes(bs)
 		default:
-			return nil, fmt.Errorf("invalid status code %v", res.StatusCode())
+			return fetchResult{}, fmt.Errorf("%v", res.StatusCode())
 		}
 	}
 
 	n, err := html.Parse(bytes.NewReader(res.Body()))
 
 	if err != nil {
-		return nil, err
+		return fetchResult{}, err
 	}
 
-	p := newPage(req.URI().String(), n)
-	return &p, nil
+	return newFetchResultWithPage(res.StatusCode(), newPage(req.URI().String(), n)), nil
 }
 
 func separateFragment(s string) (string, string, error) {

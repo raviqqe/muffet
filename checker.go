@@ -1,10 +1,10 @@
 package main
 
 import (
-	"fmt"
 	"net/url"
 	"sync"
 
+	"github.com/fatih/color"
 	"github.com/yhat/scrape"
 	"golang.org/x/net/html"
 	"golang.org/x/net/html/atom"
@@ -37,10 +37,16 @@ type checker struct {
 
 func newChecker(s string, c int, i bool) (checker, error) {
 	f := newFetcher(c, i)
-	p, err := f.Fetch(s)
+	r, err := f.Fetch(s)
 
 	if err != nil {
 		return checker{}, err
+	}
+
+	p, ok := r.Page()
+
+	if !ok {
+		panic("unreachable")
 	}
 
 	ch := checker{
@@ -51,7 +57,7 @@ func newChecker(s string, c int, i bool) (checker, error) {
 		newConcurrentStringSet(),
 	}
 
-	ch.daemons.Add(func() { ch.checkPage(*p) })
+	ch.daemons.Add(func() { ch.checkPage(p) })
 
 	return ch, nil
 }
@@ -99,17 +105,17 @@ func (c checker) checkPage(p page) {
 				return
 			}
 
-			p, err := c.fetcher.Fetch(u.String())
+			r, err := c.fetcher.Fetch(u.String())
 
 			if err == nil {
-				sc <- u.String()
+				sc <- color.GreenString("%v", r.StatusCode()) + "\t" + u.String()
 			} else {
-				ec <- fmt.Sprintf("%v (%v)", u, err)
+				ec <- color.RedString(err.Error()) + "\t" + u.String()
 			}
 
-			if n.DataAtom == atom.A && p != nil && !c.donePages.Add(p.URL().String()) && p.URL().Hostname() == c.hostname {
+			if p, ok := r.Page(); ok && n.DataAtom == atom.A && !c.donePages.Add(p.URL().String()) && p.URL().Hostname() == c.hostname {
 				c.daemons.Add(func() {
-					c.checkPage(*p)
+					c.checkPage(p)
 				})
 			}
 		}(n)

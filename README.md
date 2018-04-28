@@ -6,7 +6,7 @@
 [![Docker Build Status](https://img.shields.io/docker/build/jrottenberg/ffmpeg.svg?style=flat-square)](https://hub.docker.com/r/raviqqe/muffet)
 [![License](https://img.shields.io/github/license/raviqqe/muffet.svg?style=flat-square)](LICENSE)
 
-[![asciicast](https://asciinema.org/a/177814.png)](https://asciinema.org/a/177814)
+[![asciicast](https://asciinema.org/a/178887.png)](https://asciinema.org/a/178887)
 
 Muffet is a website link checker which scrapes and inspects all pages in a
 website recursively.

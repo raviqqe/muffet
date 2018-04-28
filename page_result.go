@@ -24,21 +24,21 @@ func (r pageResult) String(v bool) string {
 	ss := []string(nil)
 
 	if v {
-		ss = formatMessages(color.GreenString("OK"), r.successMessages)
+		ss = formatMessages(r.successMessages)
 	}
 
 	return strings.Join(
 		append(append([]string{color.YellowString(r.url)},
 			ss...),
-			formatMessages(color.RedString("ERROR"), r.errorMessages)...),
+			formatMessages(r.errorMessages)...),
 		"\n")
 }
 
-func formatMessages(prefix string, ss []string) []string {
+func formatMessages(ss []string) []string {
 	ts := make([]string, 0, len(ss))
 
 	for _, s := range ss {
-		ts = append(ts, strings.Join([]string{"\t", prefix, "\t", s}, ""))
+		ts = append(ts, "\t"+s)
 	}
 
 	sort.Strings(ts)
