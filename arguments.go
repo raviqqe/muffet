@@ -30,7 +30,7 @@ func getArguments(ss []string) (arguments, error) {
 		ss = os.Args[1:]
 	}
 
-	args, err := docopt.ParseArgs(usage, ss, "0.1.0")
+	args, err := docopt.ParseArgs(usage, ss, "0.2.0")
 
 	if err != nil {
 		return arguments{}, err
