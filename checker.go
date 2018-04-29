@@ -37,16 +37,10 @@ type checker struct {
 
 func newChecker(s string, c int, i bool) (checker, error) {
 	f := newFetcher(c, i)
-	r, err := f.Fetch(s)
+	p, err := f.FetchPage(s)
 
 	if err != nil {
 		return checker{}, err
-	}
-
-	p, ok := r.Page()
-
-	if !ok {
-		panic("unreachable")
 	}
 
 	ch := checker{
@@ -105,7 +99,7 @@ func (c checker) checkPage(p page) {
 				return
 			}
 
-			r, err := c.fetcher.Fetch(u.String())
+			r, err := c.fetcher.FetchLink(u.String())
 
 			if err == nil {
 				sc <- color.GreenString("%v", r.StatusCode()) + "\t" + u.String()
@@ -114,9 +108,7 @@ func (c checker) checkPage(p page) {
 			}
 
 			if p, ok := r.Page(); ok && n.DataAtom == atom.A && !c.donePages.Add(p.URL().String()) && p.URL().Hostname() == c.hostname {
-				c.daemons.Add(func() {
-					c.checkPage(p)
-				})
+				c.daemons.Add(func() { c.checkPage(p) })
 			}
 		}(n)
 	}

@@ -45,7 +45,7 @@ func TestCheckerCheckWithTags(t *testing.T) {
 func TestCheckerCheckPage(t *testing.T) {
 	c, _ := newChecker(rootURL, 256, false)
 
-	r, err := c.fetcher.Fetch(existentURL)
+	r, err := c.fetcher.FetchLink(existentURL)
 	assert.Nil(t, err)
 
 	p, ok := r.Page()
@@ -60,7 +60,7 @@ func TestCheckerCheckPageError(t *testing.T) {
 	for _, s := range []string{erroneousURL, invalidBaseURL} {
 		c, _ := newChecker(rootURL, 256, false)
 
-		r, err := c.fetcher.Fetch(s)
+		r, err := c.fetcher.FetchLink(s)
 		assert.Nil(t, err)
 
 		p, ok := r.Page()

@@ -10,44 +10,51 @@ func TestNewFetcher(t *testing.T) {
 	newFetcher(1, false)
 }
 
-func TestFetcherCache(t *testing.T) {
+func TestFetcherFetchPage(t *testing.T) {
+	p, err := newFetcher(1, false).FetchPage(rootURL)
+
+	assert.NotEqual(t, page{}, p)
+	assert.Nil(t, err)
+}
+
+func TestFetcherFetchLinkCache(t *testing.T) {
 	f := newFetcher(1, false)
 
-	r, err := f.Fetch(rootURL)
-	assert.NotEqual(t, fetchResult{}, r)
+	r, err := f.FetchLink(rootURL)
+	assert.NotEqual(t, linkResult{}, r)
 	assert.Nil(t, err)
 	_, ok := r.Page()
 	assert.True(t, ok)
 
-	_, err = f.Fetch(nonExistentURL)
+	_, err = f.FetchLink(nonExistentURL)
 	assert.NotNil(t, err)
 
-	r, err = f.Fetch(rootURL)
-	assert.NotEqual(t, fetchResult{}, r)
+	r, err = f.FetchLink(rootURL)
+	assert.NotEqual(t, linkResult{}, r)
 	assert.Nil(t, err)
 	_, ok = r.Page()
 	assert.False(t, ok)
 
-	_, err = f.Fetch(nonExistentURL)
+	_, err = f.FetchLink(nonExistentURL)
 	assert.NotNil(t, err)
 }
 
-func TestFetcherFetchIgnoreFragments(t *testing.T) {
-	_, err := newFetcher(1, false).Fetch(nonExistentIDURL)
+func TestFetcherFetchLinkIgnoreFragments(t *testing.T) {
+	_, err := newFetcher(1, false).FetchLink(nonExistentIDURL)
 
 	assert.NotNil(t, err)
 
-	r, err := newFetcher(1, true).Fetch(nonExistentIDURL)
+	r, err := newFetcher(1, true).FetchLink(nonExistentIDURL)
 
-	assert.NotEqual(t, fetchResult{}, r)
+	assert.NotEqual(t, linkResult{}, r)
 	assert.Nil(t, err)
 }
 
-func TestFetcherFetchError(t *testing.T) {
+func TestFetcherFetchLinkError(t *testing.T) {
 	f := newFetcher(1, false)
 
 	for _, s := range []string{nonExistentURL, ":"} {
-		_, err := f.Fetch(s)
+		_, err := f.FetchLink(s)
 
 		assert.NotNil(t, err)
 	}
@@ -57,9 +64,10 @@ func TestFetcherSendRequestWithFragment(t *testing.T) {
 	f := newFetcher(1, false)
 
 	for _, s := range []string{rootURL, existentURL, fragmentURL, erroneousURL} {
-		r, err := f.sendRequestWithFragment(s, "")
+		c, p, err := f.sendRequestWithFragment(s, "")
 
-		assert.NotEqual(t, fetchResult{}, r)
+		assert.Equal(t, 200, c)
+		assert.NotEqual(t, page{}, p)
 		assert.Nil(t, err)
 	}
 }
@@ -67,11 +75,12 @@ func TestFetcherSendRequestWithFragment(t *testing.T) {
 func TestFetcherSendRequestWithFragmentWithFragment(t *testing.T) {
 	f := newFetcher(1, false)
 
-	r, err := f.sendRequestWithFragment(fragmentURL, "foo")
-	assert.NotEqual(t, fetchResult{}, r)
+	c, p, err := f.sendRequestWithFragment(fragmentURL, "foo")
+	assert.Equal(t, 200, c)
+	assert.NotEqual(t, page{}, p)
 	assert.Nil(t, err)
 
-	_, err = f.sendRequestWithFragment(fragmentURL, "bar")
+	_, _, err = f.sendRequestWithFragment(fragmentURL, "bar")
 	assert.NotNil(t, err)
 }
 
@@ -79,7 +88,7 @@ func TestFetcherSendRequestWithFragmentError(t *testing.T) {
 	f := newFetcher(1, false)
 
 	for _, s := range []string{":", nonExistentURL} {
-		_, err := f.sendRequestWithFragment(s, "")
+		_, _, err := f.sendRequestWithFragment(s, "")
 
 		assert.NotNil(t, err)
 	}
@@ -89,15 +98,16 @@ func TestFetcherSendRequest(t *testing.T) {
 	f := newFetcher(1, false)
 
 	for _, s := range []string{rootURL, existentURL, fragmentURL, erroneousURL, redirectURL} {
-		r, err := f.sendRequest(s)
+		c, p, err := f.sendRequest(s)
 
-		assert.NotEqual(t, fetchResult{}, r)
+		assert.Equal(t, 200, c)
+		assert.NotEqual(t, page{}, p)
 		assert.Nil(t, err)
 	}
 }
 
 func TestFetcherSendRequestWithMissingLocationHeader(t *testing.T) {
-	_, err := newFetcher(1, false).sendRequest(invalidRedirectURL)
+	_, _, err := newFetcher(1, false).sendRequest(invalidRedirectURL)
 
 	assert.NotNil(t, err)
 }
