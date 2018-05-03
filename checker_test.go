@@ -31,17 +31,6 @@ func TestCheckerCheck(t *testing.T) {
 	}
 }
 
-func TestCheckerCheckWithTags(t *testing.T) {
-	c, _ := newChecker(tagsURL, 1, false)
-
-	go c.Check()
-
-	r := <-c.Results()
-
-	assert.Equal(t, 7, len(r.successMessages))
-	assert.True(t, r.OK())
-}
-
 func TestCheckerCheckPage(t *testing.T) {
 	c, _ := newChecker(rootURL, 256, false)
 
@@ -54,6 +43,23 @@ func TestCheckerCheckPage(t *testing.T) {
 	go c.checkPage(p)
 
 	assert.True(t, (<-c.Results()).OK())
+}
+
+func TestCheckerCheckPageWithTags(t *testing.T) {
+	c, _ := newChecker(tagsURL, 256, false)
+
+	l, err := c.fetcher.FetchLink(tagsURL)
+	assert.Nil(t, err)
+
+	p, ok := l.Page()
+	assert.True(t, ok)
+
+	go c.checkPage(p)
+
+	r := <-c.Results()
+
+	assert.Equal(t, 7, len(r.successMessages))
+	assert.True(t, r.OK())
 }
 
 func TestCheckerCheckPageError(t *testing.T) {

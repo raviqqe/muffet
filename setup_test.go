@@ -42,14 +42,22 @@ func (handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	case "/tags":
 		// TODO: Test <frame> tag.
 		w.Write([]byte(htmlWithBody(`
-			<a href="/" />
-			<iframe src="/"></iframe>
-			<img src="/foo.png" />
-			<link href="/" />
+			<a href="/a" />
+			<iframe src="/iframe"></iframe>
+			<img src="/foo.jpg" />
+			<link href="/link" />
 			<script src="/foo.js"></script>
 			<source src="/foo.png" />
 			<track src="/foo.vtt" />
 		`)))
+	case "/a":
+		w.Write(nil)
+	case "/iframe":
+		w.Write(nil)
+	case "/foo.jpg":
+		w.Write(nil)
+	case "/link":
+		w.Write(nil)
 	case "/foo.js":
 		w.Write(nil)
 	case "/foo.png":
