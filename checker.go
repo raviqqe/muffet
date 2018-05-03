@@ -1,31 +1,10 @@
 package main
 
 import (
-	"net/url"
 	"sync"
 
 	"github.com/fatih/color"
-	"github.com/yhat/scrape"
-	"golang.org/x/net/html"
-	"golang.org/x/net/html/atom"
 )
-
-var validSchemes = map[string]struct{}{
-	"":      {},
-	"http":  {},
-	"https": {},
-}
-
-var atomToAttribute = map[atom.Atom]string{
-	atom.A:      "href",
-	atom.Frame:  "src",
-	atom.Iframe: "src",
-	atom.Img:    "src",
-	atom.Link:   "href",
-	atom.Script: "src",
-	atom.Source: "src",
-	atom.Track:  "src",
-}
 
 type checker struct {
 	fetcher   fetcher
@@ -67,79 +46,40 @@ func (c checker) Check() {
 }
 
 func (c checker) checkPage(p page) {
-	ns := scrape.FindAllNested(p.Body(), func(n *html.Node) bool {
-		_, ok := atomToAttribute[n.DataAtom]
-		return ok
-	})
+	bs, es := scrapePage(p)
 
-	sc, ec := make(chan string, len(ns)), make(chan string, len(ns))
+	ec := make(chan string, len(bs)+len(es))
+
+	for u, err := range es {
+		ec <- formatLinkError(u, err)
+	}
+
+	sc := make(chan string, len(bs))
 	w := sync.WaitGroup{}
 
-	for _, n := range ns {
+	for u, b := range bs {
 		w.Add(1)
 
-		go func(n *html.Node) {
+		go func(u string, isHTML bool) {
 			defer w.Done()
 
-			u, err := url.Parse(scrape.Attr(n, atomToAttribute[n.DataAtom]))
-
-			if err != nil {
-				ec <- err.Error()
-				return
-			}
-
-			if _, ok := validSchemes[u.Scheme]; !ok {
-				return
-			}
-
-			u, err = resolveURL(p, u)
-
-			if err != nil {
-				ec <- err.Error()
-				return
-			}
-
-			r, err := c.fetcher.FetchLink(u.String())
+			r, err := c.fetcher.FetchLink(u)
 
 			if err == nil {
-				sc <- color.GreenString("%v", r.StatusCode()) + "\t" + u.String()
+				sc <- formatLinkSuccess(u, r.StatusCode())
 			} else {
-				ec <- color.RedString(err.Error()) + "\t" + u.String()
+				ec <- formatLinkError(u, err)
 			}
 
-			if p, ok := r.Page(); ok && n.DataAtom == atom.A && !c.donePages.Add(p.URL().String()) && p.URL().Hostname() == c.hostname {
+			if p, ok := r.Page(); ok && isHTML && !c.donePages.Add(p.URL().String()) && p.URL().Hostname() == c.hostname {
 				c.daemons.Add(func() { c.checkPage(p) })
 			}
-		}(n)
+		}(u, b)
 	}
 
 	w.Wait()
 
 	c.results <- newPageResult(p.URL().String(), stringChannelToSlice(sc), stringChannelToSlice(ec))
-}
-
-func resolveURL(p page, u *url.URL) (*url.URL, error) {
-	if u.IsAbs() {
-		return u, nil
-	}
-
-	b := p.URL()
-
-	if n, ok := scrape.Find(p.Body(), func(n *html.Node) bool {
-		return n.DataAtom == atom.Base
-	}); ok {
-		u, err := url.Parse(scrape.Attr(n, "href"))
-
-		if err != nil {
-			return nil, err
-		}
-
-		b = b.ResolveReference(u)
-	}
-
-	u = b.ResolveReference(u)
-
-	return u, nil
 }
 
 func stringChannelToSlice(sc <-chan string) []string {
@@ -150,4 +90,12 @@ func stringChannelToSlice(sc <-chan string) []string {
 	}
 
 	return ss
+}
+
+func formatLinkSuccess(u string, s int) string {
+	return color.GreenString("%v", s) + "\t" + u
+}
+
+func formatLinkError(u string, err error) string {
+	return color.RedString(err.Error()) + "\t" + u
 }

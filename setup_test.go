@@ -14,7 +14,6 @@ const (
 	nonExistentURL     = "http://localhost:8080/bar"
 	erroneousURL       = "http://localhost:8080/erroneous"
 	fragmentURL        = "http://localhost:8080/fragment"
-	tagsURL            = "http://localhost:8080/tags"
 	nonExistentIDURL   = "http://localhost:8080/#non-existent-id"
 	baseURL            = "http://localhost:8080/base"
 	invalidBaseURL     = "http://localhost:8080/invalid-base"
@@ -39,31 +38,6 @@ func (handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		`)))
 	case "/fragment":
 		w.Write([]byte(htmlWithBody(`<a id="foo" href="#foo" />`)))
-	case "/tags":
-		// TODO: Test <frame> tag.
-		w.Write([]byte(htmlWithBody(`
-			<a href="/a" />
-			<iframe src="/iframe"></iframe>
-			<img src="/foo.jpg" />
-			<link href="/link" />
-			<script src="/foo.js"></script>
-			<source src="/foo.png" />
-			<track src="/foo.vtt" />
-		`)))
-	case "/a":
-		w.Write(nil)
-	case "/iframe":
-		w.Write(nil)
-	case "/foo.jpg":
-		w.Write(nil)
-	case "/link":
-		w.Write(nil)
-	case "/foo.js":
-		w.Write(nil)
-	case "/foo.png":
-		w.Write(nil)
-	case "/foo.vtt":
-		w.Write(nil)
 	case "/base":
 		w.Write([]byte(`
 			<html>
