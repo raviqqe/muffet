@@ -14,15 +14,15 @@ var validSchemes = map[string]struct{}{
 	"https": {},
 }
 
-var atomToAttribute = map[atom.Atom]string{
-	atom.A:      "href",
-	atom.Frame:  "src",
-	atom.Iframe: "src",
-	atom.Img:    "src",
-	atom.Link:   "href",
-	atom.Script: "src",
-	atom.Source: "src",
-	atom.Track:  "src",
+var atomToAttributes = map[atom.Atom][]string{
+	atom.A:      []string{"href"},
+	atom.Frame:  []string{"src"},
+	atom.Iframe: []string{"src"},
+	atom.Img:    []string{"src"},
+	atom.Link:   []string{"href"},
+	atom.Script: []string{"src"},
+	atom.Source: []string{"src", "srcset"},
+	atom.Track:  []string{"src"},
 }
 
 func scrapePage(p page) (map[string]bool, map[string]error) {
@@ -30,29 +30,36 @@ func scrapePage(p page) (map[string]bool, map[string]error) {
 	es := map[string]error{}
 
 	for _, n := range scrape.FindAllNested(p.Body(), func(n *html.Node) bool {
-		_, ok := atomToAttribute[n.DataAtom]
+		_, ok := atomToAttributes[n.DataAtom]
 		return ok
 	}) {
-		s := scrape.Attr(n, atomToAttribute[n.DataAtom])
-		u, err := url.Parse(s)
+		for _, a := range atomToAttributes[n.DataAtom] {
+			s := scrape.Attr(n, a)
 
-		if err != nil {
-			es[s] = err
-			continue
+			if s == "" {
+				continue
+			}
+
+			u, err := url.Parse(s)
+
+			if err != nil {
+				es[s] = err
+				continue
+			}
+
+			if _, ok := validSchemes[u.Scheme]; !ok {
+				continue
+			}
+
+			u, err = resolveURL(p, u)
+
+			if err != nil {
+				es[s] = err
+				continue
+			}
+
+			bs[u.String()] = n.DataAtom == atom.A
 		}
-
-		if _, ok := validSchemes[u.Scheme]; !ok {
-			continue
-		}
-
-		u, err = resolveURL(p, u)
-
-		if err != nil {
-			es[s] = err
-			continue
-		}
-
-		bs[u.String()] = n.DataAtom == atom.A
 	}
 
 	return bs, es

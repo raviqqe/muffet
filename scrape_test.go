@@ -16,6 +16,15 @@ func TestScrapePage(t *testing.T) {
 	}{
 		{``, 0},
 		{`<a href="/" />`, 1},
+		// TODO: Test <frame> tag.
+		{`<iframe src="/iframe"></iframe>`, 1},
+		{`<img src="/foo.jpg" />`, 1},
+		{`<link href="/link" />`, 1},
+		{`<script src="/foo.js"></script>`, 1},
+		{`<source src="/foo.png" />`, 1},
+		{`<source srcset="/foo.png" />`, 1},
+		{`<source src="/foo.png" srcset="/bar.png" />`, 2},
+		{`<track src="/foo.vtt" />`, 1},
 		{`<a href="/"><img src="/foo.png" /></a>`, 2},
 		{`<a href="/" /><a href="/" />`, 1},
 	} {
@@ -27,25 +36,6 @@ func TestScrapePage(t *testing.T) {
 		assert.Equal(t, c.links, len(bs))
 		assert.Equal(t, 0, len(es))
 	}
-}
-
-func TestScrapePageWithTags(t *testing.T) {
-	// TODO: Test <frame> tag.
-	n, err := html.Parse(strings.NewReader(htmlWithBody(`
-		<a href="/a" />
-		<iframe src="/iframe"></iframe>
-		<img src="/foo.jpg" />
-		<link href="/link" />
-		<script src="/foo.js"></script>
-		<source src="/foo.png" />
-		<track src="/foo.vtt" />
-	`)))
-	assert.Nil(t, err)
-
-	bs, es := scrapePage(newPage("", n))
-
-	assert.Equal(t, 7, len(bs))
-	assert.Equal(t, 0, len(es))
 }
 
 func TestScrapePageError(t *testing.T) {
