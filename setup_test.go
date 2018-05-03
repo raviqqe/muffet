@@ -61,7 +61,6 @@ func (handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			</html>
 		`))
 	case "/parent/child":
-		w.Write(nil)
 	case "/redirect":
 		w.Header().Add("Location", "/")
 		w.WriteHeader(300)
