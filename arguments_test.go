@@ -11,7 +11,7 @@ func TestGetArguments(t *testing.T) {
 		{"--concurrency", "1", "https://foo.com"},
 		{"-c", "foo", "https://foo.com"},
 		{"-s", "https://foo.com"},
-		{"--follow-sitemap", "https://foo.com"},
+		{"--follow-sitemap-xml", "https://foo.com"},
 		{"-v", "https://foo.com"},
 		{"--verbose", "https://foo.com"},
 		{"-v", "-f", "https://foo.com"},

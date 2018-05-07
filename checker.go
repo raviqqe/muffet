@@ -14,7 +14,7 @@ type checker struct {
 	donePages    concurrentStringSet
 }
 
-func newChecker(s string, c int, i, sm bool) (checker, error) {
+func newChecker(s string, c int, i, r, sm bool) (checker, error) {
 	f := newFetcher(c, i)
 	p, err := f.FetchPage(s)
 
@@ -22,7 +22,7 @@ func newChecker(s string, c int, i, sm bool) (checker, error) {
 		return checker{}, err
 	}
 
-	ui, err := newURLInspector(p.URL().String(), sm)
+	ui, err := newURLInspector(p.URL().String(), r, sm)
 
 	if err != nil {
 		return checker{}, err

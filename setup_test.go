@@ -3,23 +3,26 @@ package main
 import (
 	"fmt"
 	"net/http"
+	"net/url"
 	"os"
 	"testing"
 	"time"
 )
 
 const (
-	rootURL            = "http://localhost:8080"
-	existentURL        = "http://localhost:8080/foo"
-	nonExistentURL     = "http://localhost:8080/bar"
-	erroneousURL       = "http://localhost:8080/erroneous"
-	fragmentURL        = "http://localhost:8080/fragment"
-	nonExistentIDURL   = "http://localhost:8080/#non-existent-id"
-	baseURL            = "http://localhost:8080/base"
-	invalidBaseURL     = "http://localhost:8080/invalid-base"
-	redirectURL        = "http://localhost:8080/redirect"
-	invalidRedirectURL = "http://localhost:8080/invalid-redirect"
-	missingSitemapURL  = "http://localhost:8081"
+	rootURL             = "http://localhost:8080"
+	existentURL         = "http://localhost:8080/foo"
+	nonExistentURL      = "http://localhost:8080/bar"
+	erroneousURL        = "http://localhost:8080/erroneous"
+	fragmentURL         = "http://localhost:8080/fragment"
+	nonExistentIDURL    = "http://localhost:8080/#non-existent-id"
+	baseURL             = "http://localhost:8080/base"
+	invalidBaseURL      = "http://localhost:8080/invalid-base"
+	redirectURL         = "http://localhost:8080/redirect"
+	invalidRedirectURL  = "http://localhost:8080/invalid-redirect"
+	missingMetadataURL  = "http://localhost:8081"
+	invalidRobotsTxtURL = "http://localhost:8082"
+	noResponseURL       = "http://localhost:8083"
 )
 
 type handler struct{}
@@ -67,6 +70,24 @@ func (handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(300)
 	case "/invalid-redirect":
 		w.WriteHeader(300)
+	case "/robots.txt":
+		u, err := url.Parse(erroneousURL)
+
+		if err != nil {
+			panic(err)
+		}
+
+		v, err := url.Parse(fragmentURL)
+
+		if err != nil {
+			panic(err)
+		}
+
+		w.Write([]byte(fmt.Sprintf(`
+			User-agent: *
+			Disallow: %v
+			Disallow: %v
+		`, u.Path, v.Path)))
 	case "/sitemap.xml":
 		w.Write([]byte(fmt.Sprintf(`
 			<?xml version="1.0" encoding="UTF-8"?>
@@ -87,9 +108,9 @@ func (handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-type noSitemapHandler struct{}
+type noMetadataHandler struct{}
 
-func (noSitemapHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+func (noMetadataHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	switch r.URL.Path {
 	case "", "/":
 	default:
@@ -97,9 +118,24 @@ func (noSitemapHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+type invalidRobotsTxtHandler struct{}
+
+func (invalidRobotsTxtHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	switch r.URL.Path {
+	case "", "/":
+	case "/robots.txt":
+		w.Write([]byte(`
+			Disallow: /
+		`))
+	default:
+		w.WriteHeader(404)
+	}
+}
+
 func TestMain(m *testing.M) {
 	go http.ListenAndServe(":8080", handler{})
-	go http.ListenAndServe(":8081", noSitemapHandler{})
+	go http.ListenAndServe(":8081", noMetadataHandler{})
+	go http.ListenAndServe(":8082", invalidRobotsTxtHandler{})
 
 	time.Sleep(time.Millisecond)
 

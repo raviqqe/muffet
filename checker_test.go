@@ -8,23 +8,23 @@ import (
 )
 
 func TestNewChecker(t *testing.T) {
-	_, err := newChecker(rootURL, 1, false, false)
+	_, err := newChecker(rootURL, 1, false, false, false)
 	assert.Nil(t, err)
 }
 
 func TestNewCheckerError(t *testing.T) {
-	_, err := newChecker(":", 1, false, false)
+	_, err := newChecker(":", 1, false, false, false)
 	assert.NotNil(t, err)
 }
 
-func TestNewCheckerWithMissingSitemap(t *testing.T) {
-	_, err := newChecker("http://localhost:8081", 1, false, true)
+func TestNewCheckerWithMissingSitemapXML(t *testing.T) {
+	_, err := newChecker("http://localhost:8081", 1, false, false, true)
 	assert.NotNil(t, err)
 }
 
 func TestCheckerCheck(t *testing.T) {
 	for _, s := range []string{rootURL, fragmentURL, baseURL, redirectURL} {
-		c, _ := newChecker(s, 1, false, false)
+		c, _ := newChecker(s, 1, false, false, false)
 
 		go c.Check()
 
@@ -35,7 +35,7 @@ func TestCheckerCheck(t *testing.T) {
 }
 
 func TestCheckerCheckMultiplePages(t *testing.T) {
-	c, _ := newChecker(rootURL, 1, false, false)
+	c, _ := newChecker(rootURL, 1, false, false, false)
 
 	go c.Check()
 
@@ -49,7 +49,7 @@ func TestCheckerCheckMultiplePages(t *testing.T) {
 }
 
 func TestCheckerCheckPage(t *testing.T) {
-	c, _ := newChecker(rootURL, 256, false, false)
+	c, _ := newChecker(rootURL, 256, false, false, false)
 
 	r, err := c.fetcher.FetchLink(existentURL)
 	assert.Nil(t, err)
@@ -64,7 +64,7 @@ func TestCheckerCheckPage(t *testing.T) {
 
 func TestCheckerCheckPageError(t *testing.T) {
 	for _, s := range []string{erroneousURL, invalidBaseURL} {
-		c, _ := newChecker(rootURL, 256, false, false)
+		c, _ := newChecker(rootURL, 256, false, false, false)
 
 		r, err := c.fetcher.FetchLink(s)
 		assert.Nil(t, err)
