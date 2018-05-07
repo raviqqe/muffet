@@ -15,14 +15,14 @@ var validSchemes = map[string]struct{}{
 }
 
 var atomToAttributes = map[atom.Atom][]string{
-	atom.A:      []string{"href"},
-	atom.Frame:  []string{"src"},
-	atom.Iframe: []string{"src"},
-	atom.Img:    []string{"src"},
-	atom.Link:   []string{"href"},
-	atom.Script: []string{"src"},
-	atom.Source: []string{"src", "srcset"},
-	atom.Track:  []string{"src"},
+	atom.A:      {"href"},
+	atom.Frame:  {"src"},
+	atom.Iframe: {"src"},
+	atom.Img:    {"src"},
+	atom.Link:   {"href"},
+	atom.Script: {"src"},
+	atom.Source: {"src", "srcset"},
+	atom.Track:  {"src"},
 }
 
 func scrapePage(p page) (map[string]bool, map[string]error) {
