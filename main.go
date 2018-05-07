@@ -12,7 +12,7 @@ func main() {
 		fail(err)
 	}
 
-	c, err := newChecker(args.url, args.concurrency, args.ignoreFragments)
+	c, err := newChecker(args.url, args.concurrency, args.ignoreFragments, args.followSitemap)
 
 	if err != nil {
 		fail(err)

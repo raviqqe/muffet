@@ -7,16 +7,22 @@ import (
 )
 
 type checker struct {
-	fetcher   fetcher
-	daemons   daemons
-	hostname  string
-	results   chan pageResult
-	donePages concurrentStringSet
+	fetcher      fetcher
+	daemons      daemons
+	urlInspector urlInspector
+	results      chan pageResult
+	donePages    concurrentStringSet
 }
 
-func newChecker(s string, c int, i bool) (checker, error) {
+func newChecker(s string, c int, i, sm bool) (checker, error) {
 	f := newFetcher(c, i)
 	p, err := f.FetchPage(s)
+
+	if err != nil {
+		return checker{}, err
+	}
+
+	ui, err := newURLInspector(p.URL().String(), sm)
 
 	if err != nil {
 		return checker{}, err
@@ -25,12 +31,12 @@ func newChecker(s string, c int, i bool) (checker, error) {
 	ch := checker{
 		f,
 		newDaemons(c),
-		p.URL().Hostname(),
+		ui,
 		make(chan pageResult, c),
 		newConcurrentStringSet(),
 	}
 
-	ch.daemons.Add(func() { ch.checkPage(p) })
+	ch.addPage(p)
 
 	return ch, nil
 }
@@ -71,8 +77,8 @@ func (c checker) checkPage(p page) {
 				ec <- formatLinkError(u, err)
 			}
 
-			if p, ok := r.Page(); ok && isHTML && !c.donePages.Add(p.URL().String()) && p.URL().Hostname() == c.hostname {
-				c.daemons.Add(func() { c.checkPage(p) })
+			if p, ok := r.Page(); ok && isHTML && c.urlInspector.Inspect(p.URL()) {
+				c.addPage(p)
 			}
 		}(u, b)
 	}
@@ -80,6 +86,12 @@ func (c checker) checkPage(p page) {
 	w.Wait()
 
 	c.results <- newPageResult(p.URL().String(), stringChannelToSlice(sc), stringChannelToSlice(ec))
+}
+
+func (c checker) addPage(p page) {
+	if !c.donePages.Add(p.URL().String()) {
+		c.daemons.Add(func() { c.checkPage(p) })
+	}
 }
 
 func stringChannelToSlice(sc <-chan string) []string {

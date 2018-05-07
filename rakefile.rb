@@ -26,13 +26,15 @@ task integration_test: :build do
   sh './muffet --help'
 
   sh './muffet -v http://localhost:1111 | grep 200'
-  sh '[ $(./muffet -v http://localhost:1111 | wc -l) -eq 14 ]'
+  sh '[ $(./muffet -v http://localhost:1111 | wc -l) -eq 8 ]'
   sh './muffet --verbose http://localhost:1111 | grep 200'
   sh '! ./muffet http://localhost:1111 | grep 200'
 
   sh './muffet -v http://localhost:1111 | sort > /tmp/muffet_1.txt'
   sh './muffet -v http://localhost:1111 | sort > /tmp/muffet_2.txt'
   sh 'diff /tmp/muffet_1.txt /tmp/muffet_2.txt'
+
+  sh '[ $(./muffet -sv http://localhost:1111 | wc -l) -eq 6 ]'
 
   sh '! ./muffet http://localhost:1111 | grep .'
 end

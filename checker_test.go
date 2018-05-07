@@ -1,24 +1,30 @@
 package main
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
 
 func TestNewChecker(t *testing.T) {
-	_, err := newChecker(rootURL, 1, false)
+	_, err := newChecker(rootURL, 1, false, false)
 	assert.Nil(t, err)
 }
 
 func TestNewCheckerError(t *testing.T) {
-	_, err := newChecker(":", 1, false)
+	_, err := newChecker(":", 1, false, false)
+	assert.NotNil(t, err)
+}
+
+func TestNewCheckerWithMissingSitemap(t *testing.T) {
+	_, err := newChecker("http://localhost:8081", 1, false, true)
 	assert.NotNil(t, err)
 }
 
 func TestCheckerCheck(t *testing.T) {
 	for _, s := range []string{rootURL, fragmentURL, baseURL, redirectURL} {
-		c, _ := newChecker(s, 1, false)
+		c, _ := newChecker(s, 1, false, false)
 
 		go c.Check()
 
@@ -28,8 +34,22 @@ func TestCheckerCheck(t *testing.T) {
 	}
 }
 
+func TestCheckerCheckMultiplePages(t *testing.T) {
+	c, _ := newChecker(rootURL, 1, false, false)
+
+	go c.Check()
+
+	i := 0
+
+	for r := range c.Results() {
+		i += strings.Count(r.String(true), "\n") + 1
+	}
+
+	assert.Equal(t, 4, i)
+}
+
 func TestCheckerCheckPage(t *testing.T) {
-	c, _ := newChecker(rootURL, 256, false)
+	c, _ := newChecker(rootURL, 256, false, false)
 
 	r, err := c.fetcher.FetchLink(existentURL)
 	assert.Nil(t, err)
@@ -44,7 +64,7 @@ func TestCheckerCheckPage(t *testing.T) {
 
 func TestCheckerCheckPageError(t *testing.T) {
 	for _, s := range []string{erroneousURL, invalidBaseURL} {
-		c, _ := newChecker(rootURL, 256, false)
+		c, _ := newChecker(rootURL, 256, false, false)
 
 		r, err := c.fetcher.FetchLink(s)
 		assert.Nil(t, err)

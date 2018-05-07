@@ -19,6 +19,7 @@ const (
 	invalidBaseURL     = "http://localhost:8080/invalid-base"
 	redirectURL        = "http://localhost:8080/redirect"
 	invalidRedirectURL = "http://localhost:8080/invalid-redirect"
+	missingSitemapURL  = "http://localhost:8081"
 )
 
 type handler struct{}
@@ -66,6 +67,31 @@ func (handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(300)
 	case "/invalid-redirect":
 		w.WriteHeader(300)
+	case "/sitemap.xml":
+		w.Write([]byte(fmt.Sprintf(`
+			<?xml version="1.0" encoding="UTF-8"?>
+			<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+				<url>
+					<loc>%v</loc>
+					<lastmod>896-5-4</lastmod>
+					<changefreq>monthly</changefreq>
+					<priority>0.8</priority>
+				</url>
+				<url>
+					<loc>%v</loc>
+				</url>
+			</urlset>
+		`, rootURL, existentURL)))
+	default:
+		w.WriteHeader(404)
+	}
+}
+
+type noSitemapHandler struct{}
+
+func (noSitemapHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	switch r.URL.Path {
+	case "", "/":
 	default:
 		w.WriteHeader(404)
 	}
@@ -73,6 +99,8 @@ func (handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 func TestMain(m *testing.M) {
 	go http.ListenAndServe(":8080", handler{})
+	go http.ListenAndServe(":8081", noSitemapHandler{})
+
 	time.Sleep(time.Millisecond)
 
 	os.Exit(m.Run())
