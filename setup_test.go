@@ -157,8 +157,7 @@ func TestMain(m *testing.M) {
 
 	time.Sleep(time.Millisecond)
 
-	e := m.Run()
-	os.Exit(e)
+	os.Exit(m.Run())
 }
 
 func prepareTLSServer() (func(), func(), error) {
