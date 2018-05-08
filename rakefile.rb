@@ -5,7 +5,11 @@ task :deps do
 end
 
 task :lint do
-  sh 'gometalinter --disable gas --disable gocyclo --disable vetshadow ./...'
+  options = %w[gas gocyclo maligned vetshadow].map do |l|
+    "--disable #{l}"
+  end.join ' '
+
+  sh "gometalinter #{options} ./..."
 end
 
 task :build do

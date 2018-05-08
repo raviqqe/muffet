@@ -12,13 +12,14 @@ func main() {
 		fail(err)
 	}
 
-	c, err := newChecker(
-		args.url,
-		args.concurrency,
-		args.ignoreFragments,
-		args.skipTLSVerification,
-		args.followRobotsTxt,
-		args.followSitemapXML)
+	c, err := newChecker(args.URL, checkerOptions{
+		args.Concurrency,
+		args.FollowRobotsTxt,
+		args.FollowSitemapXML,
+		args.IgnoreFragments,
+		args.MaxRedirections,
+		args.SkipTLSVerification,
+	})
 
 	if err != nil {
 		fail(err)
@@ -29,8 +30,8 @@ func main() {
 	b := false
 
 	for r := range c.Results() {
-		if !r.OK() || args.verbose {
-			fmt.Println(r.String(args.verbose))
+		if !r.OK() || args.Verbose {
+			fmt.Println(r.String(args.Verbose))
 		}
 
 		if !r.OK() {

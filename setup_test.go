@@ -23,6 +23,7 @@ const (
 	baseURL             = "http://localhost:8080/base"
 	invalidBaseURL      = "http://localhost:8080/invalid-base"
 	redirectURL         = "http://localhost:8080/redirect"
+	infiniteRedirectURL = "http://localhost:8080/infinite-redirect"
 	invalidRedirectURL  = "http://localhost:8080/invalid-redirect"
 	missingMetadataURL  = "http://localhost:8081"
 	invalidRobotsTxtURL = "http://localhost:8082"
@@ -72,6 +73,9 @@ func (handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	case "/parent/child":
 	case "/redirect":
 		w.Header().Add("Location", "/")
+		w.WriteHeader(300)
+	case "/infinite-redirect":
+		w.Header().Add("Location", "/infinite-redirect")
 		w.WriteHeader(300)
 	case "/invalid-redirect":
 		w.WriteHeader(300)

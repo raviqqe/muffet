@@ -2,6 +2,8 @@ package main
 
 import (
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestGetArguments(t *testing.T) {
@@ -9,7 +11,8 @@ func TestGetArguments(t *testing.T) {
 		{"https://foo.com"},
 		{"-c", "1", "https://foo.com"},
 		{"--concurrency", "1", "https://foo.com"},
-		{"-c", "foo", "https://foo.com"},
+		{"-l", "4", "https://foo.com"},
+		{"--limit-redirections", "4", "https://foo.com"},
 		{"-s", "https://foo.com"},
 		{"--follow-sitemap-xml", "https://foo.com"},
 		{"-t", "https://foo.com"},
@@ -19,6 +22,19 @@ func TestGetArguments(t *testing.T) {
 		{"-v", "-f", "https://foo.com"},
 		{"-v", "--ignore-fragments", "https://foo.com"},
 	} {
-		getArguments(ss)
+		_, err := getArguments(ss)
+		assert.Nil(t, err)
+	}
+}
+
+func TestGetArgumentsError(t *testing.T) {
+	for _, ss := range [][]string{
+		{"-c", "foo", "https://foo.com"},
+		{"--concurrency", "foo", "https://foo.com"},
+		{"-l", "foo", "https://foo.com"},
+		{"--limit-redirections", "foo", "https://foo.com"},
+	} {
+		_, err := getArguments(ss)
+		assert.NotNil(t, err)
 	}
 }

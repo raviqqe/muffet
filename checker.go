@@ -14,15 +14,23 @@ type checker struct {
 	donePages    concurrentStringSet
 }
 
-func newChecker(s string, c int, i, t, r, sm bool) (checker, error) {
-	f := newFetcher(c, i, t)
+func newChecker(s string, o checkerOptions) (checker, error) {
+	o.Initialize()
+
+	f := newFetcher(fetcherOptions{
+		o.Concurrency,
+		o.IgnoreFragments,
+		o.MaxRedirections,
+		o.SkipTLSVerification,
+	})
+
 	p, err := f.FetchPage(s)
 
 	if err != nil {
 		return checker{}, err
 	}
 
-	ui, err := newURLInspector(p.URL().String(), r, sm)
+	ui, err := newURLInspector(p.URL().String(), o.FollowRobotsTxt, o.FollowSitemapXML)
 
 	if err != nil {
 		return checker{}, err
@@ -30,9 +38,9 @@ func newChecker(s string, c int, i, t, r, sm bool) (checker, error) {
 
 	ch := checker{
 		f,
-		newDaemons(c),
+		newDaemons(o.Concurrency),
 		ui,
-		make(chan pageResult, c),
+		make(chan pageResult, o.Concurrency),
 		newConcurrentStringSet(),
 	}
 

@@ -18,19 +18,23 @@ type fetcher struct {
 	connectionSemaphore semaphore
 	cache               *sync.Map
 	ignoreFragments     bool
+	maxRedirections     int
 }
 
-func newFetcher(c int, f, t bool) fetcher {
+func newFetcher(o fetcherOptions) fetcher {
+	o.Initialize()
+
 	return fetcher{
 		&fasthttp.Client{
-			MaxConnsPerHost: c,
+			MaxConnsPerHost: o.Concurrency,
 			TLSConfig: &tls.Config{
-				InsecureSkipVerify: t,
+				InsecureSkipVerify: o.SkipTLSVerification,
 			},
 		},
-		newSemaphore(c),
+		newSemaphore(o.Concurrency),
 		&sync.Map{},
-		f,
+		o.IgnoreFragments,
+		o.MaxRedirections,
 	}
 }
 
@@ -91,6 +95,7 @@ func (f fetcher) sendRequest(u string) (int, page, error) {
 
 	req, res := fasthttp.Request{}, fasthttp.Response{}
 	req.SetRequestURI(u)
+	r := 0
 
 redirects:
 	for {
@@ -104,6 +109,12 @@ redirects:
 		case 2:
 			break redirects
 		case 3:
+			r++
+
+			if r > f.maxRedirections {
+				return 0, page{}, errors.New("too many redirections")
+			}
+
 			bs := res.Header.Peek("Location")
 
 			if len(bs) == 0 {
