@@ -42,3 +42,9 @@ func TestGetArgumentsError(t *testing.T) {
 		assert.NotNil(t, err)
 	}
 }
+
+func TestParseArguments(t *testing.T) {
+	assert.Panics(t, func() {
+		parseArguments("", nil)
+	})
+}

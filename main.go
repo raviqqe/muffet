@@ -6,7 +6,7 @@ import (
 )
 
 func main() {
-	args, err := getArguments(nil)
+	args, err := getArguments(os.Args[1:])
 
 	if err != nil {
 		fail(err)

@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"os"
 	"strconv"
 	"time"
 
@@ -39,15 +38,7 @@ type arguments struct {
 }
 
 func getArguments(ss []string) (arguments, error) {
-	if ss == nil {
-		ss = os.Args[1:]
-	}
-
-	args, err := docopt.ParseArgs(usage, ss, "0.3.0")
-
-	if err != nil {
-		return arguments{}, err
-	}
+	args := parseArguments(usage, ss)
 
 	c, err := parseInt(args["--concurrency"].(string))
 
@@ -83,4 +74,14 @@ func getArguments(ss []string) (arguments, error) {
 func parseInt(s string) (int, error) {
 	i, err := strconv.ParseInt(s, 10, 32)
 	return int(i), err
+}
+
+func parseArguments(u string, ss []string) map[string]interface{} {
+	args, err := docopt.ParseArgs(u, ss, "0.3.0")
+
+	if err != nil {
+		panic(err)
+	}
+
+	return args
 }
