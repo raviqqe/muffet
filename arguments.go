@@ -77,7 +77,7 @@ func parseInt(s string) (int, error) {
 }
 
 func parseArguments(u string, ss []string) map[string]interface{} {
-	args, err := docopt.ParseArgs(u, ss, "0.3.0")
+	args, err := docopt.ParseArgs(u, ss, "0.4.0")
 
 	if err != nil {
 		panic(err)
