@@ -10,7 +10,7 @@ import (
 const usage = `Muffet, the web repairgirl
 
 Usage:
-	muffet [-c <concurrency>] [-f] [-r] [-s] [-v] <url>
+	muffet [-c <concurrency>] [-f] [-r] [-s] [-t] [-v] <url>
 
 Options:
 	-c, --concurrency <concurrency>  Roughly maximum number of concurrent HTTP connections. [default: 512]
@@ -18,15 +18,17 @@ Options:
 	-h, --help                       Show this help.
 	-r, --follow-robots-txt          Follow robots.txt when scraping.
 	-s, --follow-sitemap-xml         Scrape only pages listed in sitemap.xml.
+	-t, --skip-tls-verification      Skip TLS certificates verification.
 	-v, --verbose                    Show successful results too.`
 
 type arguments struct {
-	concurrency      int
-	url              string
-	verbose          bool
-	ignoreFragments  bool
-	followSitemapXML bool
-	followRobotsTxt  bool
+	concurrency int
+	url         string
+	verbose,
+	ignoreFragments,
+	followSitemapXML,
+	followRobotsTxt,
+	skipTLSVerification bool
 }
 
 func getArguments(ss []string) (arguments, error) {
@@ -53,5 +55,6 @@ func getArguments(ss []string) (arguments, error) {
 		args["--ignore-fragments"].(bool),
 		args["--follow-sitemap-xml"].(bool),
 		args["--follow-robots-txt"].(bool),
+		args["--skip-tls-verification"].(bool),
 	}, nil
 }

@@ -2,9 +2,13 @@ package main
 
 import (
 	"fmt"
+	"io/ioutil"
+	"log"
 	"net/http"
 	"net/url"
 	"os"
+	"os/exec"
+	"path"
 	"testing"
 	"time"
 )
@@ -22,7 +26,8 @@ const (
 	invalidRedirectURL  = "http://localhost:8080/invalid-redirect"
 	missingMetadataURL  = "http://localhost:8081"
 	invalidRobotsTxtURL = "http://localhost:8082"
-	noResponseURL       = "http://localhost:8083"
+	selfCertificateURL  = "https://localhost:8083"
+	noResponseURL       = "http://localhost:8084"
 )
 
 type handler struct{}
@@ -132,16 +137,50 @@ func (invalidRobotsTxtHandler) ServeHTTP(w http.ResponseWriter, r *http.Request)
 	}
 }
 
+func htmlWithBody(b string) string {
+	return fmt.Sprintf(`<html><body>%v</body></html>`, b)
+}
+
 func TestMain(m *testing.M) {
 	go http.ListenAndServe(":8080", handler{})
 	go http.ListenAndServe(":8081", noMetadataHandler{})
 	go http.ListenAndServe(":8082", invalidRobotsTxtHandler{})
 
+	f, g, err := prepareTLSServer()
+	defer g()
+
+	if err != nil {
+		panic(err)
+	}
+
+	go f()
+
 	time.Sleep(time.Millisecond)
 
-	os.Exit(m.Run())
+	e := m.Run()
+	os.Exit(e)
 }
 
-func htmlWithBody(b string) string {
-	return fmt.Sprintf(`<html><body>%v</body></html>`, b)
+func prepareTLSServer() (func(), func(), error) {
+	d, err := ioutil.TempDir("", "")
+
+	if err != nil {
+		return nil, nil, err
+	}
+
+	c := path.Join(d, "foo.cert")
+	k := path.Join(d, "foo.pem")
+	err = exec.Command(
+		"openssl", "req", "-x509", "-newkey", "rsa:4096", "-nodes",
+		"-subj", "/CN=localhost",
+		"-out", c,
+		"-keyout", k,
+	).Run()
+
+	if err != nil {
+		return nil, nil, err
+	}
+
+	s := http.Server{Addr: ":8083", ErrorLog: log.New(ioutil.Discard, "", 0), Handler: handler{}}
+	return func() { s.ListenAndServeTLS(c, k) }, func() { os.Remove(d) }, nil
 }

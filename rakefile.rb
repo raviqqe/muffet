@@ -5,7 +5,7 @@ task :deps do
 end
 
 task :lint do
-  sh 'gometalinter --disable gocyclo --disable vetshadow ./...'
+  sh 'gometalinter --disable gas --disable gocyclo --disable vetshadow ./...'
 end
 
 task :build do

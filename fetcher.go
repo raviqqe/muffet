@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"crypto/tls"
 	"errors"
 	"fmt"
 	"net/url"
@@ -19,9 +20,14 @@ type fetcher struct {
 	ignoreFragments     bool
 }
 
-func newFetcher(c int, f bool) fetcher {
+func newFetcher(c int, f, t bool) fetcher {
 	return fetcher{
-		&fasthttp.Client{MaxConnsPerHost: c},
+		&fasthttp.Client{
+			MaxConnsPerHost: c,
+			TLSConfig: &tls.Config{
+				InsecureSkipVerify: t,
+			},
+		},
 		newSemaphore(c),
 		&sync.Map{},
 		f,

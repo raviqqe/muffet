@@ -16,6 +16,7 @@ func main() {
 		args.url,
 		args.concurrency,
 		args.ignoreFragments,
+		args.skipTLSVerification,
 		args.followRobotsTxt,
 		args.followSitemapXML)
 
