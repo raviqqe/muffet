@@ -13,12 +13,15 @@ func main() {
 	}
 
 	c, err := newChecker(args.URL, checkerOptions{
-		args.Concurrency,
+		fetcherOptions{
+			args.Concurrency,
+			args.IgnoreFragments,
+			args.MaxRedirections,
+			args.SkipTLSVerification,
+			args.Timeout,
+		},
 		args.FollowRobotsTxt,
 		args.FollowSitemapXML,
-		args.IgnoreFragments,
-		args.MaxRedirections,
-		args.SkipTLSVerification,
 	})
 
 	if err != nil {

@@ -12,4 +12,5 @@ func TestFetcherOptionsInitialize(t *testing.T) {
 
 	assert.Equal(t, defaultConcurrency, o.Concurrency)
 	assert.Equal(t, defaultMaxRedirections, o.MaxRedirections)
+	assert.Equal(t, defaultTimeout, o.Timeout)
 }

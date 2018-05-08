@@ -24,7 +24,8 @@ func TestNewCheckerWithMissingSitemapXML(t *testing.T) {
 
 func TestCheckerCheck(t *testing.T) {
 	for _, s := range []string{rootURL, fragmentURL, baseURL, redirectURL} {
-		c, _ := newChecker(s, checkerOptions{})
+		c, err := newChecker(s, checkerOptions{})
+		assert.Nil(t, err)
 
 		go c.Check()
 

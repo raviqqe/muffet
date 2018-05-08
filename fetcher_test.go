@@ -2,6 +2,7 @@ package main
 
 import (
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -124,6 +125,15 @@ func TestFetcherSendRequestWithMissingLocationHeader(t *testing.T) {
 	_, _, err := newFetcher(fetcherOptions{}).sendRequest(invalidRedirectURL)
 
 	assert.NotNil(t, err)
+}
+
+func TestFetcherSendRequestWithTimeout(t *testing.T) {
+	_, _, err := newFetcher(fetcherOptions{Timeout: 1 * time.Second}).sendRequest(timeoutURL)
+	assert.NotNil(t, err)
+
+	s, _, err := newFetcher(fetcherOptions{Timeout: 60 * time.Second}).sendRequest(timeoutURL)
+	assert.Equal(t, 200, s)
+	assert.Nil(t, err)
 }
 
 func TestSeparateFragment(t *testing.T) {

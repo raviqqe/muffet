@@ -17,8 +17,7 @@ type fetcher struct {
 	client              *fasthttp.Client
 	connectionSemaphore semaphore
 	cache               *sync.Map
-	ignoreFragments     bool
-	maxRedirections     int
+	options             fetcherOptions
 }
 
 func newFetcher(o fetcherOptions) fetcher {
@@ -33,8 +32,7 @@ func newFetcher(o fetcherOptions) fetcher {
 		},
 		newSemaphore(o.Concurrency),
 		&sync.Map{},
-		o.IgnoreFragments,
-		o.MaxRedirections,
+		o,
 	}
 }
 
@@ -78,7 +76,7 @@ func (f fetcher) sendRequestWithFragment(u, fr string) (int, page, error) {
 		return 0, page{}, err
 	}
 
-	if !f.ignoreFragments && fr != "" {
+	if !f.options.IgnoreFragments && fr != "" {
 		if _, ok := scrape.Find(p.Body(), func(n *html.Node) bool {
 			return scrape.Attr(n, "id") == fr
 		}); !ok {
@@ -99,7 +97,7 @@ func (f fetcher) sendRequest(u string) (int, page, error) {
 
 redirects:
 	for {
-		err := f.client.Do(&req, &res)
+		err := f.client.DoTimeout(&req, &res, f.options.Timeout)
 
 		if err != nil {
 			return 0, page{}, err
@@ -111,7 +109,7 @@ redirects:
 		case 3:
 			r++
 
-			if r > f.maxRedirections {
+			if r > f.options.MaxRedirections {
 				return 0, page{}, errors.New("too many redirections")
 			}
 
@@ -121,7 +119,7 @@ redirects:
 				return 0, page{}, errors.New("location header not found")
 			}
 
-			req.SetRequestURIBytes(bs)
+			req.URI().UpdateBytes(bs)
 		default:
 			return 0, page{}, fmt.Errorf("%v", res.StatusCode())
 		}

@@ -1,10 +1,13 @@
 package main
 
+import "time"
+
 type fetcherOptions struct {
 	Concurrency         int
 	IgnoreFragments     bool
 	MaxRedirections     int
 	SkipTLSVerification bool
+	Timeout             time.Duration
 }
 
 func (o *fetcherOptions) Initialize() {
@@ -14,5 +17,9 @@ func (o *fetcherOptions) Initialize() {
 
 	if o.MaxRedirections <= 0 {
 		o.MaxRedirections = defaultMaxRedirections
+	}
+
+	if o.Timeout <= 0 {
+		o.Timeout = defaultTimeout
 	}
 }

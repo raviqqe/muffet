@@ -15,7 +15,9 @@ func TestGetArguments(t *testing.T) {
 		{"--limit-redirections", "4", "https://foo.com"},
 		{"-s", "https://foo.com"},
 		{"--follow-sitemap-xml", "https://foo.com"},
-		{"-t", "https://foo.com"},
+		{"-t", "10", "https://foo.com"},
+		{"--timeout", "10", "https://foo.com"},
+		{"-x", "https://foo.com"},
 		{"--skip-tls-verification", "https://foo.com"},
 		{"-v", "https://foo.com"},
 		{"--verbose", "https://foo.com"},
@@ -33,6 +35,8 @@ func TestGetArgumentsError(t *testing.T) {
 		{"--concurrency", "foo", "https://foo.com"},
 		{"-l", "foo", "https://foo.com"},
 		{"--limit-redirections", "foo", "https://foo.com"},
+		{"-t", "foo", "https://foo.com"},
+		{"--timeout", "foo", "https://foo.com"},
 	} {
 		_, err := getArguments(ss)
 		assert.NotNil(t, err)

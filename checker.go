@@ -17,13 +17,7 @@ type checker struct {
 func newChecker(s string, o checkerOptions) (checker, error) {
 	o.Initialize()
 
-	f := newFetcher(fetcherOptions{
-		o.Concurrency,
-		o.IgnoreFragments,
-		o.MaxRedirections,
-		o.SkipTLSVerification,
-	})
-
+	f := newFetcher(o.fetcherOptions)
 	p, err := f.FetchPage(s)
 
 	if err != nil {

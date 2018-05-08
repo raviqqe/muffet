@@ -25,6 +25,7 @@ const (
 	redirectURL         = "http://localhost:8080/redirect"
 	infiniteRedirectURL = "http://localhost:8080/infinite-redirect"
 	invalidRedirectURL  = "http://localhost:8080/invalid-redirect"
+	timeoutURL          = "http://localhost:8080/timeout"
 	missingMetadataURL  = "http://localhost:8081"
 	invalidRobotsTxtURL = "http://localhost:8082"
 	selfCertificateURL  = "https://localhost:8083"
@@ -79,6 +80,8 @@ func (handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(300)
 	case "/invalid-redirect":
 		w.WriteHeader(300)
+	case "/timeout":
+		time.Sleep(10 * time.Second)
 	case "/robots.txt":
 		u, err := url.Parse(erroneousURL)
 

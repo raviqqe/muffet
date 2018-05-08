@@ -11,5 +11,4 @@ func TestCheckerOptionsInitialize(t *testing.T) {
 	o.Initialize()
 
 	assert.Equal(t, defaultConcurrency, o.Concurrency)
-	assert.Equal(t, defaultMaxRedirections, o.MaxRedirections)
 }
