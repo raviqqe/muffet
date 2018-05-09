@@ -38,8 +38,8 @@ func newFetcher(o fetcherOptions) fetcher {
 	}
 }
 
-func (f fetcher) FetchPage(s string) (page, error) {
-	r, err := f.sendRequest(s)
+func (f fetcher) FetchPage(u string) (page, error) {
+	r, err := f.sendRequest(u)
 
 	if err != nil {
 		return page{}, err
@@ -54,35 +54,14 @@ func (f fetcher) FetchPage(s string) (page, error) {
 	return p, nil
 }
 
-func (f fetcher) FetchLink(s string) (fetchResult, error) {
-	s, fr, err := separateFragment(s)
+func (f fetcher) FetchLink(u string) (fetchResult, error) {
+	u, fr, err := separateFragment(u)
 
 	if err != nil {
 		return fetchResult{}, err
 	}
 
-	if x, ok := f.cache.Load(s); ok {
-		switch x := x.(type) {
-		case int:
-			return newFetchResult(x), nil
-		case error:
-			return fetchResult{}, x
-		}
-	}
-
-	r, err := f.sendRequestWithFragment(s, fr)
-
-	if err == nil {
-		f.cache.Store(s, r.StatusCode())
-	} else {
-		f.cache.Store(s, err)
-	}
-
-	return r, err
-}
-
-func (f fetcher) sendRequestWithFragment(u, fr string) (fetchResult, error) {
-	r, err := f.sendRequest(u)
+	r, err := f.sendRequestWithCache(u)
 
 	if err != nil {
 		return fetchResult{}, err
@@ -97,6 +76,27 @@ func (f fetcher) sendRequestWithFragment(u, fr string) (fetchResult, error) {
 	}
 
 	return r, nil
+}
+
+func (f fetcher) sendRequestWithCache(u string) (fetchResult, error) {
+	if x, ok := f.cache.Load(u); ok {
+		switch x := x.(type) {
+		case fetchResult:
+			return x, nil
+		case error:
+			return fetchResult{}, x
+		}
+	}
+
+	r, err := f.sendRequest(u)
+
+	if err == nil {
+		f.cache.Store(u, r)
+	} else {
+		f.cache.Store(u, err)
+	}
+
+	return r, err
 }
 
 func (f fetcher) sendRequest(u string) (fetchResult, error) {

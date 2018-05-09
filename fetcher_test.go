@@ -37,6 +37,19 @@ func TestFetcherFetchPageWithInfiniteRedirections(t *testing.T) {
 	assert.NotNil(t, err)
 }
 
+func TestFetcherFetchLink(t *testing.T) {
+	f := newFetcher(fetcherOptions{})
+
+	for _, s := range []string{rootURL, existentURL, fragmentURL, erroneousURL} {
+		r, err := f.FetchLink(s)
+		_, ok := r.Page()
+
+		assert.Equal(t, 200, r.StatusCode())
+		assert.True(t, ok)
+		assert.Nil(t, err)
+	}
+}
+
 func TestFetcherFetchLinkCache(t *testing.T) {
 	f := newFetcher(fetcherOptions{})
 
@@ -53,10 +66,24 @@ func TestFetcherFetchLinkCache(t *testing.T) {
 	assert.NotEqual(t, fetchResult{}, r)
 	assert.Nil(t, err)
 	_, ok = r.Page()
-	assert.False(t, ok)
+	assert.True(t, ok)
 
 	_, err = f.FetchLink(nonExistentURL)
 	assert.NotNil(t, err)
+}
+
+func TestFetcherFetchLinkWithFragments(t *testing.T) {
+	f := newFetcher(fetcherOptions{})
+
+	r, err := f.FetchLink(existentIDURL)
+	_, ok := r.Page()
+
+	assert.Equal(t, 200, r.StatusCode())
+	assert.True(t, ok)
+	assert.Nil(t, err)
+
+	_, err = f.FetchLink(nonExistentIDURL)
+	assert.Equal(t, "id #bar not found", err.Error())
 }
 
 func TestFetcherFetchLinkIgnoreFragments(t *testing.T) {
@@ -75,43 +102,6 @@ func TestFetcherFetchLinkError(t *testing.T) {
 
 	for _, s := range []string{nonExistentURL, ":"} {
 		_, err := f.FetchLink(s)
-
-		assert.NotNil(t, err)
-	}
-}
-
-func TestFetcherSendRequestWithFragment(t *testing.T) {
-	f := newFetcher(fetcherOptions{})
-
-	for _, s := range []string{rootURL, existentURL, fragmentURL, erroneousURL} {
-		r, err := f.sendRequestWithFragment(s, "")
-		_, ok := r.Page()
-
-		assert.Equal(t, 200, r.StatusCode())
-		assert.True(t, ok)
-		assert.Nil(t, err)
-	}
-}
-
-func TestFetcherSendRequestWithFragmentWithFragment(t *testing.T) {
-	f := newFetcher(fetcherOptions{})
-
-	r, err := f.sendRequestWithFragment(fragmentURL, "foo")
-	_, ok := r.Page()
-
-	assert.Equal(t, 200, r.StatusCode())
-	assert.True(t, ok)
-	assert.Nil(t, err)
-
-	_, err = f.sendRequestWithFragment(fragmentURL, "bar")
-	assert.NotNil(t, err)
-}
-
-func TestFetcherSendRequestWithFragmentError(t *testing.T) {
-	f := newFetcher(fetcherOptions{})
-
-	for _, s := range []string{":", nonExistentURL} {
-		_, err := f.sendRequestWithFragment(s, "")
 
 		assert.NotNil(t, err)
 	}
