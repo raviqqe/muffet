@@ -26,15 +26,19 @@ const (
 	infiniteRedirectURL = "http://localhost:8080/infinite-redirect"
 	invalidRedirectURL  = "http://localhost:8080/invalid-redirect"
 	timeoutURL          = "http://localhost:8080/timeout"
+	robotsTxtURL        = "http://localhost:8080/robots.txt"
 	missingMetadataURL  = "http://localhost:8081"
 	invalidRobotsTxtURL = "http://localhost:8082"
-	selfCertificateURL  = "https://localhost:8083"
-	noResponseURL       = "http://localhost:8084"
+	invalidMIMETypeURL  = "http://localhost:8083"
+	selfCertificateURL  = "https://localhost:8084"
+	noResponseURL       = "http://localhost:8085"
 )
 
 type handler struct{}
 
 func (handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	w.Header().Add("Content-Type", "text/html")
+
 	switch r.URL.Path {
 	case "", "/":
 		w.Write([]byte(htmlWithBody(`<a href="/foo" />`)))
@@ -83,6 +87,8 @@ func (handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	case "/timeout":
 		time.Sleep(10 * time.Second)
 	case "/robots.txt":
+		w.Header().Add("Content-Type", "text/plain")
+
 		u, err := url.Parse(erroneousURL)
 
 		if err != nil {
@@ -101,6 +107,8 @@ func (handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			Disallow: %v
 		`, u.Path, v.Path)))
 	case "/sitemap.xml":
+		w.Header().Add("Content-Type", "text/xml")
+
 		w.Write([]byte(fmt.Sprintf(`
 			<?xml version="1.0" encoding="UTF-8"?>
 			<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
@@ -123,6 +131,8 @@ func (handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 type noMetadataHandler struct{}
 
 func (noMetadataHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	w.Header().Add("Content-Type", "text/html")
+
 	switch r.URL.Path {
 	case "", "/":
 	default:
@@ -133,6 +143,8 @@ func (noMetadataHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 type invalidRobotsTxtHandler struct{}
 
 func (invalidRobotsTxtHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	w.Header().Add("Content-Type", "text/html")
+
 	switch r.URL.Path {
 	case "", "/":
 	case "/robots.txt":
@@ -144,6 +156,12 @@ func (invalidRobotsTxtHandler) ServeHTTP(w http.ResponseWriter, r *http.Request)
 	}
 }
 
+type invalidMIMETypeHandler struct{}
+
+func (invalidMIMETypeHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	w.Header().Add("Content-Type", ";")
+}
+
 func htmlWithBody(b string) string {
 	return fmt.Sprintf(`<html><body>%v</body></html>`, b)
 }
@@ -152,8 +170,9 @@ func TestMain(m *testing.M) {
 	go http.ListenAndServe(":8080", handler{})
 	go http.ListenAndServe(":8081", noMetadataHandler{})
 	go http.ListenAndServe(":8082", invalidRobotsTxtHandler{})
+	go http.ListenAndServe(":8083", invalidMIMETypeHandler{})
 
-	f, g, err := prepareTLSServer()
+	f, g, err := prepareTLSServer(":8084")
 	defer g()
 
 	if err != nil {
@@ -167,7 +186,7 @@ func TestMain(m *testing.M) {
 	os.Exit(m.Run())
 }
 
-func prepareTLSServer() (func(), func(), error) {
+func prepareTLSServer(a string) (func(), func(), error) {
 	d, err := ioutil.TempDir("", "")
 
 	if err != nil {
@@ -187,6 +206,6 @@ func prepareTLSServer() (func(), func(), error) {
 		return nil, nil, err
 	}
 
-	s := http.Server{Addr: ":8083", ErrorLog: log.New(ioutil.Discard, "", 0), Handler: handler{}}
+	s := http.Server{Addr: a, ErrorLog: log.New(ioutil.Discard, "", 0), Handler: handler{}}
 	return func() { s.ListenAndServeTLS(c, k) }, func() { os.Remove(d) }, nil
 }

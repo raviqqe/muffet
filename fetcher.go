@@ -5,7 +5,9 @@ import (
 	"crypto/tls"
 	"errors"
 	"fmt"
+	"mime"
 	"net/url"
+	"strings"
 	"sync"
 
 	"github.com/valyala/fasthttp"
@@ -37,57 +39,67 @@ func newFetcher(o fetcherOptions) fetcher {
 }
 
 func (f fetcher) FetchPage(s string) (page, error) {
-	_, p, err := f.sendRequest(s)
+	r, err := f.sendRequest(s)
 
-	return p, err
+	if err != nil {
+		return page{}, err
+	}
+
+	p, ok := r.Page()
+
+	if !ok {
+		return page{}, errors.New("non-HTML page")
+	}
+
+	return p, nil
 }
 
-func (f fetcher) FetchLink(s string) (linkResult, error) {
+func (f fetcher) FetchLink(s string) (fetchResult, error) {
 	s, fr, err := separateFragment(s)
 
 	if err != nil {
-		return linkResult{}, err
+		return fetchResult{}, err
 	}
 
 	if x, ok := f.cache.Load(s); ok {
 		switch x := x.(type) {
 		case int:
-			return newLinkResult(x), nil
+			return newFetchResult(x), nil
 		case error:
-			return linkResult{}, x
+			return fetchResult{}, x
 		}
 	}
 
-	c, p, err := f.sendRequestWithFragment(s, fr)
+	r, err := f.sendRequestWithFragment(s, fr)
 
 	if err == nil {
-		f.cache.Store(s, c)
+		f.cache.Store(s, r.StatusCode())
 	} else {
 		f.cache.Store(s, err)
 	}
 
-	return newLinkResultWithPage(c, p), err
+	return r, err
 }
 
-func (f fetcher) sendRequestWithFragment(u, fr string) (int, page, error) {
-	c, p, err := f.sendRequest(u)
+func (f fetcher) sendRequestWithFragment(u, fr string) (fetchResult, error) {
+	r, err := f.sendRequest(u)
 
 	if err != nil {
-		return 0, page{}, err
+		return fetchResult{}, err
 	}
 
-	if !f.options.IgnoreFragments && fr != "" {
+	if p, ok := r.Page(); ok && !f.options.IgnoreFragments && fr != "" {
 		if _, ok := scrape.Find(p.Body(), func(n *html.Node) bool {
 			return scrape.Attr(n, "id") == fr
 		}); !ok {
-			return 0, page{}, fmt.Errorf("id #%v not found", fr)
+			return fetchResult{}, fmt.Errorf("id #%v not found", fr)
 		}
 	}
 
-	return c, p, nil
+	return r, nil
 }
 
-func (f fetcher) sendRequest(u string) (int, page, error) {
+func (f fetcher) sendRequest(u string) (fetchResult, error) {
 	f.connectionSemaphore.Request()
 	defer f.connectionSemaphore.Release()
 
@@ -100,7 +112,7 @@ redirects:
 		err := f.client.DoTimeout(&req, &res, f.options.Timeout)
 
 		if err != nil {
-			return 0, page{}, err
+			return fetchResult{}, err
 		}
 
 		switch res.StatusCode() / 100 {
@@ -110,28 +122,38 @@ redirects:
 			r++
 
 			if r > f.options.MaxRedirections {
-				return 0, page{}, errors.New("too many redirections")
+				return fetchResult{}, errors.New("too many redirections")
 			}
 
 			bs := res.Header.Peek("Location")
 
 			if len(bs) == 0 {
-				return 0, page{}, errors.New("location header not found")
+				return fetchResult{}, errors.New("location header not found")
 			}
 
 			req.URI().UpdateBytes(bs)
 		default:
-			return 0, page{}, fmt.Errorf("%v", res.StatusCode())
+			return fetchResult{}, fmt.Errorf("%v", res.StatusCode())
+		}
+	}
+
+	if s := strings.TrimSpace(string(res.Header.Peek("Content-Type"))); s != "" {
+		t, _, err := mime.ParseMediaType(s)
+
+		if err != nil {
+			return fetchResult{}, err
+		} else if t != "text/html" {
+			return newFetchResult(res.StatusCode()), nil
 		}
 	}
 
 	n, err := html.Parse(bytes.NewReader(res.Body()))
 
 	if err != nil {
-		return 0, page{}, err
+		return fetchResult{}, err
 	}
 
-	return res.StatusCode(), newPage(req.URI().String(), n), nil
+	return newFetchResultWithPage(res.StatusCode(), newPage(req.URI().String(), n)), nil
 }
 
 func separateFragment(s string) (string, string, error) {

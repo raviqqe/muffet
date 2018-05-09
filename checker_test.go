@@ -18,8 +18,8 @@ func TestNewCheckerError(t *testing.T) {
 }
 
 func TestNewCheckerWithMissingSitemapXML(t *testing.T) {
-	_, err := newChecker("http://localhost:8081", checkerOptions{FollowSitemapXML: true})
-	assert.NotNil(t, err)
+	_, err := newChecker(missingMetadataURL, checkerOptions{FollowSitemapXML: true})
+	assert.Equal(t, "URL is not a sitemap or sitemapindex", err.Error())
 }
 
 func TestCheckerCheck(t *testing.T) {
