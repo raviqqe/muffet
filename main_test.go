@@ -8,7 +8,10 @@ import (
 )
 
 func TestCommand(t *testing.T) {
-	for _, ss := range [][]string{{"-x", rootURL}} {
+	for _, ss := range [][]string{
+		{"-x", rootURL},
+		{"-a", "me:password", basicAuthURL},
+	} {
 		s, err := command(ss, ioutil.Discard)
 
 		assert.Zero(t, s)
@@ -17,16 +20,21 @@ func TestCommand(t *testing.T) {
 }
 
 func TestCommandErroneousResult(t *testing.T) {
-	s, err := command([]string{erroneousURL}, ioutil.Discard)
+	for _, ss := range [][]string{
+		{erroneousURL},
+	} {
+		s, err := command(ss, ioutil.Discard)
 
-	assert.Equal(t, 1, s)
-	assert.Nil(t, err)
+		assert.Equal(t, 1, s)
+		assert.Nil(t, err)
+	}
 }
 
 func TestCommandError(t *testing.T) {
 	for _, ss := range [][]string{
 		{":"},
 		{"-t", "foo", rootURL},
+		{"-a", "you:password", basicAuthURL},
 	} {
 		_, err := command(ss, ioutil.Discard)
 

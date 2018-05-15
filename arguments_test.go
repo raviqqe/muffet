@@ -9,6 +9,8 @@ import (
 func TestGetArguments(t *testing.T) {
 	for _, ss := range [][]string{
 		{"https://foo.com"},
+		{"-a", "me:password", "https://foo.com"},
+		{"--basic-auth", "me:password", "https://foo.com"},
 		{"-c", "1", "https://foo.com"},
 		{"--concurrency", "1", "https://foo.com"},
 		{"-l", "4", "https://foo.com"},

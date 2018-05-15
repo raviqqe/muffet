@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/base64"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -9,6 +10,7 @@ import (
 	"os"
 	"os/exec"
 	"path"
+	"strings"
 	"testing"
 	"time"
 )
@@ -27,6 +29,7 @@ const (
 	infiniteRedirectURL = "http://localhost:8080/infinite-redirect"
 	invalidRedirectURL  = "http://localhost:8080/invalid-redirect"
 	timeoutURL          = "http://localhost:8080/timeout"
+	basicAuthURL        = "http://localhost:8080/basic-auth"
 	robotsTxtURL        = "http://localhost:8080/robots.txt"
 	missingMetadataURL  = "http://localhost:8081"
 	invalidRobotsTxtURL = "http://localhost:8082"
@@ -87,6 +90,27 @@ func (handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(300)
 	case "/timeout":
 		time.Sleep(10 * time.Second)
+	case "/basic-auth":
+		ss := strings.Split(r.Header.Get("Authorization"), " ")
+
+		if ss[0] != "Basic" {
+			w.WriteHeader(401)
+			return
+		}
+
+		bs, err := base64.StdEncoding.DecodeString(ss[1])
+
+		if err != nil {
+			w.WriteHeader(401)
+			return
+		}
+
+		ss = strings.Split(string(bs), ":")
+
+		if ss[0] != "me" || ss[1] != "password" {
+			w.WriteHeader(401)
+			return
+		}
 	case "/robots.txt":
 		w.Header().Add("Content-Type", "text/plain")
 

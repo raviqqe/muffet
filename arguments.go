@@ -11,9 +11,10 @@ import (
 var usage = fmt.Sprintf(`Muffet, the web repairgirl
 
 Usage:
-	muffet [-c <concurrency>] [-f] [-l <times>] [-r] [-s] [-t <seconds>] [-v] [-x] <url>
+	muffet [-a <credential>] [-c <concurrency>] [-f] [-l <times>] [-r] [-s] [-t <seconds>] [-v] [-x] <url>
 
 Options:
+	-a, --basic-auth <credential>     Set authorization header in <username>:<password> format.
 	-c, --concurrency <concurrency>   Roughly maximum number of concurrent HTTP connections. [default: %v]
 	-f, --ignore-fragments            Ignore URL fragments.
 	-h, --help                        Show this help.
@@ -26,7 +27,8 @@ Options:
 	defaultConcurrency, defaultMaxRedirections, defaultTimeout.Seconds())
 
 type arguments struct {
-	Concurrency int
+	BasicAuthentication string
+	Concurrency         int
 	FollowRobotsTxt,
 	FollowSitemapXML,
 	IgnoreFragments bool
@@ -39,6 +41,8 @@ type arguments struct {
 
 func getArguments(ss []string) (arguments, error) {
 	args := parseArguments(usage, ss)
+
+	a, _ := args["--basic-auth"].(string)
 
 	c, err := parseInt(args["--concurrency"].(string))
 
@@ -59,6 +63,7 @@ func getArguments(ss []string) (arguments, error) {
 	}
 
 	return arguments{
+		a,
 		c,
 		args["--follow-robots-txt"].(bool),
 		args["--follow-sitemap-xml"].(bool),
