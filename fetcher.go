@@ -106,8 +106,8 @@ func (f fetcher) sendRequest(u string) (fetchResult, error) {
 	req, res := fasthttp.Request{}, fasthttp.Response{}
 	req.SetRequestURI(u)
 
-	for _, kv := range f.options.Headers {
-		req.Header.Add(kv[0], kv[1])
+	for k, v := range f.options.Headers {
+		req.Header.Add(k, v)
 	}
 
 	r := 0

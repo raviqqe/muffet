@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/base64"
 	"io/ioutil"
 	"testing"
 
@@ -10,7 +11,7 @@ import (
 func TestCommand(t *testing.T) {
 	for _, ss := range [][]string{
 		{"-x", rootURL},
-		{"-a", "me:password", basicAuthURL},
+		{"-j", authorizationHeader("me:password"), basicAuthURL},
 	} {
 		s, err := command(ss, ioutil.Discard)
 
@@ -34,10 +35,14 @@ func TestCommandError(t *testing.T) {
 	for _, ss := range [][]string{
 		{":"},
 		{"-t", "foo", rootURL},
-		{"-a", "you:password", basicAuthURL},
+		{"-j", authorizationHeader("you:password"), basicAuthURL},
 	} {
 		_, err := command(ss, ioutil.Discard)
 
 		assert.NotNil(t, err)
 	}
+}
+
+func authorizationHeader(s string) string {
+	return "Authorization: Basic " + base64.StdEncoding.EncodeToString([]byte(s))
 }

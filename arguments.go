@@ -1,8 +1,10 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/docopt/docopt-go"
@@ -11,13 +13,13 @@ import (
 var usage = fmt.Sprintf(`Muffet, the web repairgirl
 
 Usage:
-	muffet [-a <credential>] [-c <concurrency>] [-f] [-l <times>] [-r] [-s] [-t <seconds>] [-v] [-x] <url>
+	muffet [-c <concurrency>] [-f] [-j <header>...] [-l <times>] [-r] [-s] [-t <seconds>] [-v] [-x] <url>
 
 Options:
-	-a, --basic-auth <credential>     Set authorization header in <username>:<password> format.
 	-c, --concurrency <concurrency>   Roughly maximum number of concurrent HTTP connections. [default: %v]
 	-f, --ignore-fragments            Ignore URL fragments.
 	-h, --help                        Show this help.
+	-j, --header <header>...          Set custom headers.
 	-l, --limit-redirections <times>  Limit a number of redirections. [default: %v]
 	-r, --follow-robots-txt           Follow robots.txt when scraping.
 	-s, --follow-sitemap-xml          Scrape only pages listed in sitemap.xml.
@@ -27,10 +29,10 @@ Options:
 	defaultConcurrency, defaultMaxRedirections, defaultTimeout.Seconds())
 
 type arguments struct {
-	BasicAuthentication string
-	Concurrency         int
+	Concurrency int
 	FollowRobotsTxt,
-	FollowSitemapXML,
+	FollowSitemapXML bool
+	Headers         map[string]string
 	IgnoreFragments bool
 	MaxRedirections int
 	Timeout         time.Duration
@@ -42,12 +44,20 @@ type arguments struct {
 func getArguments(ss []string) (arguments, error) {
 	args := parseArguments(usage, ss)
 
-	a, _ := args["--basic-auth"].(string)
-
 	c, err := parseInt(args["--concurrency"].(string))
 
 	if err != nil {
 		return arguments{}, err
+	}
+
+	hs := map[string]string(nil)
+
+	if ss := args["--header"]; ss != nil {
+		hs, err = parseHeaders(ss.([]string))
+
+		if err != nil {
+			return arguments{}, err
+		}
 	}
 
 	r, err := parseInt(args["--limit-redirections"].(string))
@@ -63,10 +73,10 @@ func getArguments(ss []string) (arguments, error) {
 	}
 
 	return arguments{
-		a,
 		c,
 		args["--follow-robots-txt"].(bool),
 		args["--follow-sitemap-xml"].(bool),
+		hs,
 		args["--ignore-fragments"].(bool),
 		r,
 		time.Duration(t) * time.Second,
@@ -74,11 +84,6 @@ func getArguments(ss []string) (arguments, error) {
 		args["--verbose"].(bool),
 		args["--skip-tls-verification"].(bool),
 	}, nil
-}
-
-func parseInt(s string) (int, error) {
-	i, err := strconv.ParseInt(s, 10, 32)
-	return int(i), err
 }
 
 func parseArguments(u string, ss []string) map[string]interface{} {
@@ -89,4 +94,25 @@ func parseArguments(u string, ss []string) map[string]interface{} {
 	}
 
 	return args
+}
+
+func parseInt(s string) (int, error) {
+	i, err := strconv.ParseInt(s, 10, 32)
+	return int(i), err
+}
+
+func parseHeaders(ss []string) (map[string]string, error) {
+	m := make(map[string]string, len(ss))
+
+	for _, s := range ss {
+		i := strings.IndexRune(s, ':')
+
+		if i < 0 {
+			return nil, errors.New("invalid header format")
+		}
+
+		m[s[:i]] = strings.TrimSpace(s[i+1:])
+	}
+
+	return m, nil
 }

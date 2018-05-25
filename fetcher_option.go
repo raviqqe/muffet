@@ -4,7 +4,7 @@ import "time"
 
 type fetcherOptions struct {
 	Concurrency         int
-	Headers             [][2]string
+	Headers             map[string]string
 	IgnoreFragments     bool
 	MaxRedirections     int
 	SkipTLSVerification bool

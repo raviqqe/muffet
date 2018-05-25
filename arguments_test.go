@@ -9,10 +9,10 @@ import (
 func TestGetArguments(t *testing.T) {
 	for _, ss := range [][]string{
 		{"https://foo.com"},
-		{"-a", "me:password", "https://foo.com"},
-		{"--basic-auth", "me:password", "https://foo.com"},
 		{"-c", "1", "https://foo.com"},
 		{"--concurrency", "1", "https://foo.com"},
+		{"-j", "MyHeader: foo", "-j", "YourHeader: bar", "https://foo.com"},
+		{"--header", "MyHeader: foo", "--header", "YourHeader: bar", "https://foo.com"},
 		{"-l", "4", "https://foo.com"},
 		{"--limit-redirections", "4", "https://foo.com"},
 		{"-s", "https://foo.com"},
@@ -35,6 +35,8 @@ func TestGetArgumentsError(t *testing.T) {
 	for _, ss := range [][]string{
 		{"-c", "foo", "https://foo.com"},
 		{"--concurrency", "foo", "https://foo.com"},
+		{"-j", "MyHeader", "https://foo.com"},
+		{"--header", "MyHeader", "https://foo.com"},
 		{"-l", "foo", "https://foo.com"},
 		{"--limit-redirections", "foo", "https://foo.com"},
 		{"-t", "foo", "https://foo.com"},
@@ -49,4 +51,34 @@ func TestParseArguments(t *testing.T) {
 	assert.Panics(t, func() {
 		parseArguments("", nil)
 	})
+}
+
+func TestParseHeaders(t *testing.T) {
+	for _, c := range []struct {
+		arguments []string
+		answer    map[string]string
+	}{
+		{
+			nil,
+			map[string]string{},
+		},
+		{
+			[]string{"MyHeader: foo"},
+			map[string]string{"MyHeader": "foo"},
+		},
+		{
+			[]string{"MyHeader: foo", "YourHeader: bar"},
+			map[string]string{"MyHeader": "foo", "YourHeader": "bar"},
+		},
+	} {
+		hs, err := parseHeaders(c.arguments)
+
+		assert.Nil(t, err)
+		assert.Equal(t, c.answer, hs)
+	}
+}
+
+func TestParseHeadersError(t *testing.T) {
+	_, err := parseHeaders([]string{"MyHeader"})
+	assert.NotNil(t, err)
 }

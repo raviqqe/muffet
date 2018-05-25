@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/base64"
 	"fmt"
 	"io"
 	"os"
@@ -25,16 +24,10 @@ func command(ss []string, w io.Writer) (int, error) {
 		return 0, err
 	}
 
-	hs := [][2]string{}
-
-	if args.BasicAuthentication != "" {
-		hs = append(hs, [2]string{"Authorization", "Basic " + base64.StdEncoding.EncodeToString([]byte(args.BasicAuthentication))})
-	}
-
 	c, err := newChecker(args.URL, checkerOptions{
 		fetcherOptions{
 			args.Concurrency,
-			hs,
+			args.Headers,
 			args.IgnoreFragments,
 			args.MaxRedirections,
 			args.SkipTLSVerification,
