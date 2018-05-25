@@ -87,7 +87,7 @@ func getArguments(ss []string) (arguments, error) {
 }
 
 func parseArguments(u string, ss []string) map[string]interface{} {
-	args, err := docopt.ParseArgs(u, ss, "0.4.0")
+	args, err := docopt.ParseArgs(u, ss, "0.5.0")
 
 	if err != nil {
 		panic(err)
