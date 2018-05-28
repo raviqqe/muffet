@@ -3,6 +3,7 @@ package main
 import (
 	"errors"
 	"fmt"
+	"regexp"
 	"strconv"
 	"strings"
 	"time"
@@ -13,10 +14,11 @@ import (
 var usage = fmt.Sprintf(`Muffet, the web repairgirl
 
 Usage:
-	muffet [-c <concurrency>] [-f] [-j <header>...] [-l <times>] [-r] [-s] [-t <seconds>] [-v] [-x] <url>
+	muffet [-c <concurrency>] [-e <pattern>...] [-f] [-j <header>...] [-l <times>] [-r] [-s] [-t <seconds>] [-v] [-x] <url>
 
 Options:
 	-c, --concurrency <concurrency>   Roughly maximum number of concurrent HTTP connections. [default: %v]
+	-e, --exclude <pattern>...        Exclude URLs matched with given regular expressions.
 	-f, --ignore-fragments            Ignore URL fragments.
 	-h, --help                        Show this help.
 	-j, --header <header>...          Set custom headers.
@@ -29,7 +31,8 @@ Options:
 	defaultConcurrency, defaultMaxRedirections, defaultTimeout.Seconds())
 
 type arguments struct {
-	Concurrency int
+	Concurrency      int
+	ExcludedPatterns []*regexp.Regexp
 	FollowRobotsTxt,
 	FollowSitemapXML bool
 	Headers         map[string]string
@@ -45,6 +48,13 @@ func getArguments(ss []string) (arguments, error) {
 	args := parseArguments(usage, ss)
 
 	c, err := parseInt(args["--concurrency"].(string))
+
+	if err != nil {
+		return arguments{}, err
+	}
+
+	ss, _ = args["--exclude"].([]string)
+	rs, err := compileRegexps(ss)
 
 	if err != nil {
 		return arguments{}, err
@@ -74,6 +84,7 @@ func getArguments(ss []string) (arguments, error) {
 
 	return arguments{
 		c,
+		rs,
 		args["--follow-robots-txt"].(bool),
 		args["--follow-sitemap-xml"].(bool),
 		hs,
@@ -99,6 +110,22 @@ func parseArguments(u string, ss []string) map[string]interface{} {
 func parseInt(s string) (int, error) {
 	i, err := strconv.ParseInt(s, 10, 32)
 	return int(i), err
+}
+
+func compileRegexps(ss []string) ([]*regexp.Regexp, error) {
+	rs := make([]*regexp.Regexp, 0, len(ss))
+
+	for _, s := range ss {
+		r, err := regexp.Compile(s)
+
+		if err != nil {
+			return nil, err
+		}
+
+		rs = append(rs, r)
+	}
+
+	return rs, nil
 }
 
 func parseHeaders(ss []string) (map[string]string, error) {

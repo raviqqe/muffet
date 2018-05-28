@@ -11,6 +11,8 @@ func TestGetArguments(t *testing.T) {
 		{"https://foo.com"},
 		{"-c", "1", "https://foo.com"},
 		{"--concurrency", "1", "https://foo.com"},
+		{"-e", "regex1", "-e", "regex2", "https://foo.com"},
+		{"--exclude", "regex1", "--exclude", "regex2", "https://foo.com"},
 		{"-j", "MyHeader: foo", "-j", "YourHeader: bar", "https://foo.com"},
 		{"--header", "MyHeader: foo", "--header", "YourHeader: bar", "https://foo.com"},
 		{"-l", "4", "https://foo.com"},
@@ -35,6 +37,7 @@ func TestGetArgumentsError(t *testing.T) {
 	for _, ss := range [][]string{
 		{"-c", "foo", "https://foo.com"},
 		{"--concurrency", "foo", "https://foo.com"},
+		{"-e", "(", "https://foo.com"},
 		{"-j", "MyHeader", "https://foo.com"},
 		{"--header", "MyHeader", "https://foo.com"},
 		{"-l", "foo", "https://foo.com"},

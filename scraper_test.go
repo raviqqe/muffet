@@ -31,7 +31,7 @@ func TestScrapePage(t *testing.T) {
 		n, err := html.Parse(strings.NewReader(htmlWithBody(c.html)))
 		assert.Nil(t, err)
 
-		bs, es := scrapePage(newPage("", n))
+		bs, es := newScraper(nil).Scrape(newPage("", n))
 
 		assert.Equal(t, c.links, len(bs))
 		assert.Equal(t, 0, len(es))
@@ -42,10 +42,44 @@ func TestScrapePageError(t *testing.T) {
 	n, err := html.Parse(strings.NewReader(htmlWithBody(`<a href=":" />`)))
 	assert.Nil(t, err)
 
-	bs, es := scrapePage(newPage("", n))
+	bs, es := newScraper(nil).Scrape(newPage("", n))
 
 	assert.Equal(t, 0, len(bs))
 	assert.Equal(t, 1, len(es))
+}
+
+func TestScraperIsURLExcluded(t *testing.T) {
+	for _, x := range []struct {
+		url     string
+		regexps []string
+		answer  bool
+	}{
+		{
+			rootURL,
+			[]string{"localhost"},
+			true,
+		},
+		{
+			rootURL,
+			[]string{"localhost", "foo"},
+			true,
+		},
+		{
+			rootURL,
+			[]string{"foo", "localhost"},
+			true,
+		},
+		{
+			rootURL,
+			[]string{"foo"},
+			false,
+		},
+	} {
+		rs, err := compileRegexps(x.regexps)
+		assert.Nil(t, err)
+
+		assert.Equal(t, x.answer, newScraper(rs).isURLExcluded(x.url))
+	}
 }
 
 func TestResolveURLWithAbsoluteURL(t *testing.T) {

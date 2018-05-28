@@ -25,6 +25,7 @@ func command(ss []string, w io.Writer) (int, error) {
 	}
 
 	c, err := newChecker(args.URL, checkerOptions{
+		args.ExcludedPatterns,
 		fetcherOptions{
 			args.Concurrency,
 			args.Headers,

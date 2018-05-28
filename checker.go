@@ -7,7 +7,8 @@ import (
 )
 
 type checker struct {
-	fetcher      fetcher
+	fetcher
+	scraper
 	daemons      daemons
 	urlInspector urlInspector
 	results      chan pageResult
@@ -32,6 +33,7 @@ func newChecker(s string, o checkerOptions) (checker, error) {
 
 	ch := checker{
 		f,
+		newScraper(o.ExcludedPatterns),
 		newDaemons(o.Concurrency),
 		ui,
 		make(chan pageResult, o.Concurrency),
@@ -54,7 +56,7 @@ func (c checker) Check() {
 }
 
 func (c checker) checkPage(p page) {
-	bs, es := scrapePage(p)
+	bs, es := c.scraper.Scrape(p)
 
 	ec := make(chan string, len(bs)+len(es))
 

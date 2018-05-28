@@ -1,6 +1,7 @@
 package main
 
 import (
+	"regexp"
 	"strings"
 	"testing"
 
@@ -61,6 +62,17 @@ func TestCheckerCheckPage(t *testing.T) {
 	go c.checkPage(p)
 
 	assert.True(t, (<-c.Results()).OK())
+}
+
+func TestCheckerCheckWithExcludedURLs(t *testing.T) {
+	r, err := regexp.Compile("bar")
+	assert.Nil(t, err)
+
+	c, _ := newChecker(erroneousURL, checkerOptions{ExcludedPatterns: []*regexp.Regexp{r}})
+
+	go c.Check()
+
+	assert.Equal(t, 2, strings.Count((<-c.Results()).String(true), "\n"))
 }
 
 func TestCheckerCheckPageError(t *testing.T) {

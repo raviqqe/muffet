@@ -2,6 +2,7 @@ package main
 
 import (
 	"net/url"
+	"regexp"
 
 	"github.com/yhat/scrape"
 	"golang.org/x/net/html"
@@ -25,7 +26,15 @@ var atomToAttributes = map[atom.Atom][]string{
 	atom.Track:  {"src"},
 }
 
-func scrapePage(p page) (map[string]bool, map[string]error) {
+type scraper struct {
+	excludedPatterns []*regexp.Regexp
+}
+
+func newScraper(rs []*regexp.Regexp) scraper {
+	return scraper{rs}
+}
+
+func (sc scraper) Scrape(p page) (map[string]bool, map[string]error) {
 	bs := map[string]bool{}
 	es := map[string]error{}
 
@@ -36,7 +45,7 @@ func scrapePage(p page) (map[string]bool, map[string]error) {
 		for _, a := range atomToAttributes[n.DataAtom] {
 			s := scrape.Attr(n, a)
 
-			if s == "" {
+			if s == "" || sc.isURLExcluded(s) {
 				continue
 			}
 
@@ -63,6 +72,16 @@ func scrapePage(p page) (map[string]bool, map[string]error) {
 	}
 
 	return bs, es
+}
+
+func (sc scraper) isURLExcluded(u string) bool {
+	for _, r := range sc.excludedPatterns {
+		if r.MatchString(u) {
+			return true
+		}
+	}
+
+	return false
 }
 
 func resolveURL(p page, u *url.URL) (*url.URL, error) {

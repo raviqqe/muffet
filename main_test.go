@@ -12,6 +12,7 @@ func TestCommand(t *testing.T) {
 	for _, ss := range [][]string{
 		{"-x", rootURL},
 		{"-j", authorizationHeader("me:password"), basicAuthURL},
+		{"-e", ".*", erroneousURL},
 	} {
 		s, err := command(ss, ioutil.Discard)
 
