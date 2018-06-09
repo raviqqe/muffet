@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"sync"
 
 	"github.com/fatih/color"
@@ -19,10 +20,16 @@ func newChecker(s string, o checkerOptions) (checker, error) {
 	o.Initialize()
 
 	f := newFetcher(o.fetcherOptions)
-	p, err := f.FetchPage(s)
+	r, err := f.Fetch(s)
 
 	if err != nil {
 		return checker{}, err
+	}
+
+	p, ok := r.Page()
+
+	if !ok {
+		return checker{}, errors.New("non-HTML page")
 	}
 
 	ui, err := newURLInspector(p.URL().String(), o.FollowRobotsTxt, o.FollowSitemapXML)
@@ -73,7 +80,7 @@ func (c checker) checkPage(p page) {
 		go func(u string, isHTML bool) {
 			defer w.Done()
 
-			r, err := c.fetcher.FetchLink(u)
+			r, err := c.fetcher.Fetch(u)
 
 			if err == nil {
 				sc <- formatLinkSuccess(u, r.StatusCode())

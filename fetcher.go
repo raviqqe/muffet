@@ -38,23 +38,7 @@ func newFetcher(o fetcherOptions) fetcher {
 	}
 }
 
-func (f fetcher) FetchPage(u string) (page, error) {
-	r, err := f.sendRequest(u)
-
-	if err != nil {
-		return page{}, err
-	}
-
-	p, ok := r.Page()
-
-	if !ok {
-		return page{}, errors.New("non-HTML page")
-	}
-
-	return p, nil
-}
-
-func (f fetcher) FetchLink(u string) (fetchResult, error) {
+func (f fetcher) Fetch(u string) (fetchResult, error) {
 	u, fr, err := separateFragment(u)
 
 	if err != nil {

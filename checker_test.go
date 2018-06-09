@@ -18,6 +18,11 @@ func TestNewCheckerError(t *testing.T) {
 	assert.NotNil(t, err)
 }
 
+func TestNewCheckerWithNonHTMLPage(t *testing.T) {
+	_, err := newChecker(robotsTxtURL, checkerOptions{})
+	assert.Equal(t, "non-HTML page", err.Error())
+}
+
 func TestNewCheckerWithMissingSitemapXML(t *testing.T) {
 	_, err := newChecker(missingMetadataURL, checkerOptions{FollowSitemapXML: true})
 	assert.Equal(t, "URL is not a sitemap or sitemapindex", err.Error())
@@ -53,7 +58,7 @@ func TestCheckerCheckMultiplePages(t *testing.T) {
 func TestCheckerCheckPage(t *testing.T) {
 	c, _ := newChecker(rootURL, checkerOptions{})
 
-	r, err := c.fetcher.FetchLink(existentURL)
+	r, err := c.fetcher.Fetch(existentURL)
 	assert.Nil(t, err)
 
 	p, ok := r.Page()
@@ -79,7 +84,7 @@ func TestCheckerCheckPageError(t *testing.T) {
 	for _, s := range []string{erroneousURL, invalidBaseURL} {
 		c, _ := newChecker(rootURL, checkerOptions{})
 
-		r, err := c.fetcher.FetchLink(s)
+		r, err := c.fetcher.Fetch(s)
 		assert.Nil(t, err)
 
 		p, ok := r.Page()
