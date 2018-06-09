@@ -34,9 +34,8 @@ func newScraper(rs []*regexp.Regexp) scraper {
 	return scraper{rs}
 }
 
-func (sc scraper) Scrape(p page) (map[string]struct{}, map[string]error) {
-	ss := map[string]struct{}{}
-	es := map[string]error{}
+func (sc scraper) Scrape(p page) map[string]error {
+	us := map[string]error{}
 
 	for _, n := range scrape.FindAllNested(p.Body(), func(n *html.Node) bool {
 		_, ok := atomToAttributes[n.DataAtom]
@@ -52,7 +51,7 @@ func (sc scraper) Scrape(p page) (map[string]struct{}, map[string]error) {
 			u, err := url.Parse(s)
 
 			if err != nil {
-				es[s] = err
+				us[s] = err
 				continue
 			}
 
@@ -63,15 +62,15 @@ func (sc scraper) Scrape(p page) (map[string]struct{}, map[string]error) {
 			u, err = resolveURL(p, u)
 
 			if err != nil {
-				es[s] = err
+				us[s] = err
 				continue
 			}
 
-			ss[u.String()] = struct{}{}
+			us[u.String()] = nil
 		}
 	}
 
-	return ss, es
+	return us
 }
 
 func (sc scraper) isURLExcluded(u string) bool {

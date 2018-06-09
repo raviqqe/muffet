@@ -31,10 +31,18 @@ func TestScrapePage(t *testing.T) {
 		n, err := html.Parse(strings.NewReader(htmlWithBody(c.html)))
 		assert.Nil(t, err)
 
-		bs, es := newScraper(nil).Scrape(newPage("", n))
+		s, e := 0, 0
 
-		assert.Equal(t, c.links, len(bs))
-		assert.Equal(t, 0, len(es))
+		for _, err := range newScraper(nil).Scrape(newPage("", n)) {
+			if err == nil {
+				s++
+			} else {
+				e++
+			}
+		}
+
+		assert.Equal(t, c.links, s)
+		assert.Equal(t, 0, e)
 	}
 }
 
@@ -42,10 +50,18 @@ func TestScrapePageError(t *testing.T) {
 	n, err := html.Parse(strings.NewReader(htmlWithBody(`<a href=":" />`)))
 	assert.Nil(t, err)
 
-	bs, es := newScraper(nil).Scrape(newPage("", n))
+	s, e := 0, 0
 
-	assert.Equal(t, 0, len(bs))
-	assert.Equal(t, 1, len(es))
+	for _, err := range newScraper(nil).Scrape(newPage("", n)) {
+		if err == nil {
+			s++
+		} else {
+			e++
+		}
+	}
+
+	assert.Equal(t, 0, s)
+	assert.Equal(t, 1, e)
 }
 
 func TestScraperIsURLExcluded(t *testing.T) {

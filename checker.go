@@ -63,18 +63,18 @@ func (c checker) Check() {
 }
 
 func (c checker) checkPage(p page) {
-	ss, es := c.scraper.Scrape(p)
+	us := c.scraper.Scrape(p)
 
-	ec := make(chan string, len(ss)+len(es))
-
-	for u, err := range es {
-		ec <- formatLinkError(u, err)
-	}
-
-	sc := make(chan string, len(ss))
+	sc := make(chan string, len(us))
+	ec := make(chan string, len(us))
 	w := sync.WaitGroup{}
 
-	for u := range ss {
+	for u, err := range us {
+		if err != nil {
+			ec <- formatLinkError(u, err)
+			continue
+		}
+
 		w.Add(1)
 
 		go func(u string) {
