@@ -63,21 +63,21 @@ func (c checker) Check() {
 }
 
 func (c checker) checkPage(p page) {
-	bs, es := c.scraper.Scrape(p)
+	ss, es := c.scraper.Scrape(p)
 
-	ec := make(chan string, len(bs)+len(es))
+	ec := make(chan string, len(ss)+len(es))
 
 	for u, err := range es {
 		ec <- formatLinkError(u, err)
 	}
 
-	sc := make(chan string, len(bs))
+	sc := make(chan string, len(ss))
 	w := sync.WaitGroup{}
 
-	for u, b := range bs {
+	for u := range ss {
 		w.Add(1)
 
-		go func(u string, isHTML bool) {
+		go func(u string) {
 			defer w.Done()
 
 			r, err := c.fetcher.Fetch(u)
@@ -88,10 +88,10 @@ func (c checker) checkPage(p page) {
 				ec <- formatLinkError(u, err)
 			}
 
-			if p, ok := r.Page(); ok && isHTML && c.urlInspector.Inspect(p.URL()) {
+			if p, ok := r.Page(); ok && c.urlInspector.Inspect(p.URL()) {
 				c.addPage(p)
 			}
-		}(u, b)
+		}(u)
 	}
 
 	w.Wait()
