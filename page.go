@@ -18,7 +18,7 @@ func newPage(s string, n *html.Node, sc scraper) (*page, error) {
 	u, err := url.Parse(s)
 
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
 	u.Fragment = ""
@@ -39,7 +39,7 @@ func newPage(s string, n *html.Node, sc scraper) (*page, error) {
 	if n, ok := scrape.Find(n, func(n *html.Node) bool {
 		return n.DataAtom == atom.Base
 	}); ok {
-		u, err = url.Parse(scrape.Attr(n, "href"))
+		u, err := url.Parse(scrape.Attr(n, "href"))
 
 		if err != nil {
 			return nil, err

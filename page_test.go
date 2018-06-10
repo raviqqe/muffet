@@ -10,13 +10,13 @@ import (
 )
 
 func TestNewPage(t *testing.T) {
-	newPage("https://foo.com", dummyHTML(t), newScraper(nil))
+	_, err := newPage("https://foo.com", dummyHTML(t), newScraper(nil))
+	assert.Nil(t, err)
 }
 
 func TestNewPageError(t *testing.T) {
-	assert.Panics(t, func() {
-		newPage(":", dummyHTML(t), newScraper(nil))
-	})
+	_, err := newPage(":", dummyHTML(t), newScraper(nil))
+	assert.NotNil(t, err)
 }
 
 func TestPageURL(t *testing.T) {
@@ -28,6 +28,16 @@ func TestPageURL(t *testing.T) {
 	assert.Nil(t, err)
 
 	assert.Equal(t, u, p.URL())
+}
+
+func TestPageURLWithBaseTag(t *testing.T) {
+	n, err := html.Parse(strings.NewReader(`<base href="_blank" />`))
+	assert.Nil(t, err)
+
+	p, err := newPage("https://foo.com", n, newScraper(nil))
+	assert.Nil(t, err)
+
+	assert.Equal(t, "https://foo.com", p.URL().String())
 }
 
 func TestPageIDs(t *testing.T) {
