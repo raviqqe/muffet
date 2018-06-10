@@ -10,6 +10,9 @@ import (
 )
 
 func TestScrapePage(t *testing.T) {
+	b, err := url.Parse("https://localhost")
+	assert.Nil(t, err)
+
 	for _, c := range []struct {
 		html  string
 		links int
@@ -33,7 +36,7 @@ func TestScrapePage(t *testing.T) {
 
 		s, e := 0, 0
 
-		for _, err := range newScraper(nil).Scrape(newPage("", n)) {
+		for _, err := range newScraper(nil).Scrape(n, b) {
 			if err == nil {
 				s++
 			} else {
@@ -47,12 +50,15 @@ func TestScrapePage(t *testing.T) {
 }
 
 func TestScrapePageError(t *testing.T) {
+	b, err := url.Parse("https://localhost")
+	assert.Nil(t, err)
+
 	n, err := html.Parse(strings.NewReader(htmlWithBody(`<a href=":" />`)))
 	assert.Nil(t, err)
 
 	s, e := 0, 0
 
-	for _, err := range newScraper(nil).Scrape(newPage("", n)) {
+	for _, err := range newScraper(nil).Scrape(n, b) {
 		if err == nil {
 			s++
 		} else {
@@ -96,39 +102,4 @@ func TestScraperIsURLExcluded(t *testing.T) {
 
 		assert.Equal(t, x.answer, newScraper(rs).isURLExcluded(x.url))
 	}
-}
-
-func TestResolveURLWithAbsoluteURL(t *testing.T) {
-	n, err := html.Parse(strings.NewReader(""))
-	assert.Nil(t, err)
-
-	u, err := url.Parse("http://localhost/foo/bar")
-	assert.Nil(t, err)
-
-	u, err = resolveURL(newPage("http://localhost", n), u)
-	assert.Nil(t, err)
-	assert.Equal(t, "http://localhost/foo/bar", u.String())
-}
-
-func TestResolveURLWithBaseTag(t *testing.T) {
-	n, err := html.Parse(strings.NewReader(`<html><head><base href="/foo/" /></head></html>`))
-	assert.Nil(t, err)
-
-	u, err := url.Parse("bar")
-	assert.Nil(t, err)
-
-	u, err = resolveURL(newPage("http://localhost", n), u)
-	assert.Nil(t, err)
-	assert.Equal(t, "http://localhost/foo/bar", u.String())
-}
-
-func TestResolveURLError(t *testing.T) {
-	n, err := html.Parse(strings.NewReader(`<html><head><base href=":" /></head></html>`))
-	assert.Nil(t, err)
-
-	u, err := url.Parse("bar")
-	assert.Nil(t, err)
-
-	_, err = resolveURL(newPage("http://localhost", n), u)
-	assert.NotNil(t, err)
 }

@@ -1,9 +1,13 @@
 package main
 
-import "time"
+import (
+	"regexp"
+	"time"
+)
 
 type fetcherOptions struct {
 	Concurrency         int
+	ExcludedPatterns    []*regexp.Regexp
 	Headers             map[string]string
 	IgnoreFragments     bool
 	MaxRedirections     int

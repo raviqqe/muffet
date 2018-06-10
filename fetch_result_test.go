@@ -11,7 +11,10 @@ func TestNewFetchResult(t *testing.T) {
 }
 
 func TestNewFetchResultWithPage(t *testing.T) {
-	newFetchResultWithPage(200, newPage("", nil))
+	p, err := newPage("", dummyHTML(t), newScraper(nil))
+	assert.Nil(t, err)
+
+	newFetchResultWithPage(200, p)
 }
 
 func TestFetchResultStatusCode(t *testing.T) {
@@ -22,9 +25,11 @@ func TestFetchResultPage(t *testing.T) {
 	p, ok := newFetchResult(200).Page()
 
 	assert.False(t, ok)
-	assert.Equal(t, page{}, p)
+	assert.Equal(t, (*page)(nil), p)
 
-	q := newPage("", nil)
+	q, err := newPage("", dummyHTML(t), newScraper(nil))
+	assert.Nil(t, err)
+
 	p, ok = newFetchResultWithPage(200, q).Page()
 
 	assert.True(t, ok)

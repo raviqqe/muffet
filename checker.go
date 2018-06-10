@@ -9,7 +9,6 @@ import (
 
 type checker struct {
 	fetcher
-	scraper
 	daemons      daemons
 	urlInspector urlInspector
 	results      chan pageResult
@@ -40,7 +39,6 @@ func newChecker(s string, o checkerOptions) (checker, error) {
 
 	ch := checker{
 		f,
-		newScraper(o.ExcludedPatterns),
 		newDaemons(o.Concurrency),
 		ui,
 		make(chan pageResult, o.Concurrency),
@@ -62,8 +60,8 @@ func (c checker) Check() {
 	close(c.results)
 }
 
-func (c checker) checkPage(p page) {
-	us := c.scraper.Scrape(p)
+func (c checker) checkPage(p *page) {
+	us := p.Links()
 
 	sc := make(chan string, len(us))
 	ec := make(chan string, len(us))
@@ -99,7 +97,7 @@ func (c checker) checkPage(p page) {
 	c.results <- newPageResult(p.URL().String(), stringChannelToSlice(sc), stringChannelToSlice(ec))
 }
 
-func (c checker) addPage(p page) {
+func (c checker) addPage(p *page) {
 	if !c.donePages.Add(p.URL().String()) {
 		c.daemons.Add(func() { c.checkPage(p) })
 	}

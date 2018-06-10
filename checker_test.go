@@ -14,8 +14,10 @@ func TestNewChecker(t *testing.T) {
 }
 
 func TestNewCheckerError(t *testing.T) {
-	_, err := newChecker(":", checkerOptions{})
-	assert.NotNil(t, err)
+	for _, s := range []string{":", invalidBaseURL} {
+		_, err := newChecker(s, checkerOptions{})
+		assert.NotNil(t, err)
+	}
 }
 
 func TestNewCheckerWithNonHTMLPage(t *testing.T) {
@@ -73,7 +75,9 @@ func TestCheckerCheckWithExcludedURLs(t *testing.T) {
 	r, err := regexp.Compile("bar")
 	assert.Nil(t, err)
 
-	c, _ := newChecker(erroneousURL, checkerOptions{ExcludedPatterns: []*regexp.Regexp{r}})
+	c, _ := newChecker(erroneousURL, checkerOptions{
+		fetcherOptions: fetcherOptions{ExcludedPatterns: []*regexp.Regexp{r}},
+	})
 
 	go c.Check()
 
@@ -81,7 +85,7 @@ func TestCheckerCheckWithExcludedURLs(t *testing.T) {
 }
 
 func TestCheckerCheckPageError(t *testing.T) {
-	for _, s := range []string{erroneousURL, invalidBaseURL} {
+	for _, s := range []string{erroneousURL} {
 		c, _ := newChecker(rootURL, checkerOptions{})
 
 		r, err := c.fetcher.Fetch(s)

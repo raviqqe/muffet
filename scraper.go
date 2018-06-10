@@ -34,10 +34,10 @@ func newScraper(rs []*regexp.Regexp) scraper {
 	return scraper{rs}
 }
 
-func (sc scraper) Scrape(p page) map[string]error {
+func (sc scraper) Scrape(n *html.Node, base *url.URL) map[string]error {
 	us := map[string]error{}
 
-	for _, n := range scrape.FindAllNested(p.Body(), func(n *html.Node) bool {
+	for _, n := range scrape.FindAllNested(n, func(n *html.Node) bool {
 		_, ok := atomToAttributes[n.DataAtom]
 		return ok
 	}) {
@@ -59,14 +59,7 @@ func (sc scraper) Scrape(p page) map[string]error {
 				continue
 			}
 
-			u, err = resolveURL(p, u)
-
-			if err != nil {
-				us[s] = err
-				continue
-			}
-
-			us[u.String()] = nil
+			us[base.ResolveReference(u).String()] = nil
 		}
 	}
 
@@ -81,28 +74,4 @@ func (sc scraper) isURLExcluded(u string) bool {
 	}
 
 	return false
-}
-
-func resolveURL(p page, u *url.URL) (*url.URL, error) {
-	if u.IsAbs() {
-		return u, nil
-	}
-
-	b := p.URL()
-
-	if n, ok := scrape.Find(p.Body(), func(n *html.Node) bool {
-		return n.DataAtom == atom.Base
-	}); ok {
-		u, err := url.Parse(scrape.Attr(n, "href"))
-
-		if err != nil {
-			return nil, err
-		}
-
-		b = b.ResolveReference(u)
-	}
-
-	u = b.ResolveReference(u)
-
-	return u, nil
 }

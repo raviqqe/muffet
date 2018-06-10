@@ -13,6 +13,9 @@ import (
 	"strings"
 	"testing"
 	"time"
+
+	"github.com/stretchr/testify/assert"
+	"golang.org/x/net/html"
 )
 
 const (
@@ -233,4 +236,10 @@ func prepareTLSServer(a string) (func(), func(), error) {
 
 	s := http.Server{Addr: a, ErrorLog: log.New(ioutil.Discard, "", 0), Handler: handler{}}
 	return func() { s.ListenAndServeTLS(c, k) }, func() { os.Remove(d) }, nil
+}
+
+func dummyHTML(t *testing.T) *html.Node {
+	n, err := html.Parse(strings.NewReader("hello"))
+	assert.Nil(t, err)
+	return n
 }

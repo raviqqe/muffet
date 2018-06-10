@@ -11,7 +11,6 @@ import (
 	"sync"
 
 	"github.com/valyala/fasthttp"
-	"github.com/yhat/scrape"
 	"golang.org/x/net/html"
 )
 
@@ -20,6 +19,7 @@ type fetcher struct {
 	connectionSemaphore semaphore
 	cache               *sync.Map
 	options             fetcherOptions
+	scraper
 }
 
 func newFetcher(o fetcherOptions) fetcher {
@@ -35,6 +35,7 @@ func newFetcher(o fetcherOptions) fetcher {
 		newSemaphore(o.Concurrency),
 		&sync.Map{},
 		o,
+		newScraper(o.ExcludedPatterns),
 	}
 }
 
@@ -52,9 +53,7 @@ func (f fetcher) Fetch(u string) (fetchResult, error) {
 	}
 
 	if p, ok := r.Page(); ok && !f.options.IgnoreFragments && fr != "" {
-		if _, ok := scrape.Find(p.Body(), func(n *html.Node) bool {
-			return scrape.Attr(n, "id") == fr
-		}); !ok {
+		if _, ok := p.IDs()[fr]; !ok {
 			return fetchResult{}, fmt.Errorf("id #%v not found", fr)
 		}
 	}
@@ -142,7 +141,13 @@ redirects:
 		return fetchResult{}, err
 	}
 
-	return newFetchResultWithPage(res.StatusCode(), newPage(req.URI().String(), n)), nil
+	p, err := newPage(req.URI().String(), n, f.scraper)
+
+	if err != nil {
+		return fetchResult{}, err
+	}
+
+	return newFetchResultWithPage(res.StatusCode(), p), nil
 }
 
 func separateFragment(s string) (string, string, error) {
