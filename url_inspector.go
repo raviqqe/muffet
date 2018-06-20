@@ -4,6 +4,7 @@ import (
 	"errors"
 	"net/http"
 	"net/url"
+	"strings"
 
 	"github.com/temoto/robotstxt"
 	"github.com/yterajima/go-sitemap"
@@ -16,7 +17,7 @@ type urlInspector struct {
 }
 
 func newURLInspector(s string, r, sm bool) (urlInspector, error) {
-	u, err := url.Parse(s)
+	u, err := urlParse(s)
 
 	if err != nil {
 		return urlInspector{}, err
@@ -71,4 +72,16 @@ func (i urlInspector) Inspect(u *url.URL) bool {
 	}
 
 	return u.Hostname() == i.hostname
+}
+
+// unescape and remove any embedded tabs and CR/LF characters
+func urlParse(s string) (*url.URL, error) {
+	s, err := url.PathUnescape(s)
+	if err != nil {
+		return nil, err
+	}
+	s = strings.Replace(s, "\t", "", -1)
+	s = strings.Replace(s, "\r", "", -1)
+	s = strings.Replace(s, "\n", "", -1)
+	return url.Parse(s)
 }
