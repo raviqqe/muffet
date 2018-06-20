@@ -3,6 +3,7 @@ package main
 import (
 	"net/url"
 	"regexp"
+	"strings"
 
 	"github.com/yhat/scrape"
 	"golang.org/x/net/html"
@@ -48,7 +49,11 @@ func (sc scraper) Scrape(n *html.Node, base *url.URL) map[string]error {
 				continue
 			}
 
-			u, err := url.Parse(s)
+			s, err := url.PathUnescape(s)
+			s = strings.Replace(s, "\t", "", -1)
+			s = strings.Replace(s, "\r", "", -1)
+			s = strings.Replace(s, "\n", "", -1)
+			u, err := urlParse(s)
 
 			if err != nil {
 				us[s] = err
