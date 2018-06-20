@@ -14,7 +14,7 @@ func TestNewFetcher(t *testing.T) {
 func TestFetcherFetch(t *testing.T) {
 	f := newFetcher(fetcherOptions{})
 
-	for _, s := range []string{rootURL, existentURL, fragmentURL, erroneousURL} {
+	for _, s := range []string{rootURL, existentURL, escapedWSExistentURL, fragmentURL, erroneousURL} {
 		r, err := f.Fetch(s)
 		_, ok := r.Page()
 
@@ -43,6 +43,20 @@ func TestFetcherFetchCache(t *testing.T) {
 	assert.True(t, ok)
 
 	_, err = f.Fetch(nonExistentURL)
+	assert.NotNil(t, err)
+}
+
+func TestFetcherFetchWithEscapedWS(t *testing.T) {
+	f := newFetcher(fetcherOptions{})
+
+	r, err := f.Fetch(escapedWSExistentURL)
+	_, ok := r.Page()
+
+	assert.Equal(t, 200, r.StatusCode())
+	assert.True(t, ok)
+	assert.Nil(t, err)
+
+	_, err = f.Fetch(escapedWSNonexistentURL)
 	assert.NotNil(t, err)
 }
 

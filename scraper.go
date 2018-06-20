@@ -48,7 +48,7 @@ func (sc scraper) Scrape(n *html.Node, base *url.URL) map[string]error {
 				continue
 			}
 
-			u, err := url.Parse(s)
+			u, err := urlParse(s)
 
 			if err != nil {
 				us[s] = err

@@ -6,7 +6,6 @@ import (
 	"errors"
 	"fmt"
 	"mime"
-	"net/url"
 	"strings"
 	"sync"
 
@@ -151,7 +150,7 @@ redirects:
 }
 
 func separateFragment(s string) (string, string, error) {
-	u, err := url.Parse(s)
+	u, err := urlParse(s)
 
 	if err != nil {
 		return "", "", err
