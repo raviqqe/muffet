@@ -34,12 +34,12 @@ func newFetcher(o fetcherOptions) fetcher {
 		newSemaphore(o.Concurrency),
 		&sync.Map{},
 		o,
-		newScraper(o.ExcludedPatterns),
+		newScraper(o.ExcludedPatterns, o.RemoveNewlines),
 	}
 }
 
 func (f fetcher) Fetch(u string) (fetchResult, error) {
-	u, fr, err := separateFragment(u)
+	u, fr, err := separateFragment(u, f.options.RemoveNewlines)
 
 	if err != nil {
 		return fetchResult{}, err
@@ -149,8 +149,8 @@ redirects:
 	return newFetchResultWithPage(res.StatusCode(), p), nil
 }
 
-func separateFragment(s string) (string, string, error) {
-	u, err := urlParse(s)
+func separateFragment(s string, rn bool) (string, string, error) {
+	u, err := urlParse(s, rn)
 
 	if err != nil {
 		return "", "", err

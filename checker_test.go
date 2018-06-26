@@ -32,7 +32,9 @@ func TestNewCheckerWithMissingSitemapXML(t *testing.T) {
 
 func TestCheckerCheck(t *testing.T) {
 	for _, s := range []string{rootURL, fragmentURL, baseURL, redirectURL} {
-		c, err := newChecker(s, checkerOptions{})
+		c, err := newChecker(s, checkerOptions{
+			fetcherOptions: fetcherOptions{RemoveNewlines: true},
+		})
 		assert.Nil(t, err)
 
 		go c.Check()
@@ -44,7 +46,9 @@ func TestCheckerCheck(t *testing.T) {
 }
 
 func TestCheckerCheckMultiplePages(t *testing.T) {
-	c, _ := newChecker(rootURL, checkerOptions{})
+	c, _ := newChecker(rootURL, checkerOptions{
+		fetcherOptions: fetcherOptions{RemoveNewlines: true},
+	})
 
 	go c.Check()
 

@@ -11,6 +11,7 @@ type fetcherOptions struct {
 	Headers             map[string]string
 	IgnoreFragments     bool
 	MaxRedirections     int
+	RemoveNewlines      bool
 	SkipTLSVerification bool
 	Timeout             time.Duration
 }

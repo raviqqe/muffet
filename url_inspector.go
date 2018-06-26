@@ -16,8 +16,8 @@ type urlInspector struct {
 	robotsTxt    *robotstxt.RobotsData
 }
 
-func newURLInspector(s string, r, sm bool) (urlInspector, error) {
-	u, err := urlParse(s)
+func newURLInspector(s string, r, sm, rn bool) (urlInspector, error) {
+	u, err := urlParse(s, rn)
 
 	if err != nil {
 		return urlInspector{}, err
@@ -74,14 +74,11 @@ func (i urlInspector) Inspect(u *url.URL) bool {
 	return u.Hostname() == i.hostname
 }
 
-// unescape and remove any embedded tabs and CR/LF characters
-func urlParse(s string) (*url.URL, error) {
-	s, err := url.PathUnescape(s)
-	if err != nil {
-		return nil, err
+// remove any embedded CR/LF characters
+func urlParse(s string, rn bool) (*url.URL, error) {
+	if rn {
+		s = strings.Replace(s, "\r", "", -1)
+		s = strings.Replace(s, "\n", "", -1)
 	}
-	s = strings.Replace(s, "\t", "", -1)
-	s = strings.Replace(s, "\r", "", -1)
-	s = strings.Replace(s, "\n", "", -1)
 	return url.Parse(s)
 }

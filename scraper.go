@@ -28,10 +28,11 @@ var atomToAttributes = map[atom.Atom][]string{
 
 type scraper struct {
 	excludedPatterns []*regexp.Regexp
+	removeNewlines   bool
 }
 
-func newScraper(rs []*regexp.Regexp) scraper {
-	return scraper{rs}
+func newScraper(rs []*regexp.Regexp, rn bool) scraper {
+	return scraper{rs, rn}
 }
 
 func (sc scraper) Scrape(n *html.Node, base *url.URL) map[string]error {
@@ -48,7 +49,7 @@ func (sc scraper) Scrape(n *html.Node, base *url.URL) map[string]error {
 				continue
 			}
 
-			u, err := urlParse(s)
+			u, err := urlParse(s, sc.removeNewlines)
 
 			if err != nil {
 				us[s] = err

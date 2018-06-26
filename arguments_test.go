@@ -17,6 +17,8 @@ func TestGetArguments(t *testing.T) {
 		{"--header", "MyHeader: foo", "--header", "YourHeader: bar", "https://foo.com"},
 		{"-l", "4", "https://foo.com"},
 		{"--limit-redirections", "4", "https://foo.com"},
+		{"-n", "https://foo.com"},
+		{"--remove-newlines", "https://foo.com"},
 		{"-s", "https://foo.com"},
 		{"--follow-sitemap-xml", "https://foo.com"},
 		{"-t", "10", "https://foo.com"},

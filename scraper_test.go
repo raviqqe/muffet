@@ -36,7 +36,7 @@ func TestScrapePage(t *testing.T) {
 
 		s, e := 0, 0
 
-		for _, err := range newScraper(nil).Scrape(n, b) {
+		for _, err := range newScraper(nil, false).Scrape(n, b) {
 			if err == nil {
 				s++
 			} else {
@@ -58,7 +58,7 @@ func TestScrapePageError(t *testing.T) {
 
 	s, e := 0, 0
 
-	for _, err := range newScraper(nil).Scrape(n, b) {
+	for _, err := range newScraper(nil, false).Scrape(n, b) {
 		if err == nil {
 			s++
 		} else {
@@ -100,6 +100,6 @@ func TestScraperIsURLExcluded(t *testing.T) {
 		rs, err := compileRegexps(x.regexps)
 		assert.Nil(t, err)
 
-		assert.Equal(t, x.answer, newScraper(rs).isURLExcluded(x.url))
+		assert.Equal(t, x.answer, newScraper(rs, false).isURLExcluded(x.url))
 	}
 }
