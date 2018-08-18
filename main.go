@@ -10,7 +10,7 @@ func main() {
 	s, err := command(os.Args[1:], os.Stdout)
 
 	if err != nil {
-		fmt.Fprintln(os.Stderr, err)
+		fprintln(os.Stderr, err)
 		os.Exit(1)
 	}
 
@@ -48,7 +48,7 @@ func command(ss []string, w io.Writer) (int, error) {
 
 	for r := range c.Results() {
 		if !r.OK() || args.Verbose {
-			fmt.Fprintln(w, r.String(args.Verbose))
+			fprintln(w, r.String(args.Verbose))
 		}
 
 		if !r.OK() {
@@ -57,4 +57,10 @@ func command(ss []string, w io.Writer) (int, error) {
 	}
 
 	return s, nil
+}
+
+func fprintln(w io.Writer, xs ...interface{}) {
+	if _, err := fmt.Fprintln(w, xs...); err != nil {
+		panic(err)
+	}
 }
