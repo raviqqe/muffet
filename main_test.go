@@ -10,7 +10,7 @@ import (
 
 func TestCommand(t *testing.T) {
 	for _, ss := range [][]string{
-		{"-x", rootURL},
+		{"-n", "-x", rootURL},
 		{"-j", authorizationHeader("me:password"), basicAuthURL},
 		{"-e", ".*", erroneousURL},
 	} {

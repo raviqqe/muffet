@@ -31,7 +31,7 @@ func newChecker(s string, o checkerOptions) (checker, error) {
 		return checker{}, errors.New("non-HTML page")
 	}
 
-	ui, err := newURLInspector(p.URL().String(), o.FollowRobotsTxt, o.FollowSitemapXML)
+	ui, err := newURLInspector(p.URL().String(), o.FollowRobotsTxt, o.FollowSitemapXML, o.RemoveNewlines)
 
 	if err != nil {
 		return checker{}, err

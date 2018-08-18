@@ -4,6 +4,7 @@ import (
 	"errors"
 	"net/http"
 	"net/url"
+	"strings"
 
 	"github.com/temoto/robotstxt"
 	"github.com/yterajima/go-sitemap"
@@ -15,8 +16,8 @@ type urlInspector struct {
 	robotsTxt    *robotstxt.RobotsData
 }
 
-func newURLInspector(s string, r, sm bool) (urlInspector, error) {
-	u, err := url.Parse(s)
+func newURLInspector(s string, r, sm, rn bool) (urlInspector, error) {
+	u, err := urlParse(s, rn)
 
 	if err != nil {
 		return urlInspector{}, err
@@ -71,4 +72,13 @@ func (i urlInspector) Inspect(u *url.URL) bool {
 	}
 
 	return u.Hostname() == i.hostname
+}
+
+// remove any embedded CR/LF characters
+func urlParse(s string, rn bool) (*url.URL, error) {
+	if rn {
+		s = strings.Replace(s, "\r", "", -1)
+		s = strings.Replace(s, "\n", "", -1)
+	}
+	return url.Parse(s)
 }

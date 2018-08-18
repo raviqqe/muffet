@@ -19,26 +19,28 @@ import (
 )
 
 const (
-	rootURL             = "http://localhost:8080"
-	existentURL         = "http://localhost:8080/foo"
-	nonExistentURL      = "http://localhost:8080/bar"
-	erroneousURL        = "http://localhost:8080/erroneous"
-	fragmentURL         = "http://localhost:8080/fragment"
-	existentIDURL       = "http://localhost:8080/fragment#foo"
-	nonExistentIDURL    = "http://localhost:8080/fragment#bar"
-	baseURL             = "http://localhost:8080/base"
-	invalidBaseURL      = "http://localhost:8080/invalid-base"
-	redirectURL         = "http://localhost:8080/redirect"
-	infiniteRedirectURL = "http://localhost:8080/infinite-redirect"
-	invalidRedirectURL  = "http://localhost:8080/invalid-redirect"
-	timeoutURL          = "http://localhost:8080/timeout"
-	basicAuthURL        = "http://localhost:8080/basic-auth"
-	robotsTxtURL        = "http://localhost:8080/robots.txt"
-	missingMetadataURL  = "http://localhost:8081"
-	invalidRobotsTxtURL = "http://localhost:8082"
-	invalidMIMETypeURL  = "http://localhost:8083"
-	selfCertificateURL  = "https://localhost:8084"
-	noResponseURL       = "http://localhost:8085"
+	rootURL                = "http://localhost:8080"
+	existentURL            = "http://localhost:8080/foo"
+	newlinesExistentURL    = "http://localhost:8080/\rf\no\no"
+	nonExistentURL         = "http://localhost:8080/bar"
+	newlinesNonexistentURL = "http://localhost:8080/\rb\na\nr"
+	erroneousURL           = "http://localhost:8080/erroneous"
+	fragmentURL            = "http://localhost:8080/fragment"
+	existentIDURL          = "http://localhost:8080/fragment#foo"
+	nonExistentIDURL       = "http://localhost:8080/fragment#bar"
+	baseURL                = "http://localhost:8080/base"
+	invalidBaseURL         = "http://localhost:8080/invalid-base"
+	redirectURL            = "http://localhost:8080/redirect"
+	infiniteRedirectURL    = "http://localhost:8080/infinite-redirect"
+	invalidRedirectURL     = "http://localhost:8080/invalid-redirect"
+	timeoutURL             = "http://localhost:8080/timeout"
+	basicAuthURL           = "http://localhost:8080/basic-auth"
+	robotsTxtURL           = "http://localhost:8080/robots.txt"
+	missingMetadataURL     = "http://localhost:8081"
+	invalidRobotsTxtURL    = "http://localhost:8082"
+	invalidMIMETypeURL     = "http://localhost:8083"
+	selfCertificateURL     = "https://localhost:8084"
+	noResponseURL          = "http://localhost:8085"
 )
 
 type handler struct{}
@@ -48,7 +50,8 @@ func (handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	switch r.URL.Path {
 	case "", "/":
-		w.Write([]byte(htmlWithBody(`<a href="/foo" />`)))
+		w.Write([]byte(htmlWithBody(`<a href="/f
+oo" />`)))
 	case "/foo":
 		w.Write([]byte(htmlWithBody(`<a href="/" />`)))
 	case "/erroneous":
@@ -59,12 +62,14 @@ func (handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			<a href="#foo" />
 		`)))
 	case "/fragment":
-		w.Write([]byte(htmlWithBody(`<a id="foo" href="#foo" />`)))
+		w.Write([]byte(htmlWithBody(`<a id="foo" href="#f
+oo" />`)))
 	case "/base":
 		w.Write([]byte(`
 			<html>
 				<head>
-					<base href="/parent/" />
+					<base href="/par
+ent/" />
 				</head>
 				<body>
 					<a href="child" />

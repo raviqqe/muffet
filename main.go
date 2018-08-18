@@ -31,6 +31,7 @@ func command(ss []string, w io.Writer) (int, error) {
 			args.Headers,
 			args.IgnoreFragments,
 			args.MaxRedirections,
+			args.RemoveNewlines,
 			args.SkipTLSVerification,
 			args.Timeout,
 		},

@@ -11,7 +11,7 @@ func TestNewFetchResult(t *testing.T) {
 }
 
 func TestNewFetchResultWithPage(t *testing.T) {
-	p, err := newPage("", dummyHTML(t), newScraper(nil))
+	p, err := newPage("", dummyHTML(t), newScraper(nil, false))
 	assert.Nil(t, err)
 
 	newFetchResultWithPage(200, p)
@@ -27,7 +27,7 @@ func TestFetchResultPage(t *testing.T) {
 	assert.False(t, ok)
 	assert.Equal(t, (*page)(nil), p)
 
-	q, err := newPage("", dummyHTML(t), newScraper(nil))
+	q, err := newPage("", dummyHTML(t), newScraper(nil, false))
 	assert.Nil(t, err)
 
 	p, ok = newFetchResultWithPage(200, q).Page()

@@ -10,12 +10,12 @@ import (
 )
 
 func TestNewPage(t *testing.T) {
-	_, err := newPage("https://foo.com", dummyHTML(t), newScraper(nil))
+	_, err := newPage("https://foo.com", dummyHTML(t), newScraper(nil, false))
 	assert.Nil(t, err)
 }
 
 func TestNewPageError(t *testing.T) {
-	_, err := newPage(":", dummyHTML(t), newScraper(nil))
+	_, err := newPage(":", dummyHTML(t), newScraper(nil, false))
 	assert.NotNil(t, err)
 }
 
@@ -24,7 +24,7 @@ func TestPageURL(t *testing.T) {
 	u, err := url.Parse(s)
 	assert.Nil(t, err)
 
-	p, err := newPage(s, dummyHTML(t), newScraper(nil))
+	p, err := newPage(s, dummyHTML(t), newScraper(nil, false))
 	assert.Nil(t, err)
 
 	assert.Equal(t, u, p.URL())
@@ -34,7 +34,7 @@ func TestPageURLWithBaseTag(t *testing.T) {
 	n, err := html.Parse(strings.NewReader(`<base href="_blank" />`))
 	assert.Nil(t, err)
 
-	p, err := newPage("https://foo.com", n, newScraper(nil))
+	p, err := newPage("https://foo.com", n, newScraper(nil, false))
 	assert.Nil(t, err)
 
 	assert.Equal(t, "https://foo.com", p.URL().String())
@@ -44,7 +44,7 @@ func TestPageIDs(t *testing.T) {
 	n, err := html.Parse(strings.NewReader(`<p id="foo">Hello!</p>`))
 	assert.Nil(t, err)
 
-	p, err := newPage("https://foo.com", n, newScraper(nil))
+	p, err := newPage("https://foo.com", n, newScraper(nil, false))
 	assert.Nil(t, err)
 
 	assert.Equal(t, 1, len(p.IDs()))
@@ -77,7 +77,7 @@ func TestPageLinks(t *testing.T) {
 		n, err := html.Parse(strings.NewReader(ss[0]))
 		assert.Nil(t, err)
 
-		p, err := newPage("https://foo.com", n, newScraper(nil))
+		p, err := newPage("https://foo.com", n, newScraper(nil, false))
 		assert.Nil(t, err)
 
 		assert.Equal(t, 1, len(p.Links()))

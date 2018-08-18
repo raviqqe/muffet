@@ -14,7 +14,7 @@ import (
 var usage = fmt.Sprintf(`Muffet, the web repairgirl
 
 Usage:
-	muffet [-c <concurrency>] [-e <pattern>...] [-f] [-j <header>...] [-l <times>] [-r] [-s] [-t <seconds>] [-v] [-x] <url>
+	muffet [-c <concurrency>] [-e <pattern>...] [-f] [-j <header>...] [-l <times>] [-n] [-r] [-s] [-t <seconds>] [-v] [-x] <url>
 
 Options:
 	-c, --concurrency <concurrency>   Roughly maximum number of concurrent HTTP connections. [default: %v]
@@ -23,6 +23,7 @@ Options:
 	-h, --help                        Show this help.
 	-j, --header <header>...          Set custom headers.
 	-l, --limit-redirections <times>  Limit a number of redirections. [default: %v]
+	-n, --remove-newlines             Remove CR/LF characters from URLs before checking.
 	-r, --follow-robots-txt           Follow robots.txt when scraping.
 	-s, --follow-sitemap-xml          Scrape only pages listed in sitemap.xml.
 	-t, --timeout <seconds>           Set timeout for HTTP requests in seconds. [default: %v]
@@ -38,6 +39,7 @@ type arguments struct {
 	Headers         map[string]string
 	IgnoreFragments bool
 	MaxRedirections int
+	RemoveNewlines  bool
 	Timeout         time.Duration
 	URL             string
 	Verbose,
@@ -90,6 +92,7 @@ func getArguments(ss []string) (arguments, error) {
 		hs,
 		args["--ignore-fragments"].(bool),
 		r,
+		args["--remove-newlines"].(bool),
 		time.Duration(t) * time.Second,
 		args["<url>"].(string),
 		args["--verbose"].(bool),

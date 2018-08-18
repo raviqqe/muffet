@@ -12,9 +12,9 @@ func TestNewFetcher(t *testing.T) {
 }
 
 func TestFetcherFetch(t *testing.T) {
-	f := newFetcher(fetcherOptions{})
+	f := newFetcher(fetcherOptions{RemoveNewlines: true})
 
-	for _, s := range []string{rootURL, existentURL, fragmentURL, erroneousURL} {
+	for _, s := range []string{rootURL, existentURL, newlinesExistentURL, fragmentURL, erroneousURL} {
 		r, err := f.Fetch(s)
 		_, ok := r.Page()
 
@@ -43,6 +43,20 @@ func TestFetcherFetchCache(t *testing.T) {
 	assert.True(t, ok)
 
 	_, err = f.Fetch(nonExistentURL)
+	assert.NotNil(t, err)
+}
+
+func TestFetcherFetchWithNewlines(t *testing.T) {
+	f := newFetcher(fetcherOptions{RemoveNewlines: true})
+
+	r, err := f.Fetch(newlinesExistentURL)
+	_, ok := r.Page()
+
+	assert.Equal(t, 200, r.StatusCode())
+	assert.True(t, ok)
+	assert.Nil(t, err)
+
+	_, err = f.Fetch(newlinesNonexistentURL)
 	assert.NotNil(t, err)
 }
 
@@ -132,7 +146,7 @@ func TestSeparateFragment(t *testing.T) {
 		{"http://foo.com#bar", "http://foo.com", "bar"},
 		{"#bar", "", "bar"},
 	} {
-		u, id, err := separateFragment(ss[0])
+		u, id, err := separateFragment(ss[0], false)
 
 		assert.Nil(t, err)
 		assert.Equal(t, ss[1], u)
@@ -141,7 +155,7 @@ func TestSeparateFragment(t *testing.T) {
 }
 
 func TestSeparateFragmentError(t *testing.T) {
-	_, _, err := separateFragment(":")
+	_, _, err := separateFragment(":", false)
 
 	assert.NotNil(t, err)
 }
