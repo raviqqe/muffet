@@ -19,6 +19,8 @@ func TestScrapePage(t *testing.T) {
 	}{
 		{``, 0},
 		{`<a href="/" />`, 1},
+		{`<a href="/f
+		o 	o" />`, 1},
 		// TODO: Test <frame> tag.
 		{`<iframe src="/iframe"></iframe>`, 1},
 		{`<img src="/foo.jpg" />`, 1},

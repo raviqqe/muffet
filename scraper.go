@@ -3,6 +3,8 @@ package main
 import (
 	"net/url"
 	"regexp"
+	"strings"
+	"unicode"
 
 	"github.com/yhat/scrape"
 	"golang.org/x/net/html"
@@ -42,7 +44,7 @@ func (sc scraper) Scrape(n *html.Node, base *url.URL) map[string]error {
 		return ok
 	}) {
 		for _, a := range atomToAttributes[n.DataAtom] {
-			s := scrape.Attr(n, a)
+			s := normalizeURL(scrape.Attr(n, a))
 
 			if s == "" || sc.isURLExcluded(s) {
 				continue
@@ -74,4 +76,14 @@ func (sc scraper) isURLExcluded(u string) bool {
 	}
 
 	return false
+}
+
+func normalizeURL(s string) string {
+	return strings.Map(func(r rune) rune {
+		if unicode.IsSpace(r) {
+			return -1
+		}
+
+		return r
+	}, s)
 }
