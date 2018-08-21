@@ -1,6 +1,6 @@
 name: muffet
 version: latest
-version-script: git -C parts/muffet/build rev-parse --short HEAD
+version-script: prime/bin/muffet --version
 summary:  Fast website link checker in Go
 description: |
   Muffet is a website link checker which scrapes and inspects all pages in a

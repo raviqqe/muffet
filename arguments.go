@@ -11,8 +11,6 @@ import (
 	"github.com/docopt/docopt-go"
 )
 
-var version string
-
 var usage = fmt.Sprintf(`Muffet, the web repairgirl
 
 Usage:
@@ -100,7 +98,7 @@ func getArguments(ss []string) (arguments, error) {
 }
 
 func parseArguments(u string, ss []string) map[string]interface{} {
-	args, err := docopt.ParseArgs(u, ss, version)
+	args, err := docopt.ParseArgs(u, ss, "0.5.4")
 
 	if err != nil {
 		panic(err)
