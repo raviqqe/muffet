@@ -1,7 +1,7 @@
 name: muffet
 version: latest
 version-script: prime/bin/muffet --version
-summary:  Fast website link checker in Go
+summary: Fast website link checker in Go
 description: |
   Muffet is a website link checker which scrapes and inspects all pages in a
   website recursively.
