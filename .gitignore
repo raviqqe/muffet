@@ -1,2 +1,7 @@
+*.snap
+.snapcraft
 coverage.txt
 muffet
+parts
+prime
+stage
