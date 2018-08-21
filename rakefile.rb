@@ -13,7 +13,7 @@ task :lint do
 end
 
 task :build do
-  sh 'go build'
+  sh 'go build -ldflags "-X main.version=$(git describe --abbrev=0 --tags)"'
 end
 
 task :unit_test do
