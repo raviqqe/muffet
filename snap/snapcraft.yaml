@@ -1,5 +1,5 @@
 name: muffet
-version: "latest"
+version: latest
 version-script: git -C parts/muffet/build rev-parse --short HEAD
 summary:  Fast website link checker in Go
 description: |
@@ -20,7 +20,8 @@ parts:
     source-tag: go1.10.1
   muffet:
     plugin: go
-    after: [go]
+    after:
+      - go
     source: https://github.com/raviqqe/muffet.git
     source-type: git
     go-importpath: github.com/raviqqe/muffet
