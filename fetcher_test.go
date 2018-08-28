@@ -1,6 +1,7 @@
 package main
 
 import (
+	"sync"
 	"testing"
 	"time"
 
@@ -69,6 +70,23 @@ func TestFetcherFetchIgnoreFragments(t *testing.T) {
 
 	assert.NotEqual(t, fetchResult{}, r)
 	assert.Nil(t, err)
+}
+
+func TestFetcherFetchManyURLs(t *testing.T) {
+	g := &sync.WaitGroup{}
+	f := newFetcher(fetcherOptions{})
+
+	for i := 0; i < 1000; i++ {
+		g.Add(1)
+		go func() {
+			f.Fetch(countingURL)
+			g.Done()
+		}()
+	}
+
+	g.Wait()
+
+	assert.Equal(t, 1, testCountingHandler.Count())
 }
 
 func TestFetcherFetchWithTLSVerification(t *testing.T) {

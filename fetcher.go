@@ -62,7 +62,16 @@ func (f fetcher) Fetch(u string) (fetchResult, error) {
 }
 
 func (f fetcher) sendRequestWithCache(u string) (fetchResult, error) {
-	if x, ok := f.cache.Load(u); ok {
+	g := &sync.WaitGroup{}
+	g.Add(1)
+	defer g.Done()
+
+	if x, ok := f.cache.LoadOrStore(u, g); ok {
+		if g, ok := x.(*sync.WaitGroup); ok {
+			g.Wait()
+			x, _ = f.cache.Load(u)
+		}
+
 		switch x := x.(type) {
 		case fetchResult:
 			return x, nil

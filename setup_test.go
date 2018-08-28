@@ -11,6 +11,7 @@ import (
 	"os/exec"
 	"path"
 	"strings"
+	"sync/atomic"
 	"testing"
 	"time"
 
@@ -37,8 +38,9 @@ const (
 	missingMetadataURL  = "http://localhost:8081"
 	invalidRobotsTxtURL = "http://localhost:8082"
 	invalidMIMETypeURL  = "http://localhost:8083"
-	selfCertificateURL  = "https://localhost:8084"
-	noResponseURL       = "http://localhost:8085"
+	countingURL         = "http://localhost:8084"
+	selfCertificateURL  = "https://localhost:8085"
+	noResponseURL       = "http://localhost:8086"
 )
 
 type handler struct{}
@@ -194,13 +196,27 @@ func htmlWithBody(b string) string {
 	return fmt.Sprintf(`<html><body>%v</body></html>`, b)
 }
 
+type countingHandler struct{ count int32 }
+
+var testCountingHandler = &countingHandler{}
+
+func (h *countingHandler) Count() int {
+	return int(atomic.LoadInt32(&h.count))
+}
+
+func (h *countingHandler) ServeHTTP(w http.ResponseWriter, _ *http.Request) {
+	atomic.AddInt32(&h.count, 1)
+	w.WriteHeader(200)
+}
+
 func TestMain(m *testing.M) {
 	go http.ListenAndServe(":8080", handler{})
 	go http.ListenAndServe(":8081", noMetadataHandler{})
 	go http.ListenAndServe(":8082", invalidRobotsTxtHandler{})
 	go http.ListenAndServe(":8083", invalidMIMETypeHandler{})
+	go http.ListenAndServe(":8084", testCountingHandler)
 
-	f, g, err := prepareTLSServer(":8084")
+	f, g, err := prepareTLSServer(":8085")
 	defer g()
 
 	if err != nil {
