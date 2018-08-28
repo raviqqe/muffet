@@ -75,8 +75,8 @@ func (f fetcher) sendRequestWithCache(u string) (fetchResult, error) {
 		switch x := x.(type) {
 		case fetchResult:
 			return x, nil
-		case error:
-			return fetchResult{}, x
+		default:
+			return fetchResult{}, x.(error)
 		}
 	}
 
