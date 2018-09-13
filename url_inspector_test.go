@@ -30,8 +30,10 @@ func TestNewURLInspectorErrorWithRobotsTxt(t *testing.T) {
 }
 
 func TestNewURLInspectorWithMissingSitemapXML(t *testing.T) {
-	_, err := newURLInspector(missingMetadataURL, false, true)
-	assert.NotNil(t, err)
+	for _, s := range []string{missingMetadataURL, noResponseURL} {
+		_, err := newURLInspector(s, false, true)
+		assert.NotNil(t, err)
+	}
 }
 
 func TestURLInspectorInspectWithSitemapXML(t *testing.T) {
