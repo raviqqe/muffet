@@ -39,13 +39,15 @@ func TestNewURLInspectorWithMissingSitemapXML(t *testing.T) {
 }
 
 func TestNewURLInspectorWithSelfCertifiedServer(t *testing.T) {
-	_, err := newURLInspector(&fasthttp.Client{}, selfCertificateURL, true, true)
-	assert.NotNil(t, err)
+	for _, bs := range [][2]bool{{true, false}, {false, true}, {true, true}} {
+		_, err := newURLInspector(&fasthttp.Client{}, selfCertificateURL, bs[0], bs[1])
+		assert.NotNil(t, err)
 
-	_, err = newURLInspector(
-		&fasthttp.Client{TLSConfig: &tls.Config{InsecureSkipVerify: true}},
-		selfCertificateURL, true, true)
-	assert.Nil(t, err)
+		_, err = newURLInspector(
+			&fasthttp.Client{TLSConfig: &tls.Config{InsecureSkipVerify: true}},
+			selfCertificateURL, bs[0], bs[1])
+		assert.Nil(t, err)
+	}
 }
 
 func TestURLInspectorInspectWithSitemapXML(t *testing.T) {
