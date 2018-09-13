@@ -66,12 +66,11 @@ func (f fetcher) sendRequestWithCache(u string) (fetchResult, error) {
 			x, _ = f.cache.Load(u)
 		}
 
-		switch x := x.(type) {
-		case fetchResult:
-			return x, nil
-		default:
-			return fetchResult{}, x.(error)
+		if err, ok := x.(error); ok {
+			return fetchResult{}, err
 		}
+
+		return x.(fetchResult), nil
 	}
 
 	r, err := f.sendRequest(u)
