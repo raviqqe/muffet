@@ -47,7 +47,12 @@ func newURLInspector(c *fasthttp.Client, s string, r, sm bool) (urlInspector, er
 		u.Path = "sitemap.xml"
 
 		sitemap.SetFetch(func(s string, _ interface{}) ([]byte, error) {
-			_, bs, err := c.Get(nil, s)
+			c, bs, err := c.Get(nil, s)
+
+			if c != 200 {
+				return nil, errors.New("sitemap not found")
+			}
+
 			return bs, err
 		})
 

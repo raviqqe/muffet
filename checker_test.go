@@ -27,7 +27,7 @@ func TestNewCheckerWithNonHTMLPage(t *testing.T) {
 
 func TestNewCheckerWithMissingSitemapXML(t *testing.T) {
 	_, err := newChecker(missingMetadataURL, checkerOptions{FollowSitemapXML: true})
-	assert.Equal(t, "URL is not a sitemap or sitemapindex", err.Error())
+	assert.Equal(t, "sitemap not found", err.Error())
 }
 
 func TestCheckerCheck(t *testing.T) {
