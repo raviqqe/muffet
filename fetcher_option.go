@@ -6,13 +6,12 @@ import (
 )
 
 type fetcherOptions struct {
-	Concurrency         int
-	ExcludedPatterns    []*regexp.Regexp
-	Headers             map[string]string
-	IgnoreFragments     bool
-	MaxRedirections     int
-	SkipTLSVerification bool
-	Timeout             time.Duration
+	Concurrency      int
+	ExcludedPatterns []*regexp.Regexp
+	Headers          map[string]string
+	IgnoreFragments  bool
+	MaxRedirections  int
+	Timeout          time.Duration
 }
 
 func (o *fetcherOptions) Initialize() {

@@ -2,7 +2,6 @@ package main
 
 import (
 	"bytes"
-	"crypto/tls"
 	"errors"
 	"fmt"
 	"mime"
@@ -22,16 +21,11 @@ type fetcher struct {
 	scraper
 }
 
-func newFetcher(o fetcherOptions) fetcher {
+func newFetcher(c *fasthttp.Client, o fetcherOptions) fetcher {
 	o.Initialize()
 
 	return fetcher{
-		&fasthttp.Client{
-			MaxConnsPerHost: o.Concurrency,
-			TLSConfig: &tls.Config{
-				InsecureSkipVerify: o.SkipTLSVerification,
-			},
-		},
+		c,
 		newSemaphore(o.Concurrency),
 		&sync.Map{},
 		o,

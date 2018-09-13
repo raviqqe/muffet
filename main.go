@@ -31,11 +31,11 @@ func command(ss []string, w io.Writer) (int, error) {
 			args.Headers,
 			args.IgnoreFragments,
 			args.MaxRedirections,
-			args.SkipTLSVerification,
 			args.Timeout,
 		},
 		args.FollowRobotsTxt,
 		args.FollowSitemapXML,
+		args.SkipTLSVerification,
 	})
 
 	if err != nil {

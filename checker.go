@@ -1,10 +1,12 @@
 package main
 
 import (
+	"crypto/tls"
 	"errors"
 	"sync"
 
 	"github.com/fatih/color"
+	"github.com/valyala/fasthttp"
 )
 
 type checker struct {
@@ -18,7 +20,13 @@ type checker struct {
 func newChecker(s string, o checkerOptions) (checker, error) {
 	o.Initialize()
 
-	f := newFetcher(o.fetcherOptions)
+	c := &fasthttp.Client{
+		MaxConnsPerHost: o.Concurrency,
+		TLSConfig: &tls.Config{
+			InsecureSkipVerify: o.SkipTLSVerification,
+		},
+	}
+	f := newFetcher(c, o.fetcherOptions)
 	r, err := f.Fetch(s)
 
 	if err != nil {
@@ -31,7 +39,7 @@ func newChecker(s string, o checkerOptions) (checker, error) {
 		return checker{}, errors.New("non-HTML page")
 	}
 
-	ui, err := newURLInspector(p.URL().String(), o.FollowRobotsTxt, o.FollowSitemapXML)
+	ui, err := newURLInspector(c, p.URL().String(), o.FollowRobotsTxt, o.FollowSitemapXML)
 
 	if err != nil {
 		return checker{}, err
