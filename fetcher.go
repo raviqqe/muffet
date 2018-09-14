@@ -133,7 +133,7 @@ redirects:
 		if err != nil {
 			return fetchResult{}, err
 		} else if t != "text/html" {
-			return newFetchResult(res.StatusCode()), nil
+			return newFetchResult(res.StatusCode(), nil), nil
 		}
 	}
 
@@ -149,7 +149,7 @@ redirects:
 		return fetchResult{}, err
 	}
 
-	return newFetchResultWithPage(res.StatusCode(), p), nil
+	return newFetchResult(res.StatusCode(), p), nil
 }
 
 func separateFragment(s string) (string, string, error) {

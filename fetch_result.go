@@ -5,11 +5,7 @@ type fetchResult struct {
 	page       *page
 }
 
-func newFetchResult(s int) fetchResult {
-	return fetchResult{s, nil}
-}
-
-func newFetchResultWithPage(s int, p *page) fetchResult {
+func newFetchResult(s int, p *page) fetchResult {
 	return fetchResult{s, p}
 }
 
