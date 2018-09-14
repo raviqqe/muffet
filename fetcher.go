@@ -7,7 +7,6 @@ import (
 	"mime"
 	"net/url"
 	"strings"
-	"sync"
 
 	"github.com/valyala/fasthttp"
 	"golang.org/x/net/html"
@@ -16,7 +15,7 @@ import (
 type fetcher struct {
 	client              *fasthttp.Client
 	connectionSemaphore semaphore
-	cache               *sync.Map
+	cache               cache
 	options             fetcherOptions
 	scraper
 }
@@ -27,7 +26,7 @@ func newFetcher(c *fasthttp.Client, o fetcherOptions) fetcher {
 	return fetcher{
 		c,
 		newSemaphore(o.Concurrency),
-		&sync.Map{},
+		newCache(),
 		o,
 		newScraper(o.ExcludedPatterns),
 	}
@@ -56,16 +55,9 @@ func (f fetcher) Fetch(u string) (fetchResult, error) {
 }
 
 func (f fetcher) sendRequestWithCache(u string) (fetchResult, error) {
-	g := &sync.WaitGroup{}
-	g.Add(1)
-	defer g.Done()
+	x, s, ok := f.cache.LoadOrStore(u)
 
-	if x, ok := f.cache.LoadOrStore(u, g); ok {
-		if g, ok := x.(*sync.WaitGroup); ok {
-			g.Wait()
-			x, _ = f.cache.Load(u)
-		}
-
+	if ok {
 		if err, ok := x.(error); ok {
 			return fetchResult{}, err
 		}
@@ -76,9 +68,9 @@ func (f fetcher) sendRequestWithCache(u string) (fetchResult, error) {
 	r, err := f.sendRequest(u)
 
 	if err == nil {
-		f.cache.Store(u, r)
+		s(r)
 	} else {
-		f.cache.Store(u, err)
+		s(err)
 	}
 
 	return r, err
