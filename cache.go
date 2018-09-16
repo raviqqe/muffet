@@ -12,6 +12,10 @@ func newCache() cache {
 }
 
 func (c cache) LoadOrStore(s string) (interface{}, func(interface{}), bool) {
+	if x, ok := c.values.Load(s); ok {
+		return x, nil, true
+	}
+
 	g := &sync.WaitGroup{}
 	g.Add(1)
 
@@ -25,5 +29,6 @@ func (c cache) LoadOrStore(s string) (interface{}, func(interface{}), bool) {
 	return nil, func(x interface{}) {
 		c.values.Store(s, x)
 		g.Done()
+		c.locks.Delete(s)
 	}, false
 }
