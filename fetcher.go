@@ -15,7 +15,7 @@ import (
 type fetcher struct {
 	client              *fasthttp.Client
 	connectionSemaphore semaphore
-	cache               cache
+	cache               *cache
 	options             fetcherOptions
 	scraper
 }
