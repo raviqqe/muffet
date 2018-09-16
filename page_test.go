@@ -1,6 +1,8 @@
 package main
 
 import (
+	"bytes"
+	"encoding/gob"
 	"net/url"
 	"strings"
 	"testing"
@@ -86,4 +88,54 @@ func TestPageLinks(t *testing.T) {
 
 		assert.True(t, ok)
 	}
+}
+
+func TestPageEncodeDecode(t *testing.T) {
+	for _, s := range []string{
+		"",
+		`
+			<a href=":" />
+			<a href="mailto:me@right.here" />
+			<a href="/bar" />
+			<a href="#foo" />
+		`,
+	} {
+		n, err := html.Parse(strings.NewReader(htmlWithBody(s)))
+		assert.Nil(t, err)
+
+		p, err := newPage("https://foo.com", n, newScraper(nil))
+		assert.Nil(t, err)
+
+		b := bytes.NewBuffer(nil)
+		assert.Nil(t, gob.NewEncoder(b).Encode(p))
+
+		q := &page{}
+		assert.Nil(t, gob.NewDecoder(b).Decode(q))
+
+		assertPagesEqual(t, p, q)
+	}
+}
+
+func assertPagesEqual(t *testing.T, p, q *page) {
+	if p == nil {
+		assert.Equal(t, p, q)
+		return
+	}
+
+	assert.Equal(t, p.URL(), q.URL())
+	assert.Equal(t, p.IDs(), q.IDs())
+
+	for k, v := range p.Links() {
+		if v == nil {
+			assert.Equal(t, nil, q.Links()[k])
+			continue
+		}
+
+		assert.Equal(t, v.Error(), q.Links()[k].Error())
+	}
+}
+
+func TestPageUnmarshalError(t *testing.T) {
+	p := page{}
+	assert.NotNil(t, p.UnmarshalBinary(nil))
 }

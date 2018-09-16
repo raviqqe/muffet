@@ -1,6 +1,9 @@
 package main
 
 import (
+	"bytes"
+	"encoding/gob"
+	"errors"
 	"net/url"
 
 	"github.com/yhat/scrape"
@@ -61,4 +64,53 @@ func (p page) IDs() map[string]struct{} {
 
 func (p page) Links() map[string]error {
 	return p.links
+}
+
+type encodablePage struct {
+	URL   *url.URL
+	IDs   map[string]struct{}
+	Links map[string]string
+}
+
+func (p page) MarshalBinary() ([]byte, error) {
+	b := bytes.NewBuffer(nil)
+	ls := make(map[string]string, len(p.links))
+
+	for k, v := range p.links {
+		if v == nil {
+			ls[k] = ""
+			continue
+		}
+
+		ls[k] = v.Error()
+	}
+
+	if err := gob.NewEncoder(b).Encode(encodablePage{p.url, p.ids, ls}); err != nil {
+		return nil, err
+	}
+
+	return b.Bytes(), nil
+}
+
+func (p *page) UnmarshalBinary(bs []byte) error {
+	q := encodablePage{}
+
+	if err := gob.NewDecoder(bytes.NewBuffer(bs)).Decode(&q); err != nil {
+		return err
+	}
+
+	ls := make(map[string]error, len(q.Links))
+
+	for k, v := range q.Links {
+		if v == "" {
+			ls[k] = nil
+			continue
+		}
+
+		ls[k] = errors.New(v)
+	}
+
+	*p = page{q.URL, q.IDs, ls}
+
+	return nil
 }
