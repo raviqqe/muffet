@@ -49,6 +49,23 @@ func TestFetcherFetchCache(t *testing.T) {
 	assert.NotNil(t, err)
 }
 
+func TestFetcherFetchCacheConcurrency(t *testing.T) {
+	g := &sync.WaitGroup{}
+	f := newFetcher(&fasthttp.Client{}, fetcherOptions{})
+
+	for i := 0; i < 1000; i++ {
+		g.Add(1)
+		go func() {
+			f.Fetch(countingURL)
+			g.Done()
+		}()
+	}
+
+	g.Wait()
+
+	assert.Equal(t, 1, testCountingHandler.Count())
+}
+
 func TestFetcherFetchWithFragments(t *testing.T) {
 	f := newFetcher(&fasthttp.Client{}, fetcherOptions{})
 
@@ -72,23 +89,6 @@ func TestFetcherFetchIgnoreFragments(t *testing.T) {
 
 	assert.NotEqual(t, fetchResult{}, r)
 	assert.Nil(t, err)
-}
-
-func TestFetcherFetchManyURLs(t *testing.T) {
-	g := &sync.WaitGroup{}
-	f := newFetcher(&fasthttp.Client{}, fetcherOptions{})
-
-	for i := 0; i < 1000; i++ {
-		g.Add(1)
-		go func() {
-			f.Fetch(countingURL)
-			g.Done()
-		}()
-	}
-
-	g.Wait()
-
-	assert.Equal(t, 1, testCountingHandler.Count())
 }
 
 func TestFetcherFetchWithTLSVerification(t *testing.T) {
@@ -148,6 +148,24 @@ func TestFetcherSendRequestWithTimeout(t *testing.T) {
 	r, err := newFetcher(&fasthttp.Client{}, fetcherOptions{Timeout: 60 * time.Second}).sendRequest(timeoutURL)
 	assert.Equal(t, 200, r.StatusCode())
 	assert.Nil(t, err)
+}
+
+func TestFetcherSendRequestConcurrency(t *testing.T) {
+	c := 900
+	f := newFetcher(&fasthttp.Client{MaxConnsPerHost: c}, fetcherOptions{Concurrency: c})
+
+	g := sync.WaitGroup{}
+
+	for i := 0; i < 10000; i++ {
+		g.Add(1)
+		go func() {
+			_, err := f.sendRequest("http://httpbin.org/get")
+			assert.Nil(t, err)
+			g.Done()
+		}()
+	}
+
+	g.Wait()
 }
 
 func TestSeparateFragment(t *testing.T) {
