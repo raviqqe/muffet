@@ -60,3 +60,25 @@ func TestCacheLoadOrStoreConcurrency(t *testing.T) {
 	assert.Equal(t, int32(999), l)
 	assert.Equal(t, int32(1), s)
 }
+
+func BenchmarkCacheLoadOrStore(b *testing.B) {
+	c := newCache()
+	g := &sync.WaitGroup{}
+
+	_, f, ok := c.LoadOrStore("https://foo.com")
+	assert.False(b, ok)
+	f(42)
+
+	b.ResetTimer()
+
+	for i := 0; i < b.N; i++ {
+		g.Add(1)
+
+		go func() {
+			c.LoadOrStore("https://foo.com")
+			g.Done()
+		}()
+	}
+
+	g.Wait()
+}
