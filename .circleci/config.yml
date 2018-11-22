@@ -37,6 +37,7 @@ jobs:
       - image: docker:17
     steps:
       - setup_remote_docker
+      - checkout
       - attach_workspace:
           at: .
       - run: |
