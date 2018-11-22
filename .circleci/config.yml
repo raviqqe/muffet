@@ -1,4 +1,12 @@
 version: 2
+workflows:
+  version: 2
+  all:
+    jobs:
+      - build
+      - docker:
+          requires:
+            - build
 jobs:
   build:
     docker:
@@ -6,59 +14,39 @@ jobs:
     working_directory: /go/src/github.com/raviqqe/muffet
     steps:
       - checkout
-
-      - run:
-          name: Setup
-          command: |
-            apt -y update --fix-missing
-            apt -y upgrade
-            apt -y install rake
-
-      - run:
-          name: Dependencies
-          command: rake deps
-
-      - run:
-          name: Lint
-          command: rake lint
-
-      - run:
-          name: Build
-          command: rake build
-
-      - run:
-          name: Unit Test
-          command: rake unit_test
-
-      - run:
-          name: Coverage Report
-          command: |
-            bash <(curl -s https://codecov.io/bash)
-
-      - run:
-          name: Integration Test
-          command: |
-            rake serve
-            sleep 1
-            rake integration_test
-
+      - run: |
+          apt -y update --fix-missing
+          apt -y upgrade
+          apt -y install rake
+      - run: rake deps
+      - run: rake lint
+      - run: rake build
+      - run: rake unit_test
+      - run: curl -s https://codecov.io/bash | bash
+      - run: |
+          rake serve
+          sleep 1
+          rake integration_test
+      - run: ./muffet --version > version
+      - persist_to_workspace:
+          root: .
+          paths:
+            - version
+  docker:
+    docker:
+      - image: docker:17
+    steps:
       - setup_remote_docker
+      - attach_workspace:
+          at: .
+      - run: |
+          version=$(cat version)
 
-      - run:
-          name: Docker Image
-          command: |
-            curl -L https://download.docker.com/linux/static/stable/x86_64/docker-17.12.1-ce.tgz |
-            tar -xz -C /tmp
-            mv /tmp/docker/* /usr/bin
-
-            version=$(./muffet --version)
-            old_version=$(docker run raviqqe/muffet --version)
-
-            if [ $CIRCLE_BRANCH = master -a $version != $old_version ]
-            then
-              docker build -t $DOCKER_USER/muffet .
-              docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
-              docker push $DOCKER_USER/muffet
-              docker tag $DOCKER_USER/muffet $DOCKER_USER/muffet:$version
-              docker push $DOCKER_USER/muffet:$version
-            fi
+          if [ $CIRCLE_BRANCH = master -a $version != $(docker run raviqqe/muffet --version) ]
+          then
+            docker build -t $DOCKER_USER/muffet .
+            docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
+            docker push $DOCKER_USER/muffet
+            docker tag $DOCKER_USER/muffet $DOCKER_USER/muffet:$version
+            docker push $DOCKER_USER/muffet:$version
+          fi
