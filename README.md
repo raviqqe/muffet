@@ -7,7 +7,7 @@
 [![Snap](https://img.shields.io/badge/snap-available-orange.svg?style=flat-square)](https://snapcraft.io/muffet)
 [![License](https://img.shields.io/github/license/raviqqe/muffet.svg?style=flat-square)](LICENSE)
 
-[![asciicast](https://asciinema.org/a/178887.png)](https://asciinema.org/a/178887)
+![demo](img/demo.gif)
 
 Muffet is a website link checker which scrapes and inspects all pages in a
 website recursively.
