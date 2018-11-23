@@ -41,13 +41,14 @@ jobs:
       - attach_workspace:
           at: .
       - run: |
+          name=$DOCKER_USER/muffet
           version=$(cat version)
 
-          if [ $CIRCLE_BRANCH = master -a $version != $(docker run raviqqe/muffet --version) ]
+          if [ $CIRCLE_BRANCH = master -a $version != $(docker run $name --version) ]
           then
-            docker build -t $DOCKER_USER/muffet .
+            docker build -t $name .
             docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
-            docker push $DOCKER_USER/muffet
-            docker tag $DOCKER_USER/muffet $DOCKER_USER/muffet:$version
-            docker push $DOCKER_USER/muffet:$version
+            docker push $name
+            docker tag $name $name:$version
+            docker push $name:$version
           fi
