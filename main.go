@@ -32,6 +32,7 @@ func command(ss []string, w io.Writer) (int, error) {
 			args.IgnoreFragments,
 			args.MaxRedirections,
 			args.Timeout,
+			args.OnePageOnly,
 		},
 		args.FollowRobotsTxt,
 		args.FollowSitemapXML,
