@@ -12,6 +12,7 @@ type fetcherOptions struct {
 	IgnoreFragments  bool
 	MaxRedirections  int
 	Timeout          time.Duration
+	OnePageOnly      bool
 }
 
 func (o *fetcherOptions) Initialize() {

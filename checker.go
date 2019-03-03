@@ -94,8 +94,11 @@ func (c checker) checkPage(p *page) {
 				ec <- formatLinkError(u, err)
 			}
 
-			if p, ok := r.Page(); ok && c.urlInspector.Inspect(p.URL()) {
-				c.addPage(p)
+			// only consider adding the page to the list if we're recursing
+			if !c.fetcher.options.OnePageOnly {
+				if p, ok := r.Page(); ok && c.urlInspector.Inspect(p.URL()) {
+					c.addPage(p)
+				}
 			}
 		}(u)
 	}

@@ -14,7 +14,7 @@ import (
 var usage = fmt.Sprintf(`Muffet, the web repairgirl
 
 Usage:
-	muffet [-c <concurrency>] [-e <pattern>...] [-f] [-j <header>...] [-l <times>] [-r] [-s] [-t <seconds>] [-v] [-x] <url>
+	muffet [-c <concurrency>] [-e <pattern>...] [-f] [-j <header>...] [-l <times>] [-p] [-r] [-s] [-t <seconds>] [-v] [-x] <url>
 
 Options:
 	-c, --concurrency <concurrency>   Roughly maximum number of concurrent HTTP connections. [default: %v]
@@ -23,6 +23,7 @@ Options:
 	-h, --help                        Show this help.
 	-j, --header <header>...          Set custom headers.
 	-l, --limit-redirections <times>  Limit a number of redirections. [default: %v]
+	-p, --one-page-only               Only check links found in the given URL, do not follow links.
 	-r, --follow-robots-txt           Follow robots.txt when scraping.
 	-s, --follow-sitemap-xml          Scrape only pages listed in sitemap.xml.
 	-t, --timeout <seconds>           Set timeout for HTTP requests in seconds. [default: %v]
@@ -42,6 +43,7 @@ type arguments struct {
 	URL             string
 	Verbose,
 	SkipTLSVerification bool
+	OnePageOnly bool
 }
 
 func getArguments(ss []string) (arguments, error) {
@@ -94,6 +96,7 @@ func getArguments(ss []string) (arguments, error) {
 		args["<url>"].(string),
 		args["--verbose"].(bool),
 		args["--skip-tls-verification"].(bool),
+		args["--one-page-only"].(bool),
 	}, nil
 }
 
