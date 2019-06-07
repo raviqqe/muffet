@@ -45,6 +45,7 @@ const (
 
 type handler struct{}
 
+// nolint:errcheck
 func (handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Content-Type", "text/html")
 
@@ -172,6 +173,7 @@ func (noMetadataHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 type invalidRobotsTxtHandler struct{}
 
+// nolint:errcheck
 func (invalidRobotsTxtHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Content-Type", "text/html")
 
@@ -209,6 +211,7 @@ func (h *countingHandler) ServeHTTP(w http.ResponseWriter, _ *http.Request) {
 	w.WriteHeader(200)
 }
 
+// nolint:errcheck
 func TestMain(m *testing.M) {
 	go http.ListenAndServe(":8080", handler{})
 	go http.ListenAndServe(":8081", noMetadataHandler{})
@@ -230,6 +233,7 @@ func TestMain(m *testing.M) {
 	os.Exit(m.Run())
 }
 
+// nolint:errcheck
 func prepareTLSServer(a string) (func(), func(), error) {
 	d, err := ioutil.TempDir("", "")
 

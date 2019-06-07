@@ -1,11 +1,12 @@
+# frozen_string_literal: true
+
 task :deps do
-  sh 'go get -u github.com/alecthomas/gometalinter'
-  sh 'gometalinter --install'
+  sh 'GO111MODULE=off go get -u github.com/golangci/golangci-lint/cmd/golangci-lint'
   sh 'go get -d -t ./...'
 end
 
 task :lint do
-  sh 'gometalinter ./...'
+  sh 'golangci-lint run'
 end
 
 task :build do

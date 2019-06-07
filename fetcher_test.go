@@ -56,7 +56,8 @@ func TestFetcherFetchCacheConcurrency(t *testing.T) {
 	for i := 0; i < 1000; i++ {
 		g.Add(1)
 		go func() {
-			f.Fetch(countingURL)
+			_, err := f.Fetch(countingURL)
+			assert.Nil(t, err)
 			g.Done()
 		}()
 	}
