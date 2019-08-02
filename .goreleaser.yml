@@ -1,20 +1,28 @@
 builds:
   - env:
       - CGO_ENABLED=0
+    goarch:
+      - 386
+      - amd64
+      - arm
+      - arm64
+    goos:
+      - darwin
+      - freebsd
+      - linux
+      - windows
+    goarm:
+      - 6
+      - 7
 archives:
   - replacements:
-      darwin: Darwin
-      linux: Linux
-      windows: Windows
       386: i386
       amd64: x86_64
-checksum:
-  name_template: "checksums.txt"
-snapshot:
-  name_template: "{{ .Tag }}-next"
+      arm64: ARM64
+      arm: ARM
+      darwin: Darwin
+      freebsd: FreeBSD
+      linux: Linux
+      windows: Windows
 changelog:
   sort: asc
-  filters:
-    exclude:
-      - "^docs:"
-      - "^test:"
