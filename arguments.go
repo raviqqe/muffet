@@ -101,7 +101,7 @@ func getArguments(ss []string) (arguments, error) {
 }
 
 func parseArguments(u string, ss []string) map[string]interface{} {
-	args, err := docopt.ParseArgs(u, ss, "1.1.0")
+	args, err := docopt.ParseArgs(u, ss, "1.1.1")
 
 	if err != nil {
 		panic(err)
