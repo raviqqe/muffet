@@ -7,6 +7,8 @@ pids=$!
 ran -p=2222 -r=test/dead_link &
 pids="$pids $!"
 
+sleep 1
+
 ./muffet http://localhost:1111
 ! ./muffet http://localhost:2222
 
