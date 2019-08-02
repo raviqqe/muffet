@@ -21,6 +21,7 @@ jobs:
     docker:
       - image: golang
     environment:
+      CGO_ENABLED: "0"
       GO111MODULE: "on"
     working_directory: /go/src/github.com/raviqqe/muffet
     steps:
