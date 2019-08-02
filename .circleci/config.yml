@@ -21,7 +21,6 @@ jobs:
     docker:
       - image: golang
     environment:
-      CGO_ENABLED: "0"
       GO111MODULE: "on"
     working_directory: /go/src/github.com/raviqqe/muffet
     steps:
@@ -67,7 +66,7 @@ jobs:
           name=$DOCKER_USER/muffet
           version=$(./muffet --version)
 
-          if [ $version == $(docker run $name --version) ]
+          if [ $version = $(docker run $name --version) ]
           then
             exit 0
           fi
