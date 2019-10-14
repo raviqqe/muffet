@@ -28,7 +28,7 @@ func newFetcher(c *fasthttp.Client, o fetcherOptions) fetcher {
 		newSemaphore(o.Concurrency),
 		newCache(),
 		o,
-		newScraper(o.ExcludedPatterns),
+		newScraper(o.ExcludedPatterns, o.FollowURLParams),
 	}
 }
 

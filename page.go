@@ -22,7 +22,9 @@ func newPage(s string, n *html.Node, sc scraper) (*page, error) {
 	}
 
 	u.Fragment = ""
-	u.RawQuery = ""
+	if !sc.followURLParams {
+		u.RawQuery = ""
+	}
 
 	ids := map[string]struct{}{}
 

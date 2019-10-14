@@ -10,6 +10,7 @@ type fetcherOptions struct {
 	ExcludedPatterns []*regexp.Regexp
 	Headers          map[string]string
 	IgnoreFragments  bool
+	FollowURLParams  bool
 	MaxRedirections  int
 	Timeout          time.Duration
 	OnePageOnly      bool
