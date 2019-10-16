@@ -30,12 +30,14 @@ func command(ss []string, w io.Writer) (int, error) {
 			args.ExcludedPatterns,
 			args.Headers,
 			args.IgnoreFragments,
+			args.FollowURLParams,
 			args.MaxRedirections,
 			args.Timeout,
 			args.OnePageOnly,
 		},
 		args.FollowRobotsTxt,
 		args.FollowSitemapXML,
+		args.FollowURLParams,
 		args.SkipTLSVerification,
 	})
 
