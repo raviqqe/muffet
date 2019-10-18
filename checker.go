@@ -22,6 +22,7 @@ func newChecker(s string, o checkerOptions) (checker, error) {
 
 	c := &fasthttp.Client{
 		MaxConnsPerHost: o.Concurrency,
+		ReadBufferSize:  o.BufferSize,
 		TLSConfig: &tls.Config{
 			InsecureSkipVerify: o.SkipTLSVerification,
 		},

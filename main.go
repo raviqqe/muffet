@@ -35,6 +35,7 @@ func command(ss []string, w io.Writer) (int, error) {
 			args.Timeout,
 			args.OnePageOnly,
 		},
+		args.BufferSize,
 		args.FollowRobotsTxt,
 		args.FollowSitemapXML,
 		args.FollowURLParams,

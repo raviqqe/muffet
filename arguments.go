@@ -14,9 +14,10 @@ import (
 var usage = fmt.Sprintf(`Muffet, the web repairgirl
 
 Usage:
-	muffet [-c <concurrency>] [-e <pattern>...] [-f] [-j <header>...] [-l <times>] [-p] [-r] [-s] [-u] [-t <seconds>] [-v] [-x] <url>
+	muffet [-b <size>] [-c <concurrency>] [-e <pattern>...] [-f] [-j <header>...] [-l <times>] [-p] [-r] [-s] [-u] [-t <seconds>] [-v] [-x] <url>
 
 Options:
+	-b, --buffer-size <size>          Set HTTP body buffer size in bytes. [default: %v]
 	-c, --concurrency <concurrency>   Roughly maximum number of concurrent HTTP connections. [default: %v]
 	-e, --exclude <pattern>...        Exclude URLs matched with given regular expressions.
 	-f, --ignore-fragments            Ignore URL fragments.
@@ -30,9 +31,10 @@ Options:
 	-t, --timeout <seconds>           Set timeout for HTTP requests in seconds. [default: %v]
 	-v, --verbose                     Show successful results too.
 	-x, --skip-tls-verification       Skip TLS certificates verification.`,
-	defaultConcurrency, defaultMaxRedirections, defaultTimeout.Seconds())
+	defaultBufferSize, defaultConcurrency, defaultMaxRedirections, defaultTimeout.Seconds())
 
 type arguments struct {
+	BufferSize       int
 	Concurrency      int
 	ExcludedPatterns []*regexp.Regexp
 	FollowRobotsTxt,
@@ -50,6 +52,12 @@ type arguments struct {
 
 func getArguments(ss []string) (arguments, error) {
 	args := parseArguments(usage, ss)
+
+	b, err := parseInt(args["--buffer-size"].(string))
+
+	if err != nil {
+		return arguments{}, err
+	}
 
 	c, err := parseInt(args["--concurrency"].(string))
 
@@ -87,6 +95,7 @@ func getArguments(ss []string) (arguments, error) {
 	}
 
 	return arguments{
+		b,
 		c,
 		rs,
 		args["--follow-robots-txt"].(bool),
