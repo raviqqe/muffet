@@ -17,7 +17,7 @@ Usage:
 	muffet [-b <size>] [-c <concurrency>] [-e <pattern>...] [-f] [-j <header>...] [-l <times>] [-p] [-r] [-s] [-u] [-t <seconds>] [-v] [-x] <url>
 
 Options:
-	-b, --buffer-size <size>          Set HTTP body buffer size in bytes. [default: %v]
+	-b, --buffer-size <size>          Set HTTP response buffer size in bytes. [default: %v]
 	-c, --concurrency <concurrency>   Roughly maximum number of concurrent HTTP connections. [default: %v]
 	-e, --exclude <pattern>...        Exclude URLs matched with given regular expressions.
 	-f, --ignore-fragments            Ignore URL fragments.
