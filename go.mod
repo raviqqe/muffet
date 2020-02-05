@@ -61,7 +61,7 @@ require (
 	github.com/temoto/robotstxt v1.1.1
 	github.com/ugorji/go v1.1.7 // indirect
 	github.com/ultraware/funlen v0.0.2 // indirect
-	github.com/valyala/fasthttp v1.8.0
+	github.com/valyala/fasthttp v1.9.0
 	github.com/valyala/quicktemplate v1.2.0 // indirect
 	github.com/yhat/scrape v0.0.0-20161128144610-24b7890b0945
 	github.com/yterajima/go-sitemap v0.2.2
