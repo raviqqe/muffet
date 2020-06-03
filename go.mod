@@ -26,7 +26,6 @@ require (
 	github.com/grpc-ecosystem/go-grpc-middleware v1.1.0 // indirect
 	github.com/grpc-ecosystem/grpc-gateway v1.11.1 // indirect
 	github.com/hashicorp/golang-lru v0.5.3 // indirect
-	github.com/klauspost/compress v1.9.2 // indirect
 	github.com/konsorten/go-windows-terminal-sequences v1.0.2 // indirect
 	github.com/kr/pty v1.1.8 // indirect
 	github.com/logrusorgru/aurora v0.0.0-20190803045625-94edacc10f9b // indirect
@@ -59,7 +58,7 @@ require (
 	github.com/temoto/robotstxt v1.1.1
 	github.com/ugorji/go v1.1.7 // indirect
 	github.com/ultraware/funlen v0.0.2 // indirect
-	github.com/valyala/fasthttp v1.9.0
+	github.com/valyala/fasthttp v1.14.0
 	github.com/valyala/quicktemplate v1.2.0 // indirect
 	github.com/yhat/scrape v0.0.0-20161128144610-24b7890b0945
 	github.com/yterajima/go-sitemap v0.2.2
@@ -70,9 +69,8 @@ require (
 	golang.org/x/image v0.0.0-20190910094157-69e4b8554b2a // indirect
 	golang.org/x/lint v0.0.0-20190909230951-414d861bb4ac // indirect
 	golang.org/x/mobile v0.0.0-20190910184405-b558ed863381 // indirect
-	golang.org/x/net v0.0.0-20191119073136-fc4aabc6c914
+	golang.org/x/net v0.0.0-20200324143707-d3edc9973b7e
 	golang.org/x/sync v0.0.0-20190911185100-cd5d95a43a6e // indirect
-	golang.org/x/sys v0.0.0-20191119195528-f068ffe820e4 // indirect
 	golang.org/x/tools v0.0.0-20190912132005-44811c017489 // indirect
 	google.golang.org/api v0.10.0 // indirect
 	google.golang.org/appengine v1.6.2 // indirect
