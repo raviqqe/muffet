@@ -58,7 +58,7 @@ require (
 	github.com/temoto/robotstxt v1.1.1
 	github.com/ugorji/go v1.1.7 // indirect
 	github.com/ultraware/funlen v0.0.2 // indirect
-	github.com/valyala/fasthttp v1.14.0
+	github.com/valyala/fasthttp v1.15.0
 	github.com/valyala/quicktemplate v1.2.0 // indirect
 	github.com/yhat/scrape v0.0.0-20161128144610-24b7890b0945
 	github.com/yterajima/go-sitemap v0.2.2
@@ -69,7 +69,7 @@ require (
 	golang.org/x/image v0.0.0-20190910094157-69e4b8554b2a // indirect
 	golang.org/x/lint v0.0.0-20190909230951-414d861bb4ac // indirect
 	golang.org/x/mobile v0.0.0-20190910184405-b558ed863381 // indirect
-	golang.org/x/net v0.0.0-20200324143707-d3edc9973b7e
+	golang.org/x/net v0.0.0-20200602114024-627f9648deb9
 	golang.org/x/sync v0.0.0-20190911185100-cd5d95a43a6e // indirect
 	golang.org/x/tools v0.0.0-20190912132005-44811c017489 // indirect
 	google.golang.org/api v0.10.0 // indirect
