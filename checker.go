@@ -106,6 +106,9 @@ func (c checker) checkPage(p *page) {
 
 	w.Wait()
 
+	close(sc)
+	close(ec)
+
 	c.results <- newPageResult(p.URL().String(), stringChannelToSlice(sc), stringChannelToSlice(ec))
 }
 
@@ -118,8 +121,8 @@ func (c checker) addPage(p *page) {
 func stringChannelToSlice(sc <-chan string) []string {
 	ss := make([]string, 0, len(sc))
 
-	for i := 0; i < cap(ss); i++ {
-		ss = append(ss, <-sc)
+	for s := range sc {
+		ss = append(ss, s)
 	}
 
 	return ss
