@@ -55,9 +55,9 @@ func (f fetcher) Fetch(u string) (fetchResult, error) {
 }
 
 func (f fetcher) sendRequestWithCache(u string) (fetchResult, error) {
-	x, s, ok := f.cache.LoadOrStore(u)
+	x, store := f.cache.LoadOrStore(u)
 
-	if ok {
+	if store == nil {
 		if err, ok := x.(error); ok {
 			return fetchResult{}, err
 		}
@@ -68,9 +68,9 @@ func (f fetcher) sendRequestWithCache(u string) (fetchResult, error) {
 	r, err := f.sendRequest(u)
 
 	if err == nil {
-		s(r)
+		store(r)
 	} else {
-		s(err)
+		store(err)
 	}
 
 	return r, err

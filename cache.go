@@ -11,23 +11,23 @@ func newCache() cache {
 	return cache{&sync.Map{}, &sync.Map{}}
 }
 
-func (c cache) LoadOrStore(s string) (interface{}, func(interface{}), bool) {
-	if x, ok := c.values.Load(s); ok {
-		return x, nil, true
+func (c cache) LoadOrStore(key string) (interface{}, func(interface{})) {
+	if x, ok := c.values.Load(key); ok {
+		return x, nil
 	}
 
 	g := &sync.WaitGroup{}
 	g.Add(1)
 
-	if g, ok := c.locks.LoadOrStore(s, g); ok {
+	if g, ok := c.locks.LoadOrStore(key, g); ok {
 		g.(*sync.WaitGroup).Wait()
-		x, _ := c.values.Load(s)
+		x, _ := c.values.Load(key)
 
-		return x, nil, true
+		return x, nil
 	}
 
 	return nil, func(x interface{}) {
-		c.values.Store(s, x)
+		c.values.Store(key, x)
 		g.Done()
-	}, false
+	}
 }

@@ -15,19 +15,17 @@ func TestNewCache(t *testing.T) {
 func TestCacheLoadOrStore(t *testing.T) {
 	c := newCache()
 
-	x, f, ok := c.LoadOrStore("https://foo.com")
+	x, f := c.LoadOrStore("https://foo.com")
 
 	assert.Nil(t, x)
 	assert.NotNil(t, f)
-	assert.False(t, ok)
 
 	f(42)
 
-	x, f, ok = c.LoadOrStore("https://foo.com")
+	x, f = c.LoadOrStore("https://foo.com")
 
 	assert.Equal(t, 42, x)
 	assert.Nil(t, f)
-	assert.True(t, ok)
 }
 
 func TestCacheLoadOrStoreConcurrency(t *testing.T) {
@@ -40,9 +38,9 @@ func TestCacheLoadOrStoreConcurrency(t *testing.T) {
 		g.Add(1)
 
 		go func() {
-			x, f, ok := c.LoadOrStore("https://foo.com")
+			x, f := c.LoadOrStore("https://foo.com")
 
-			if ok {
+			if f == nil {
 				assert.Equal(t, 42, x)
 				atomic.AddInt32(&l, 1)
 			} else {
@@ -65,8 +63,7 @@ func BenchmarkCacheLoadOrStore(b *testing.B) {
 	c := newCache()
 	g := &sync.WaitGroup{}
 
-	_, f, ok := c.LoadOrStore("https://foo.com")
-	assert.False(b, ok)
+	_, f := c.LoadOrStore("https://foo.com")
 	f(42)
 
 	b.ResetTimer()
