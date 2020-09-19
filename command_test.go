@@ -9,12 +9,12 @@ import (
 )
 
 func TestCommand(t *testing.T) {
-	for _, ss := range [][]string{
+	for _, args := range [][]string{
 		{"-x", rootURL},
 		{"-j", authorizationHeader("me:password"), basicAuthURL},
 		{"-e", ".*", erroneousURL},
 	} {
-		ok, err := command(ss, ioutil.Discard)
+		ok, err := newCommand(ioutil.Discard).Run(args)
 
 		assert.True(t, ok)
 		assert.Nil(t, err)
@@ -22,10 +22,10 @@ func TestCommand(t *testing.T) {
 }
 
 func TestCommandErroneousResult(t *testing.T) {
-	for _, ss := range [][]string{
+	for _, args := range [][]string{
 		{erroneousURL},
 	} {
-		ok, err := command(ss, ioutil.Discard)
+		ok, err := newCommand(ioutil.Discard).Run(args)
 
 		assert.False(t, ok)
 		assert.Nil(t, err)
@@ -33,12 +33,12 @@ func TestCommandErroneousResult(t *testing.T) {
 }
 
 func TestCommandError(t *testing.T) {
-	for _, ss := range [][]string{
+	for _, args := range [][]string{
 		{":"},
 		{"-t", "foo", rootURL},
 		{"-j", authorizationHeader("you:password"), basicAuthURL},
 	} {
-		_, err := command(ss, ioutil.Discard)
+		_, err := newCommand(ioutil.Discard).Run(args)
 
 		assert.NotNil(t, err)
 	}
