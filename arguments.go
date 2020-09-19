@@ -50,36 +50,33 @@ type arguments struct {
 	OnePageOnly bool
 }
 
-func getArguments(ss []string) (arguments, error) {
-	args := parseArguments(usage, ss)
+func getArguments(regexps []string) (arguments, error) {
+	args := parseArguments(usage, regexps)
 
-	b, err := parseInt(args["--buffer-size"].(string))
-
-	if err != nil {
-		return arguments{}, err
-	}
-
-	c, err := parseInt(args["--concurrency"].(string))
+	bufferSize, err := parseInt(args["--buffer-size"].(string))
 
 	if err != nil {
 		return arguments{}, err
 	}
 
-	ss, _ = args["--exclude"].([]string)
+	concurrency, err := parseInt(args["--concurrency"].(string))
+
+	if err != nil {
+		return arguments{}, err
+	}
+
+	ss, _ := args["--exclude"].([]string)
 	rs, err := compileRegexps(ss)
 
 	if err != nil {
 		return arguments{}, err
 	}
 
-	hs := map[string]string(nil)
+	ss, _ = args["--header"].([]string)
+	hs, err := parseHeaders(ss)
 
-	if ss := args["--header"]; ss != nil {
-		hs, err = parseHeaders(ss.([]string))
-
-		if err != nil {
-			return arguments{}, err
-		}
+	if err != nil {
+		return arguments{}, err
 	}
 
 	r, err := parseInt(args["--limit-redirections"].(string))
@@ -95,8 +92,8 @@ func getArguments(ss []string) (arguments, error) {
 	}
 
 	return arguments{
-		b,
-		c,
+		bufferSize,
+		concurrency,
 		rs,
 		args["--follow-robots-txt"].(bool),
 		args["--follow-sitemap-xml"].(bool),
@@ -127,10 +124,10 @@ func parseInt(s string) (int, error) {
 	return int(i), err
 }
 
-func compileRegexps(exps []string) ([]*regexp.Regexp, error) {
-	rs := make([]*regexp.Regexp, 0, len(exps))
+func compileRegexps(regexps []string) ([]*regexp.Regexp, error) {
+	rs := make([]*regexp.Regexp, 0, len(regexps))
 
-	for _, s := range exps {
+	for _, s := range regexps {
 		r, err := regexp.Compile(s)
 
 		if err != nil {
