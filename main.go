@@ -9,21 +9,22 @@ import (
 )
 
 func main() {
-	s, err := command(os.Args[1:], colorable.NewColorableStdout())
+	ok, err := command(os.Args[1:], colorable.NewColorableStdout())
 
 	if err != nil {
 		fprintln(os.Stderr, err)
-		os.Exit(1)
 	}
 
-	os.Exit(s)
+	if !ok {
+		os.Exit(1)
+	}
 }
 
-func command(ss []string, w io.Writer) (int, error) {
+func command(ss []string, w io.Writer) (bool, error) {
 	args, err := getArguments(ss)
 
 	if err != nil {
-		return 0, err
+		return false, err
 	}
 
 	c, err := newChecker(args.URL, checkerOptions{
@@ -45,12 +46,12 @@ func command(ss []string, w io.Writer) (int, error) {
 	})
 
 	if err != nil {
-		return 0, err
+		return false, err
 	}
 
 	go c.Check()
 
-	s := 0
+	ok := true
 
 	for r := range c.Results() {
 		if !r.OK() || args.Verbose {
@@ -58,11 +59,11 @@ func command(ss []string, w io.Writer) (int, error) {
 		}
 
 		if !r.OK() {
-			s = 1
+			ok = false
 		}
 	}
 
-	return s, nil
+	return ok, nil
 }
 
 func fprintln(w io.Writer, xs ...interface{}) {
