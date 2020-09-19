@@ -137,6 +137,8 @@ func TestStringChannelToSlice(t *testing.T) {
 			[]string{"foo", "bar", "baz"},
 		},
 	} {
+		close(c.channel)
+
 		assert.Equal(t, c.slice, stringChannelToSlice(c.channel))
 	}
 }
