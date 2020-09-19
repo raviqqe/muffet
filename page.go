@@ -22,6 +22,7 @@ func newPage(s string, n *html.Node, sc scraper) (*page, error) {
 	}
 
 	u.Fragment = ""
+
 	if !sc.followURLParams {
 		u.RawQuery = ""
 	}
