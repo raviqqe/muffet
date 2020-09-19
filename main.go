@@ -4,10 +4,12 @@ import (
 	"fmt"
 	"io"
 	"os"
+
+	"github.com/mattn/go-colorable"
 )
 
 func main() {
-	s, err := command(os.Args[1:], os.Stdout)
+	s, err := command(os.Args[1:], colorable.NewColorableStdout())
 
 	if err != nil {
 		fprintln(os.Stderr, err)
