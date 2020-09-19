@@ -53,13 +53,13 @@ type arguments struct {
 func getArguments(regexps []string) (arguments, error) {
 	args := parseArguments(usage, regexps)
 
-	bufferSize, err := parseInt(args["--buffer-size"].(string))
+	b, err := parseInt(args["--buffer-size"].(string))
 
 	if err != nil {
 		return arguments{}, err
 	}
 
-	concurrency, err := parseInt(args["--concurrency"].(string))
+	c, err := parseInt(args["--concurrency"].(string))
 
 	if err != nil {
 		return arguments{}, err
@@ -92,8 +92,8 @@ func getArguments(regexps []string) (arguments, error) {
 	}
 
 	return arguments{
-		bufferSize,
-		concurrency,
+		b,
+		c,
 		rs,
 		args["--follow-robots-txt"].(bool),
 		args["--follow-sitemap-xml"].(bool),
