@@ -11,10 +11,10 @@ import (
 
 type checker struct {
 	fetcher
-	daemons      daemons
-	urlInspector urlInspector
-	results      chan pageResult
-	donePages    concurrentStringSet
+	daemonManager daemonManager
+	urlInspector  urlInspector
+	results       chan pageResult
+	donePages     concurrentStringSet
 }
 
 func newChecker(s string, o checkerOptions) (checker, error) {
@@ -48,7 +48,7 @@ func newChecker(s string, o checkerOptions) (checker, error) {
 
 	ch := checker{
 		f,
-		newDaemons(o.Concurrency),
+		newDaemonManager(o.Concurrency),
 		ui,
 		make(chan pageResult, o.Concurrency),
 		newConcurrentStringSet(),
@@ -64,7 +64,7 @@ func (c checker) Results() <-chan pageResult {
 }
 
 func (c checker) Check() {
-	c.daemons.Run()
+	c.daemonManager.Run()
 
 	close(c.results)
 }
@@ -111,7 +111,7 @@ func (c checker) checkPage(p *page) {
 
 func (c checker) addPage(p *page) {
 	if !c.donePages.Add(p.URL().String()) {
-		c.daemons.Add(func() { c.checkPage(p) })
+		c.daemonManager.Add(func() { c.checkPage(p) })
 	}
 }
 
