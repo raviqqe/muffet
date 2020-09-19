@@ -19,7 +19,6 @@ func newCommand(writer io.Writer) command {
 
 func (c command) Run(rawArgs []string) (bool, error) {
 	args, err := getArguments(rawArgs)
-
 	if err != nil {
 		return false, err
 	}
@@ -44,7 +43,6 @@ func (c command) Run(rawArgs []string) (bool, error) {
 	})
 
 	r, err := f.Fetch(args.URL)
-
 	if err != nil {
 		return false, err
 	}
@@ -56,7 +54,6 @@ func (c command) Run(rawArgs []string) (bool, error) {
 	}
 
 	ui, err := newURLInspector(client, p.URL().String(), args.FollowRobotsTxt, args.FollowSitemapXML)
-
 	if err != nil {
 		return false, err
 	}

@@ -54,39 +54,33 @@ func getArguments(regexps []string) (arguments, error) {
 	args := parseArguments(usage, regexps)
 
 	b, err := parseInt(args["--buffer-size"].(string))
-
 	if err != nil {
 		return arguments{}, err
 	}
 
 	c, err := parseInt(args["--concurrency"].(string))
-
 	if err != nil {
 		return arguments{}, err
 	}
 
 	ss, _ := args["--exclude"].([]string)
 	rs, err := compileRegexps(ss)
-
 	if err != nil {
 		return arguments{}, err
 	}
 
 	ss, _ = args["--header"].([]string)
 	hs, err := parseHeaders(ss)
-
 	if err != nil {
 		return arguments{}, err
 	}
 
 	r, err := parseInt(args["--limit-redirections"].(string))
-
 	if err != nil {
 		return arguments{}, err
 	}
 
 	t, err := parseInt(args["--timeout"].(string))
-
 	if err != nil {
 		return arguments{}, err
 	}
@@ -111,7 +105,6 @@ func getArguments(regexps []string) (arguments, error) {
 
 func parseArguments(u string, ss []string) map[string]interface{} {
 	args, err := docopt.ParseArgs(u, ss, "1.3.3")
-
 	if err != nil {
 		panic(err)
 	}
@@ -129,7 +122,6 @@ func compileRegexps(regexps []string) ([]*regexp.Regexp, error) {
 
 	for _, s := range regexps {
 		r, err := regexp.Compile(s)
-
 		if err != nil {
 			return nil, err
 		}

@@ -16,7 +16,6 @@ type page struct {
 
 func newPage(s string, n *html.Node, sc scraper) (*page, error) {
 	u, err := url.Parse(s)
-
 	if err != nil {
 		return nil, err
 	}
@@ -43,7 +42,6 @@ func newPage(s string, n *html.Node, sc scraper) (*page, error) {
 		return n.DataAtom == atom.Base
 	}); ok {
 		u, err := url.Parse(scrape.Attr(n, "href"))
-
 		if err != nil {
 			return nil, err
 		}

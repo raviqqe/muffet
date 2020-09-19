@@ -17,7 +17,6 @@ type urlInspector struct {
 
 func newURLInspector(c *fasthttp.Client, s string, r, sm bool) (urlInspector, error) {
 	u, err := url.Parse(s)
-
 	if err != nil {
 		return urlInspector{}, err
 	}
@@ -57,7 +56,6 @@ func newURLInspector(c *fasthttp.Client, s string, r, sm bool) (urlInspector, er
 		})
 
 		m, err := sitemap.Get(u.String(), nil)
-
 		if err != nil {
 			return urlInspector{}, err
 		}

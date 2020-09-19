@@ -105,7 +105,6 @@ func (handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		}
 
 		bs, err := base64.StdEncoding.DecodeString(ss[1])
-
 		if err != nil {
 			w.WriteHeader(401)
 			return
@@ -121,13 +120,11 @@ func (handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		w.Header().Add("Content-Type", "text/plain")
 
 		u, err := url.Parse(erroneousURL)
-
 		if err != nil {
 			panic(err)
 		}
 
 		v, err := url.Parse(fragmentURL)
-
 		if err != nil {
 			panic(err)
 		}
@@ -236,7 +233,6 @@ func TestMain(m *testing.M) {
 // nolint:errcheck
 func prepareTLSServer(a string) (func(), func(), error) {
 	d, err := ioutil.TempDir("", "")
-
 	if err != nil {
 		return nil, nil, err
 	}

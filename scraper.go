@@ -52,7 +52,6 @@ func (sc scraper) Scrape(n *html.Node, base *url.URL) map[string]error {
 			}
 
 			u, err := url.Parse(s)
-
 			if err != nil {
 				us[s] = err
 				continue

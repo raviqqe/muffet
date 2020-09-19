@@ -34,13 +34,11 @@ func newFetcher(c *fasthttp.Client, o fetcherOptions) fetcher {
 
 func (f fetcher) Fetch(u string) (fetchResult, error) {
 	u, fr, err := separateFragment(u)
-
 	if err != nil {
 		return fetchResult{}, err
 	}
 
 	r, err := f.sendRequestWithCache(u)
-
 	if err != nil {
 		return fetchResult{}, err
 	}
@@ -93,7 +91,6 @@ func (f fetcher) sendRequest(u string) (fetchResult, error) {
 redirects:
 	for {
 		err := f.client.DoTimeout(&req, &res, f.options.Timeout)
-
 		if err != nil {
 			return fetchResult{}, err
 		}
@@ -131,13 +128,11 @@ redirects:
 	}
 
 	n, err := html.Parse(bytes.NewReader(res.Body()))
-
 	if err != nil {
 		return fetchResult{}, err
 	}
 
 	p, err := newPage(req.URI().String(), n, f.scraper)
-
 	if err != nil {
 		return fetchResult{}, err
 	}
@@ -147,7 +142,6 @@ redirects:
 
 func separateFragment(s string) (string, string, error) {
 	u, err := url.Parse(s)
-
 	if err != nil {
 		return "", "", err
 	}
