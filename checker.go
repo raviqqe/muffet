@@ -1,69 +1,35 @@
 package main
 
 import (
-	"crypto/tls"
-	"errors"
 	"sync"
 
 	"github.com/fatih/color"
-	"github.com/valyala/fasthttp"
 )
 
 type checker struct {
-	fetcher
-	daemonManager daemonManager
+	fetcher       fetcher
 	urlInspector  urlInspector
+	daemonManager daemonManager
 	results       chan pageResult
 	donePages     concurrentStringSet
 }
 
-func newChecker(s string, o checkerOptions) (checker, error) {
-	o.Initialize()
-
-	c := &fasthttp.Client{
-		MaxConnsPerHost: o.Concurrency,
-		ReadBufferSize:  o.BufferSize,
-		TLSConfig: &tls.Config{
-			InsecureSkipVerify: o.SkipTLSVerification,
-		},
-	}
-	f := newFetcher(c, o.fetcherOptions)
-	r, err := f.Fetch(s)
-
-	if err != nil {
-		return checker{}, err
-	}
-
-	p, ok := r.Page()
-
-	if !ok {
-		return checker{}, errors.New("non-HTML page")
-	}
-
-	ui, err := newURLInspector(c, p.URL().String(), o.FollowRobotsTxt, o.FollowSitemapXML)
-
-	if err != nil {
-		return checker{}, err
-	}
-
-	ch := checker{
+func newChecker(f fetcher, ui urlInspector, concurrency int) checker {
+	return checker{
 		f,
-		newDaemonManager(o.Concurrency),
 		ui,
-		make(chan pageResult, o.Concurrency),
+		newDaemonManager(concurrency),
+		make(chan pageResult, concurrency),
 		newConcurrentStringSet(),
 	}
-
-	ch.addPage(p)
-
-	return ch, nil
 }
 
 func (c checker) Results() <-chan pageResult {
 	return c.results
 }
 
-func (c checker) Check() {
+func (c checker) Check(page *page) {
+	c.addPage(page)
 	c.daemonManager.Run()
 
 	close(c.results)
@@ -95,7 +61,6 @@ func (c checker) checkPage(p *page) {
 				ec <- formatLinkError(u, err)
 			}
 
-			// only consider adding the page to the list if we're recursing
 			if !c.fetcher.options.OnePageOnly {
 				if p, ok := r.Page(); ok && c.urlInspector.Inspect(p.URL()) {
 					c.addPage(p)

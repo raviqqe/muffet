@@ -1,8 +1,12 @@
 package main
 
 import (
+	"crypto/tls"
+	"errors"
 	"fmt"
 	"io"
+
+	"github.com/valyala/fasthttp"
 )
 
 type command struct {
@@ -20,31 +24,48 @@ func (c command) Run(rawArgs []string) (bool, error) {
 		return false, err
 	}
 
-	checker, err := newChecker(args.URL, checkerOptions{
-		fetcherOptions{
-			args.Concurrency,
-			args.ExcludedPatterns,
-			args.Headers,
-			args.IgnoreFragments,
-			args.FollowURLParams,
-			args.MaxRedirections,
-			args.Timeout,
-			args.OnePageOnly,
+	client := &fasthttp.Client{
+		MaxConnsPerHost: args.Concurrency,
+		ReadBufferSize:  args.BufferSize,
+		TLSConfig: &tls.Config{
+			InsecureSkipVerify: args.SkipTLSVerification,
 		},
-		args.BufferSize,
-		args.FollowRobotsTxt,
-		args.FollowSitemapXML,
+	}
+
+	f := newFetcher(client, fetcherOptions{
+		args.Concurrency,
+		args.ExcludedPatterns,
+		args.Headers,
+		args.IgnoreFragments,
 		args.FollowURLParams,
-		args.SkipTLSVerification,
+		args.MaxRedirections,
+		args.Timeout,
+		args.OnePageOnly,
 	})
+
+	r, err := f.Fetch(args.URL)
 
 	if err != nil {
 		return false, err
 	}
 
-	go checker.Check()
+	p, ok := r.Page()
 
-	ok := true
+	if !ok {
+		return false, errors.New("non-HTML page")
+	}
+
+	ui, err := newURLInspector(client, p.URL().String(), args.FollowRobotsTxt, args.FollowSitemapXML)
+
+	if err != nil {
+		return false, err
+	}
+
+	checker := newChecker(f, ui, args.Concurrency)
+
+	go checker.Check(p)
+
+	ok = true
 
 	for r := range checker.Results() {
 		if !r.OK() || args.Verbose {
