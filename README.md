@@ -4,7 +4,6 @@
 [![Codecov](https://img.shields.io/codecov/c/github/raviqqe/muffet.svg?style=flat-square)](https://codecov.io/gh/raviqqe/muffet)
 [![Go Report Card](https://goreportcard.com/badge/github.com/raviqqe/muffet?style=flat-square)](https://goreportcard.com/report/github.com/raviqqe/muffet)
 [![Docker](https://img.shields.io/badge/docker-available-blue.svg?style=flat-square)](https://hub.docker.com/r/raviqqe/muffet)
-[![Snap](https://img.shields.io/badge/snap-available-orange.svg?style=flat-square)](https://snapcraft.io/muffet)
 [![License](https://img.shields.io/github/license/raviqqe/muffet.svg?style=flat-square)](LICENSE)
 
 ![demo](img/demo.gif)
