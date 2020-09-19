@@ -127,10 +127,10 @@ func parseInt(s string) (int, error) {
 	return int(i), err
 }
 
-func compileRegexps(ss []string) ([]*regexp.Regexp, error) {
-	rs := make([]*regexp.Regexp, 0, len(ss))
+func compileRegexps(exps []string) ([]*regexp.Regexp, error) {
+	rs := make([]*regexp.Regexp, 0, len(exps))
 
-	for _, s := range ss {
+	for _, s := range exps {
 		r, err := regexp.Compile(s)
 
 		if err != nil {
@@ -143,10 +143,10 @@ func compileRegexps(ss []string) ([]*regexp.Regexp, error) {
 	return rs, nil
 }
 
-func parseHeaders(ss []string) (map[string]string, error) {
-	m := make(map[string]string, len(ss))
+func parseHeaders(headers []string) (map[string]string, error) {
+	m := make(map[string]string, len(headers))
 
-	for _, s := range ss {
+	for _, s := range headers {
 		i := strings.IndexRune(s, ':')
 
 		if i < 0 {
