@@ -42,7 +42,6 @@ const (
 	invalidRobotsTxtURL = "http://localhost:8082"
 	invalidMIMETypeURL  = "http://localhost:8083"
 	countingURL         = "http://localhost:8084"
-	selfCertificateURL  = "https://localhost:8085"
 	noResponseURL       = "http://localhost:8086"
 )
 
