@@ -46,7 +46,7 @@ func (f linkFinder) Find(n *html.Node, base *url.URL) map[string]error {
 		for _, a := range atomToAttributes[n.DataAtom] {
 			s := normalizeURL(scrape.Attr(n, a))
 
-			if s == "" || f.isURLExcluded(s) {
+			if s == "" || f.isLinkExcluded(s) {
 				continue
 			}
 
@@ -67,7 +67,7 @@ func (f linkFinder) Find(n *html.Node, base *url.URL) map[string]error {
 	return us
 }
 
-func (f linkFinder) isURLExcluded(u string) bool {
+func (f linkFinder) isLinkExcluded(u string) bool {
 	for _, r := range f.excludedPatterns {
 		if r.MatchString(u) {
 			return true
