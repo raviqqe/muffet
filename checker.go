@@ -14,10 +14,10 @@ type checker struct {
 	donePages     concurrentStringSet
 }
 
-func newChecker(f fetcher, ui urlValidator, concurrency int) checker {
+func newChecker(f fetcher, uv urlValidator, concurrency int) checker {
 	return checker{
 		f,
-		ui,
+		uv,
 		newDaemonManager(concurrency),
 		make(chan pageResult, concurrency),
 		newConcurrentStringSet(),
