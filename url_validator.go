@@ -9,11 +9,11 @@ import (
 type urlValidator struct {
 	hostname    string
 	sitemapURLs map[string]struct{}
-	robotsTxt   *robotstxt.RobotsData
+	robotsData  *robotstxt.RobotsData
 }
 
-func newURLValidator(hostname string, robotsTxt *robotstxt.RobotsData, sitemap map[string]struct{}) urlValidator {
-	return urlValidator{hostname, sitemap, robotsTxt}
+func newURLValidator(hostname string, robotsData *robotstxt.RobotsData, sitemap map[string]struct{}) urlValidator {
+	return urlValidator{hostname, sitemap, robotsData}
 }
 
 func (i urlValidator) Validate(u *url.URL) bool {
@@ -23,7 +23,7 @@ func (i urlValidator) Validate(u *url.URL) bool {
 		}
 	}
 
-	if i.robotsTxt != nil && !i.robotsTxt.TestAgent(u.Path, "muffet") {
+	if i.robotsData != nil && !i.robotsData.TestAgent(u.Path, "muffet") {
 		return false
 	}
 
