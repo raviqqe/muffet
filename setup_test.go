@@ -38,11 +38,8 @@ const (
 	basicAuthURL        = "http://localhost:8080/basic-auth"
 	// TODO Write test for it.
 	// robotsTxtURL = "http://localhost:8080/robots.txt"
-	missingMetadataURL  = "http://localhost:8081"
-	invalidRobotsTxtURL = "http://localhost:8082"
-	invalidMIMETypeURL  = "http://localhost:8083"
-	countingURL         = "http://localhost:8084"
-	noResponseURL       = "http://localhost:8086"
+	invalidMIMETypeURL = "http://localhost:8083"
+	countingURL        = "http://localhost:8084"
 )
 
 type handler struct{}
