@@ -37,7 +37,7 @@ func newLinkFinder(rs []*regexp.Regexp) linkFinder {
 }
 
 func (f linkFinder) Find(n *html.Node, base *url.URL) map[string]error {
-	us := map[string]error{}
+	ls := map[string]error{}
 
 	for _, n := range scrape.FindAllNested(n, func(n *html.Node) bool {
 		_, ok := atomToAttributes[n.DataAtom]
@@ -52,15 +52,15 @@ func (f linkFinder) Find(n *html.Node, base *url.URL) map[string]error {
 
 			u, err := url.Parse(s)
 			if err != nil {
-				us[s] = err
+				ls[s] = err
 				continue
 			} else if _, ok := validSchemes[u.Scheme]; ok {
-				us[base.ResolveReference(u).String()] = nil
+				ls[base.ResolveReference(u).String()] = nil
 			}
 		}
 	}
 
-	return us
+	return ls
 }
 
 func (f linkFinder) isLinkExcluded(u string) bool {
