@@ -1,5 +1,3 @@
-// +build !v2
-
 package main
 
 import (
@@ -11,13 +9,13 @@ import (
 	"golang.org/x/net/html"
 )
 
-func TestScrapePage(t *testing.T) {
+func TestLinkFinderFindLinks(t *testing.T) {
 	b, err := url.Parse("https://localhost")
 	assert.Nil(t, err)
 
 	for _, c := range []struct {
-		html  string
-		links int
+		html      string
+		linkCount int
 	}{
 		{``, 0},
 		{`<a href="/" />`, 1},
@@ -40,7 +38,7 @@ func TestScrapePage(t *testing.T) {
 
 		s, e := 0, 0
 
-		for _, err := range newScraper(nil, false).Scrape(n, b) {
+		for _, err := range newLinkFinder(nil).Find(n, b) {
 			if err == nil {
 				s++
 			} else {
@@ -48,62 +46,49 @@ func TestScrapePage(t *testing.T) {
 			}
 		}
 
-		assert.Equal(t, c.links, s)
+		assert.Equal(t, c.linkCount, s)
 		assert.Equal(t, 0, e)
 	}
 }
 
-func TestScrapePageError(t *testing.T) {
-	b, err := url.Parse("https://localhost")
+func TestLinkFinderScrapePageError(t *testing.T) {
+	b, err := url.Parse("http://foo.com")
 	assert.Nil(t, err)
 
 	n, err := html.Parse(strings.NewReader(htmlWithBody(`<a href=":" />`)))
 	assert.Nil(t, err)
 
-	s, e := 0, 0
+	ls := newLinkFinder(nil).Find(n, b)
 
-	for _, err := range newScraper(nil, false).Scrape(n, b) {
-		if err == nil {
-			s++
-		} else {
-			e++
-		}
-	}
-
-	assert.Equal(t, 0, s)
-	assert.Equal(t, 1, e)
+	assert.Equal(t, 1, len(ls))
+	assert.NotNil(t, ls[":"])
 }
 
-func TestScraperIsURLExcluded(t *testing.T) {
+func TestLinkFinderIsLinkExcluded(t *testing.T) {
 	for _, x := range []struct {
-		url     string
 		regexps []string
 		answer  bool
 	}{
 		{
-			rootURL,
-			[]string{"localhost"},
+			[]string{"foo\\.com"},
 			true,
 		},
 		{
-			rootURL,
-			[]string{"localhost", "foo"},
-			true,
-		},
-		{
-			rootURL,
-			[]string{"foo", "localhost"},
-			true,
-		},
-		{
-			rootURL,
 			[]string{"foo"},
+			true,
+		},
+		{
+			[]string{"bar", "foo"},
+			true,
+		},
+		{
+			[]string{"bar"},
 			false,
 		},
 	} {
 		rs, err := compileRegexps(x.regexps)
 		assert.Nil(t, err)
 
-		assert.Equal(t, x.answer, newScraper(rs, false).isURLExcluded(x.url))
+		assert.Equal(t, x.answer, newLinkFinder(rs).isLinkExcluded("http://foo.com"))
 	}
 }
