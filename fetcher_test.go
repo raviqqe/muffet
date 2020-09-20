@@ -9,11 +9,11 @@ import (
 )
 
 func TestNewFetcher(t *testing.T) {
-	newFetcher(newFakeHTTPClient(), fetcherOptions{})
+	newFetcher(newFakeHTTPClient(nil), fetcherOptions{})
 }
 
 func TestFetcherFetch(t *testing.T) {
-	f := newFetcher(newFakeHTTPClient(), fetcherOptions{})
+	f := newFetcher(newFakeHTTPClient(nil), fetcherOptions{})
 
 	for _, s := range []string{rootURL, existentURL, fragmentURL, erroneousURL} {
 		r, err := f.Fetch(s)
@@ -26,7 +26,7 @@ func TestFetcherFetch(t *testing.T) {
 }
 
 func TestFetcherFetchCache(t *testing.T) {
-	f := newFetcher(newFakeHTTPClient(), fetcherOptions{})
+	f := newFetcher(newFakeHTTPClient(nil), fetcherOptions{})
 
 	r, err := f.Fetch(rootURL)
 	assert.NotEqual(t, fetchResult{}, r)
@@ -49,7 +49,7 @@ func TestFetcherFetchCache(t *testing.T) {
 
 func TestFetcherFetchCacheConcurrency(t *testing.T) {
 	g := &sync.WaitGroup{}
-	f := newFetcher(newFakeHTTPClient(), fetcherOptions{})
+	f := newFetcher(newFakeHTTPClient(nil), fetcherOptions{})
 
 	for i := 0; i < 1000; i++ {
 		g.Add(1)
@@ -66,7 +66,7 @@ func TestFetcherFetchCacheConcurrency(t *testing.T) {
 }
 
 func TestFetcherFetchWithFragments(t *testing.T) {
-	f := newFetcher(newFakeHTTPClient(), fetcherOptions{})
+	f := newFetcher(newFakeHTTPClient(nil), fetcherOptions{})
 
 	r, err := f.Fetch(existentIDURL)
 	_, ok := r.Page()
@@ -80,23 +80,23 @@ func TestFetcherFetchWithFragments(t *testing.T) {
 }
 
 func TestFetcherFetchIgnoreFragments(t *testing.T) {
-	_, err := newFetcher(newFakeHTTPClient(), fetcherOptions{}).Fetch(nonExistentIDURL)
+	_, err := newFetcher(newFakeHTTPClient(nil), fetcherOptions{}).Fetch(nonExistentIDURL)
 
 	assert.NotNil(t, err)
 
-	r, err := newFetcher(newFakeHTTPClient(), fetcherOptions{IgnoreFragments: true}).Fetch(nonExistentIDURL)
+	r, err := newFetcher(newFakeHTTPClient(nil), fetcherOptions{IgnoreFragments: true}).Fetch(nonExistentIDURL)
 
 	assert.NotEqual(t, fetchResult{}, r)
 	assert.Nil(t, err)
 }
 
 func TestFetcherFetchWithInfiniteRedirections(t *testing.T) {
-	_, err := newFetcher(newFakeHTTPClient(), fetcherOptions{}).Fetch(infiniteRedirectURL)
+	_, err := newFetcher(newFakeHTTPClient(nil), fetcherOptions{}).Fetch(infiniteRedirectURL)
 	assert.NotNil(t, err)
 }
 
 func TestFetcherFetchError(t *testing.T) {
-	f := newFetcher(newFakeHTTPClient(), fetcherOptions{})
+	f := newFetcher(newFakeHTTPClient(nil), fetcherOptions{})
 
 	for _, s := range []string{nonExistentURL, ":"} {
 		_, err := f.Fetch(s)
@@ -106,7 +106,7 @@ func TestFetcherFetchError(t *testing.T) {
 }
 
 func TestFetcherSendRequest(t *testing.T) {
-	f := newFetcher(newFakeHTTPClient(), fetcherOptions{})
+	f := newFetcher(newFakeHTTPClient(nil), fetcherOptions{})
 
 	for _, s := range []string{rootURL, existentURL, fragmentURL, erroneousURL, redirectURL} {
 		r, err := f.sendRequest(s)
@@ -119,20 +119,20 @@ func TestFetcherSendRequest(t *testing.T) {
 }
 
 func TestFetcherSendRequestWithMissingLocationHeader(t *testing.T) {
-	_, err := newFetcher(newFakeHTTPClient(), fetcherOptions{}).sendRequest(invalidRedirectURL)
+	_, err := newFetcher(newFakeHTTPClient(nil), fetcherOptions{}).sendRequest(invalidRedirectURL)
 	assert.NotNil(t, err)
 }
 
 func TestFetcherSendRequestWithInvalidMIMEType(t *testing.T) {
-	_, err := newFetcher(newFakeHTTPClient(), fetcherOptions{}).sendRequest(invalidMIMETypeURL)
+	_, err := newFetcher(newFakeHTTPClient(nil), fetcherOptions{}).sendRequest(invalidMIMETypeURL)
 	assert.Equal(t, "mime: no media type", err.Error())
 }
 
 func TestFetcherSendRequestWithTimeout(t *testing.T) {
-	_, err := newFetcher(newFakeHTTPClient(), fetcherOptions{Timeout: 1 * time.Second}).sendRequest(timeoutURL)
+	_, err := newFetcher(newFakeHTTPClient(nil), fetcherOptions{Timeout: 1 * time.Second}).sendRequest(timeoutURL)
 	assert.NotNil(t, err)
 
-	r, err := newFetcher(newFakeHTTPClient(), fetcherOptions{Timeout: 60 * time.Second}).sendRequest(timeoutURL)
+	r, err := newFetcher(newFakeHTTPClient(nil), fetcherOptions{Timeout: 60 * time.Second}).sendRequest(timeoutURL)
 	assert.Equal(t, 200, r.StatusCode())
 	assert.Nil(t, err)
 }
