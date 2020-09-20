@@ -38,10 +38,10 @@ func (c command) Run(rawArgs []string) (bool, error) {
 
 	pp := newPageParser(newLinkFinder(args.ExcludedPatterns), args.FollowURLParams)
 
-	f := newFetcher(
+	f := newLinkFetcher(
 		client,
 		pp,
-		fetcherOptions{
+		linkFetcherOptions{
 			args.Concurrency,
 			args.Headers,
 			args.IgnoreFragments,

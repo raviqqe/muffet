@@ -7,7 +7,7 @@ import (
 )
 
 type checker struct {
-	fetcher       fetcher
+	fetcher       linkFetcher
 	linkValidator linkValidator
 	daemonManager daemonManager
 	results       chan pageResult
@@ -15,7 +15,7 @@ type checker struct {
 	onePageOnly   bool
 }
 
-func newChecker(f fetcher, uv linkValidator, concurrency int, onePageOnly bool) checker {
+func newChecker(f linkFetcher, uv linkValidator, concurrency int, onePageOnly bool) checker {
 	return checker{
 		f,
 		uv,

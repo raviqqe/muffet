@@ -4,7 +4,7 @@ import (
 	"time"
 )
 
-type fetcherOptions struct {
+type linkFetcherOptions struct {
 	Concurrency     int
 	Headers         map[string]string
 	IgnoreFragments bool
@@ -12,7 +12,7 @@ type fetcherOptions struct {
 	Timeout         time.Duration
 }
 
-func (o *fetcherOptions) Initialize() {
+func (o *linkFetcherOptions) Initialize() {
 	if o.MaxRedirections <= 0 {
 		o.MaxRedirections = defaultMaxRedirections
 	}

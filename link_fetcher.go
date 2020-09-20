@@ -7,16 +7,16 @@ import (
 	"strings"
 )
 
-type fetcher struct {
+type linkFetcher struct {
 	client              httpClient
 	pageParser          *pageParser
 	connectionSemaphore semaphore
 	cache               cache
-	options             fetcherOptions
+	options             linkFetcherOptions
 }
 
-func newFetcher(c httpClient, pp *pageParser, o fetcherOptions) fetcher {
-	return fetcher{
+func newLinkFetcher(c httpClient, pp *pageParser, o linkFetcherOptions) linkFetcher {
+	return linkFetcher{
 		c,
 		pp,
 		newSemaphore(o.Concurrency),
@@ -25,7 +25,7 @@ func newFetcher(c httpClient, pp *pageParser, o fetcherOptions) fetcher {
 	}
 }
 
-func (f fetcher) Fetch(u string) (fetchResult, error) {
+func (f linkFetcher) Fetch(u string) (fetchResult, error) {
 	u, fr, err := separateFragment(u)
 	if err != nil {
 		return fetchResult{}, err
@@ -45,7 +45,7 @@ func (f fetcher) Fetch(u string) (fetchResult, error) {
 	return r, nil
 }
 
-func (f fetcher) sendRequestWithCache(u string) (fetchResult, error) {
+func (f linkFetcher) sendRequestWithCache(u string) (fetchResult, error) {
 	x, store := f.cache.LoadOrStore(u)
 
 	if store == nil {
@@ -67,7 +67,7 @@ func (f fetcher) sendRequestWithCache(u string) (fetchResult, error) {
 	return r, err
 }
 
-func (f fetcher) sendRequest(s string) (fetchResult, error) {
+func (f linkFetcher) sendRequest(s string) (fetchResult, error) {
 	f.connectionSemaphore.Request()
 	defer f.connectionSemaphore.Release()
 
