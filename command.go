@@ -23,13 +23,13 @@ func (c command) Run(rawArgs []string) (bool, error) {
 		return false, err
 	}
 
-	client := &fasthttp.Client{
+	client := newFasthttpHTTPClient(&fasthttp.Client{
 		MaxConnsPerHost: args.Concurrency,
 		ReadBufferSize:  args.BufferSize,
 		TLSConfig: &tls.Config{
 			InsecureSkipVerify: args.SkipTLSVerification,
 		},
-	}
+	})
 
 	f := newFetcher(client, fetcherOptions{
 		args.Concurrency,

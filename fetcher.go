@@ -8,19 +8,18 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/valyala/fasthttp"
 	"golang.org/x/net/html"
 )
 
 type fetcher struct {
-	client              *fasthttp.Client
+	client              httpClient
 	connectionSemaphore semaphore
 	cache               cache
 	options             fetcherOptions
 	scraper
 }
 
-func newFetcher(c *fasthttp.Client, o fetcherOptions) fetcher {
+func newFetcher(c httpClient, o fetcherOptions) fetcher {
 	o.Initialize()
 
 	return fetcher{
@@ -74,70 +73,66 @@ func (f fetcher) sendRequestWithCache(u string) (fetchResult, error) {
 	return r, err
 }
 
-func (f fetcher) sendRequest(u string) (fetchResult, error) {
+func (f fetcher) sendRequest(rawURL string) (fetchResult, error) {
 	f.connectionSemaphore.Request()
 	defer f.connectionSemaphore.Release()
 
-	req, res := fasthttp.Request{}, fasthttp.Response{}
-	req.SetRequestURI(u)
-	req.SetConnectionClose()
+	i := 0
 
-	for k, v := range f.options.Headers {
-		req.Header.Add(k, v)
-	}
-
-	r := 0
-
-redirects:
 	for {
-		err := f.client.DoTimeout(&req, &res, f.options.Timeout)
+		u, err := url.Parse(rawURL)
 		if err != nil {
 			return fetchResult{}, err
 		}
 
-		switch res.StatusCode() / 100 {
-		case 2:
-			break redirects
-		case 3:
-			r++
+		r, err := f.client.Get(u, f.options.Headers, f.options.Timeout)
+		if err != nil {
+			return fetchResult{}, err
+		}
 
-			if r > f.options.MaxRedirections {
+		switch r.StatusCode() / 100 {
+		case 2:
+			return f.createSuccessfulResult(r, rawURL)
+		case 3:
+			i++
+
+			if i > f.options.MaxRedirections {
 				return fetchResult{}, errors.New("too many redirections")
 			}
 
-			bs := res.Header.Peek("Location")
+			rawURL = r.Header("Location")
 
-			if len(bs) == 0 {
+			if len(rawURL) == 0 {
 				return fetchResult{}, errors.New("location header not found")
 			}
-
-			req.URI().UpdateBytes(bs)
 		default:
-			return fetchResult{}, fmt.Errorf("%v", res.StatusCode())
+			return fetchResult{}, fmt.Errorf("%v", r.StatusCode())
 		}
 	}
+}
 
-	if s := strings.TrimSpace(string(res.Header.Peek("Content-Type"))); s != "" {
+func (f fetcher) createSuccessfulResult(r httpResponse, u string) (fetchResult, error) {
+	if s := strings.TrimSpace(r.Header("Content-Type")); s != "" {
 		t, _, err := mime.ParseMediaType(s)
 
 		if err != nil {
 			return fetchResult{}, err
 		} else if t != "text/html" {
-			return newFetchResult(res.StatusCode(), nil), nil
+			return newFetchResult(r.StatusCode(), nil), nil
 		}
 	}
 
-	n, err := html.Parse(bytes.NewReader(res.Body()))
+	n, err := html.Parse(bytes.NewReader(r.Body()))
 	if err != nil {
 		return fetchResult{}, err
 	}
 
-	p, err := newPage(req.URI().String(), n, f.scraper)
+	p, err := newPage(u, n, f.scraper)
 	if err != nil {
 		return fetchResult{}, err
 	}
 
-	return newFetchResult(res.StatusCode(), p), nil
+	return newFetchResult(r.StatusCode(), p), nil
 }
 
 func separateFragment(s string) (string, string, error) {

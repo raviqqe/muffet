@@ -3,9 +3,9 @@ package main
 import (
 	"errors"
 	"net/url"
+	"time"
 
 	"github.com/temoto/robotstxt"
-	"github.com/valyala/fasthttp"
 	"github.com/yterajima/go-sitemap"
 )
 
@@ -15,7 +15,7 @@ type urlInspector struct {
 	robotsTxt    *robotstxt.RobotsData
 }
 
-func newURLInspector(c *fasthttp.Client, s string, r, sm bool) (urlInspector, error) {
+func newURLInspector(c httpClient, s string, useRobotsTxt, useSitemap bool) (urlInspector, error) {
 	u, err := url.Parse(s)
 	if err != nil {
 		return urlInspector{}, err
@@ -23,17 +23,17 @@ func newURLInspector(c *fasthttp.Client, s string, r, sm bool) (urlInspector, er
 
 	rd := (*robotstxt.RobotsData)(nil)
 
-	if r {
+	if useRobotsTxt {
 		u.Path = "robots.txt"
-		c, bs, err := c.Get(nil, u.String())
+		r, err := c.Get(u, nil, time.Duration(0))
 
 		if err != nil {
 			return urlInspector{}, err
-		} else if c != 200 {
+		} else if r.StatusCode() != 200 {
 			return urlInspector{}, errors.New("robots.txt not found")
 		}
 
-		rd, err = robotstxt.FromBytes(bs)
+		rd, err = robotstxt.FromBytes(r.Body())
 
 		if err != nil {
 			return urlInspector{}, err
@@ -42,17 +42,25 @@ func newURLInspector(c *fasthttp.Client, s string, r, sm bool) (urlInspector, er
 
 	us := map[string]struct{}{}
 
-	if sm {
+	if useSitemap {
 		u.Path = "sitemap.xml"
 
 		sitemap.SetFetch(func(s string, _ interface{}) ([]byte, error) {
-			c, bs, err := c.Get(nil, s)
+			u, err := url.Parse(s)
 
-			if c != 200 {
+			if err != nil {
+				return nil, err
+			}
+
+			r, err := c.Get(u, nil, time.Duration(0))
+
+			if err != nil {
+				return nil, err
+			} else if r.StatusCode() != 200 {
 				return nil, errors.New("sitemap not found")
 			}
 
-			return bs, err
+			return r.Body(), err
 		})
 
 		m, err := sitemap.Get(u.String(), nil)
