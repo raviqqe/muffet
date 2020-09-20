@@ -17,7 +17,7 @@ func newURLValidator(hostname string, robotsTxt *robotstxt.RobotsData, sitemap m
 }
 
 func (i urlValidator) Validate(u *url.URL) bool {
-	if len(i.sitemapURLs) != 0 {
+	if i.sitemapURLs != nil {
 		if _, ok := i.sitemapURLs[u.String()]; !ok {
 			return false
 		}
