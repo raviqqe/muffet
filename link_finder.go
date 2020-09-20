@@ -54,11 +54,9 @@ func (f linkFinder) Find(n *html.Node, base *url.URL) map[string]error {
 			if err != nil {
 				us[s] = err
 				continue
-			} else if _, ok := validSchemes[u.Scheme]; !ok {
-				continue
+			} else if _, ok := validSchemes[u.Scheme]; ok {
+				us[base.ResolveReference(u).String()] = nil
 			}
-
-			us[base.ResolveReference(u).String()] = nil
 		}
 	}
 
