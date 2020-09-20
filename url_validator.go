@@ -23,7 +23,7 @@ func (v urlValidator) Validate(u *url.URL) bool {
 		}
 	}
 
-	if v.robotsData != nil && !v.robotsData.TestAgent(u.Path, "muffet") {
+	if v.robotsData != nil && !v.robotsData.TestAgent(u.Path, agentName) {
 		return false
 	}
 
