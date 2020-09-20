@@ -8,7 +8,7 @@ import (
 
 type checker struct {
 	fetcher       fetcher
-	linkValidator  linkValidator
+	linkValidator linkValidator
 	daemonManager daemonManager
 	results       chan pageResult
 	donePages     concurrentStringSet

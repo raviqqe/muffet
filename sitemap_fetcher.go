@@ -14,7 +14,6 @@ type sitemapFetcher struct {
 func newSitemapFetcher(c httpClient) *sitemapFetcher {
 	sitemap.SetFetch(func(s string, _ interface{}) ([]byte, error) {
 		u, err := url.Parse(s)
-
 		if err != nil {
 			return nil, err
 		}
