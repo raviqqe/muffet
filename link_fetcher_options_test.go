@@ -6,8 +6,8 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestFetcherOptionsInitialize(t *testing.T) {
-	o := fetcherOptions{}
+func TestLinkFetcherOptionsInitialize(t *testing.T) {
+	o := linkFetcherOptions{}
 	o.Initialize()
 
 	assert.Equal(t, defaultConcurrency, o.Concurrency)

@@ -13,6 +13,10 @@ type linkFetcherOptions struct {
 }
 
 func (o *linkFetcherOptions) Initialize() {
+	if o.Concurrency <= 0 {
+		o.Concurrency = defaultConcurrency
+	}
+
 	if o.MaxRedirections <= 0 {
 		o.MaxRedirections = defaultMaxRedirections
 	}
