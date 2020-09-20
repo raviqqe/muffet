@@ -92,7 +92,7 @@ func (f fetcher) sendRequest(rawURL string) (fetchResult, error) {
 
 		switch r.StatusCode() / 100 {
 		case 2:
-			return f.createSuccessfulResult(r, rawURL)
+			return f.handle200(r, rawURL)
 		case 3:
 			i++
 
@@ -111,7 +111,7 @@ func (f fetcher) sendRequest(rawURL string) (fetchResult, error) {
 	}
 }
 
-func (f fetcher) createSuccessfulResult(r httpResponse, u string) (fetchResult, error) {
+func (f fetcher) handle200(r httpResponse, u string) (fetchResult, error) {
 	if s := strings.TrimSpace(r.Header("Content-Type")); s != "" {
 		t, _, err := mime.ParseMediaType(s)
 
