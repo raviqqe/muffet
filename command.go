@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 
+	"github.com/temoto/robotstxt"
 	"github.com/valyala/fasthttp"
 )
 
@@ -53,12 +54,27 @@ func (c command) Run(rawArgs []string) (bool, error) {
 		return false, errors.New("non-HTML page")
 	}
 
-	ui, err := newURLValidator(client, p.URL().String(), args.FollowRobotsTxt, args.FollowSitemapXML)
-	if err != nil {
-		return false, err
+	rd := (*robotstxt.RobotsData)(nil)
+
+	if args.FollowRobotsTxt {
+		rd, err = newRobotsTxtFetcher(client).Fetch(p.URL())
+
+		if err != nil {
+			return false, err
+		}
 	}
 
-	checker := newChecker(f, ui, args.Concurrency)
+	sm := (map[string]struct{})(nil)
+
+	if args.FollowSitemapXML {
+		sm, err = newSitemapFetcher(client).Fetch(p.URL())
+
+		if err != nil {
+			return false, err
+		}
+	}
+
+	checker := newChecker(f, newURLValidator(p.URL().Hostname(), rd, sm), args.Concurrency)
 
 	go checker.Check(p)
 
