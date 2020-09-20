@@ -1,13 +1,20 @@
 package main
 
-import "github.com/valyala/fasthttp"
+import (
+	"github.com/valyala/fasthttp"
+)
 
 type fasthttpHTTPResponse struct {
+	url      *fasthttp.URI
 	response *fasthttp.Response
 }
 
-func newFasthttpHTTPResponse(r *fasthttp.Response) httpResponse {
-	return fasthttpHTTPResponse{r}
+func newFasthttpHTTPResponse(u *fasthttp.URI, r *fasthttp.Response) httpResponse {
+	return fasthttpHTTPResponse{u, r}
+}
+
+func (r fasthttpHTTPResponse) URL() string {
+	return r.url.String()
 }
 
 func (r fasthttpHTTPResponse) StatusCode() int {

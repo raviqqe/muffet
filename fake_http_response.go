@@ -13,16 +13,17 @@ func newFakeHTTPResponse(statusCode int, location string, contentType string, bo
 	return &fakeHTTPResponse{statusCode, location, contentType, body}
 }
 
+func (r *fakeHTTPResponse) URL() string {
+	return r.location
+}
+
 func (r *fakeHTTPResponse) StatusCode() int {
 	return r.statusCode
 }
 
 func (r *fakeHTTPResponse) Header(name string) string {
-	switch strings.ToLower(name) {
-	case "location":
-		return r.location
-	case "content-type":
-		return r.location
+	if strings.ToLower(name) == "content-type" {
+		return r.contentType
 	}
 
 	return ""

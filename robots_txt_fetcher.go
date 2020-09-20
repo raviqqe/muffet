@@ -3,7 +3,6 @@ package main
 import (
 	"errors"
 	"net/url"
-	"time"
 
 	"github.com/temoto/robotstxt"
 )
@@ -19,7 +18,7 @@ func newRobotsTxtFetcher(c httpClient) *robotsTxtFetcher {
 func (f *robotsTxtFetcher) Fetch(uu *url.URL) (*robotstxt.RobotsData, error) {
 	u := *uu
 	u.Path = "robots.txt"
-	r, err := f.client.Get(&u, nil, time.Duration(0))
+	r, err := f.client.Get(&u, nil)
 
 	if err != nil {
 		return nil, err

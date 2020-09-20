@@ -3,7 +3,6 @@ package main
 import (
 	"errors"
 	"net/url"
-	"time"
 )
 
 type fakeHTTPClient struct {
@@ -14,7 +13,7 @@ func newFakeHTTPClient(data map[string]*fakeHTTPResponse) httpClient {
 	return &fakeHTTPClient{data}
 }
 
-func (c *fakeHTTPClient) Get(u *url.URL, headers map[string]string, timeout time.Duration) (httpResponse, error) {
+func (c *fakeHTTPClient) Get(u *url.URL, headers map[string]string) (httpResponse, error) {
 	if r, ok := c.data[u.String()]; ok {
 		return r, nil
 	}

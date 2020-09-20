@@ -1,6 +1,8 @@
 package main
 
 import (
+	"errors"
+	"fmt"
 	"net/url"
 	"time"
 
@@ -8,14 +10,16 @@ import (
 )
 
 type fasthttpHTTPClient struct {
-	client *fasthttp.Client
+	client          *fasthttp.Client
+	maxRedirections int
+	timeout         time.Duration
 }
 
-func newFasthttpHTTPClient(c *fasthttp.Client) httpClient {
-	return fasthttpHTTPClient{c}
+func newFasthttpHTTPClient(c *fasthttp.Client, maxRedirections int, timeout time.Duration) httpClient {
+	return &fasthttpHTTPClient{c, maxRedirections, timeout}
 }
 
-func (c fasthttpHTTPClient) Get(u *url.URL, headers map[string]string, timeout time.Duration) (httpResponse, error) {
+func (c *fasthttpHTTPClient) Get(u *url.URL, headers map[string]string) (httpResponse, error) {
 	req, res := fasthttp.Request{}, fasthttp.Response{}
 	req.SetRequestURI(u.String())
 	req.SetConnectionClose()
@@ -24,10 +28,33 @@ func (c fasthttpHTTPClient) Get(u *url.URL, headers map[string]string, timeout t
 		req.Header.Add(k, v)
 	}
 
-	err := c.client.DoTimeout(&req, &res, timeout)
-	if err != nil {
-		return nil, err
-	}
+	i := 0
 
-	return newFasthttpHTTPResponse(&res), nil
+	for {
+		err := c.client.DoTimeout(&req, &res, c.timeout)
+		if err != nil {
+			return nil, err
+		}
+
+		switch res.StatusCode() / 100 {
+		case 2:
+			return newFasthttpHTTPResponse(req.URI(), &res), nil
+		case 3:
+			i++
+
+			if i > c.maxRedirections {
+				return nil, errors.New("too many redirections")
+			}
+
+			u := res.Header.Peek("Location")
+
+			if len(u) == 0 {
+				return nil, errors.New("location header not found")
+			}
+
+			req.URI().UpdateBytes(u)
+		default:
+			return nil, fmt.Errorf("%v", res.StatusCode())
+		}
+	}
 }

@@ -3,7 +3,6 @@ package main
 import (
 	"errors"
 	"net/url"
-	"time"
 
 	"github.com/yterajima/go-sitemap"
 )
@@ -20,7 +19,7 @@ func newSitemapFetcher(c httpClient) *sitemapFetcher {
 			return nil, err
 		}
 
-		r, err := c.Get(u, nil, time.Duration(0))
+		r, err := c.Get(u, nil)
 
 		if err != nil {
 			return nil, err

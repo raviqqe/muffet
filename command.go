@@ -24,13 +24,17 @@ func (c command) Run(rawArgs []string) (bool, error) {
 		return false, err
 	}
 
-	client := newFasthttpHTTPClient(&fasthttp.Client{
-		MaxConnsPerHost: args.Concurrency,
-		ReadBufferSize:  args.BufferSize,
-		TLSConfig: &tls.Config{
-			InsecureSkipVerify: args.SkipTLSVerification,
+	client := newFasthttpHTTPClient(
+		&fasthttp.Client{
+			MaxConnsPerHost: args.Concurrency,
+			ReadBufferSize:  args.BufferSize,
+			TLSConfig: &tls.Config{
+				InsecureSkipVerify: args.SkipTLSVerification,
+			},
 		},
-	})
+		args.MaxRedirections,
+		args.Timeout,
+	)
 
 	pp := newPageParser(newScraper(args.ExcludedPatterns), args.FollowURLParams)
 

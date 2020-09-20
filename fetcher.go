@@ -1,7 +1,6 @@
 package main
 
 import (
-	"errors"
 	"fmt"
 	"mime"
 	"net/url"
@@ -68,46 +67,20 @@ func (f fetcher) sendRequestWithCache(u string) (fetchResult, error) {
 	return r, err
 }
 
-func (f fetcher) sendRequest(rawURL string) (fetchResult, error) {
+func (f fetcher) sendRequest(s string) (fetchResult, error) {
 	f.connectionSemaphore.Request()
 	defer f.connectionSemaphore.Release()
 
-	i := 0
-
-	for {
-		u, err := url.Parse(rawURL)
-		if err != nil {
-			return fetchResult{}, err
-		}
-
-		r, err := f.client.Get(u, f.options.Headers, f.options.Timeout)
-		if err != nil {
-			return fetchResult{}, err
-		}
-
-		switch r.StatusCode() / 100 {
-		case 2:
-			return f.handle200(r, rawURL)
-		case 3:
-			i++
-
-			if i > f.options.MaxRedirections {
-				return fetchResult{}, errors.New("too many redirections")
-			}
-
-			rawURL = r.Header("Location")
-
-			if len(rawURL) == 0 {
-				return fetchResult{}, errors.New("location header not found")
-			}
-		default:
-			return fetchResult{}, fmt.Errorf("%v", r.StatusCode())
-		}
+	u, err := url.Parse(s)
+	if err != nil {
+		return fetchResult{}, err
 	}
-}
 
-func (f fetcher) handle200(r httpResponse, u string) (fetchResult, error) {
-	if s := strings.TrimSpace(r.Header("Content-Type")); s != "" {
+	r, err := f.client.Get(u, f.options.Headers)
+
+	if err != nil {
+		return fetchResult{}, err
+	} else if s := strings.TrimSpace(r.Header("Content-Type")); s != "" {
 		t, _, err := mime.ParseMediaType(s)
 
 		if err != nil {
@@ -117,7 +90,7 @@ func (f fetcher) handle200(r httpResponse, u string) (fetchResult, error) {
 		}
 	}
 
-	p, err := f.pageParser.Parse(u, r.Body())
+	p, err := f.pageParser.Parse(r.URL(), r.Body())
 	if err != nil {
 		return fetchResult{}, err
 	}
