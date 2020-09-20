@@ -8,13 +8,13 @@ import (
 
 type checker struct {
 	fetcher       fetcher
-	urlInspector  urlInspector
+	urlValidator  urlValidator
 	daemonManager daemonManager
 	results       chan pageResult
 	donePages     concurrentStringSet
 }
 
-func newChecker(f fetcher, ui urlInspector, concurrency int) checker {
+func newChecker(f fetcher, ui urlValidator, concurrency int) checker {
 	return checker{
 		f,
 		ui,
@@ -62,7 +62,7 @@ func (c checker) checkPage(p *page) {
 			}
 
 			if !c.fetcher.options.OnePageOnly {
-				if p, ok := r.Page(); ok && c.urlInspector.Inspect(p.URL()) {
+				if p, ok := r.Page(); ok && c.urlValidator.Validate(p.URL()) {
 					c.addPage(p)
 				}
 			}

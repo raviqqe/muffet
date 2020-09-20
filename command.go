@@ -53,7 +53,7 @@ func (c command) Run(rawArgs []string) (bool, error) {
 		return false, errors.New("non-HTML page")
 	}
 
-	ui, err := newURLInspector(client, p.URL().String(), args.FollowRobotsTxt, args.FollowSitemapXML)
+	ui, err := newURLValidator(client, p.URL().String(), args.FollowRobotsTxt, args.FollowSitemapXML)
 	if err != nil {
 		return false, err
 	}

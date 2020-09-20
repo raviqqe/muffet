@@ -9,16 +9,16 @@ import (
 	"github.com/yterajima/go-sitemap"
 )
 
-type urlInspector struct {
+type urlValidator struct {
 	hostname     string
 	includedURLs map[string]struct{}
 	robotsTxt    *robotstxt.RobotsData
 }
 
-func newURLInspector(c httpClient, s string, useRobotsTxt, useSitemap bool) (urlInspector, error) {
+func newURLValidator(c httpClient, s string, useRobotsTxt, useSitemap bool) (urlValidator, error) {
 	u, err := url.Parse(s)
 	if err != nil {
-		return urlInspector{}, err
+		return urlValidator{}, err
 	}
 
 	rd := (*robotstxt.RobotsData)(nil)
@@ -28,15 +28,15 @@ func newURLInspector(c httpClient, s string, useRobotsTxt, useSitemap bool) (url
 		r, err := c.Get(u, nil, time.Duration(0))
 
 		if err != nil {
-			return urlInspector{}, err
+			return urlValidator{}, err
 		} else if r.StatusCode() != 200 {
-			return urlInspector{}, errors.New("robots.txt not found")
+			return urlValidator{}, errors.New("robots.txt not found")
 		}
 
 		rd, err = robotstxt.FromBytes(r.Body())
 
 		if err != nil {
-			return urlInspector{}, err
+			return urlValidator{}, err
 		}
 	}
 
@@ -65,7 +65,7 @@ func newURLInspector(c httpClient, s string, useRobotsTxt, useSitemap bool) (url
 
 		m, err := sitemap.Get(u.String(), nil)
 		if err != nil {
-			return urlInspector{}, err
+			return urlValidator{}, err
 		}
 
 		for _, u := range m.URL {
@@ -73,10 +73,10 @@ func newURLInspector(c httpClient, s string, useRobotsTxt, useSitemap bool) (url
 		}
 	}
 
-	return urlInspector{u.Hostname(), us, rd}, nil
+	return urlValidator{u.Hostname(), us, rd}, nil
 }
 
-func (i urlInspector) Inspect(u *url.URL) bool {
+func (i urlValidator) Validate(u *url.URL) bool {
 	if len(i.includedURLs) != 0 {
 		if _, ok := i.includedURLs[u.String()]; !ok {
 			return false
