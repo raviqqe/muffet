@@ -8,14 +8,14 @@ import (
 
 type checker struct {
 	fetcher       fetcher
-	urlValidator  urlValidator
+	linkValidator  linkValidator
 	daemonManager daemonManager
 	results       chan pageResult
 	donePages     concurrentStringSet
 	onePageOnly   bool
 }
 
-func newChecker(f fetcher, uv urlValidator, concurrency int, onePageOnly bool) checker {
+func newChecker(f fetcher, uv linkValidator, concurrency int, onePageOnly bool) checker {
 	return checker{
 		f,
 		uv,
@@ -64,7 +64,7 @@ func (c checker) checkPage(p *page) {
 			}
 
 			if !c.onePageOnly {
-				if p, ok := r.Page(); ok && c.urlValidator.Validate(p.URL()) {
+				if p, ok := r.Page(); ok && c.linkValidator.Validate(p.URL()) {
 					c.addPage(p)
 				}
 			}

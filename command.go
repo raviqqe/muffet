@@ -83,7 +83,7 @@ func (c command) Run(rawArgs []string) (bool, error) {
 
 	checker := newChecker(
 		f,
-		newURLValidator(p.URL().Hostname(), rd, sm),
+		newLinkValidator(p.URL().Hostname(), rd, sm),
 		args.Concurrency,
 		args.OnePageOnly,
 	)

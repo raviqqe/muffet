@@ -8,8 +8,8 @@ import (
 	"github.com/temoto/robotstxt"
 )
 
-func TestURLValidatorReturnTrueForSameHostname(t *testing.T) {
-	i := newURLValidator("foo.com", nil, nil)
+func TestLinkValidatorReturnTrueForSameHostname(t *testing.T) {
+	i := newLinkValidator("foo.com", nil, nil)
 
 	for _, s := range []string{
 		"http://foo.com",
@@ -22,16 +22,16 @@ func TestURLValidatorReturnTrueForSameHostname(t *testing.T) {
 	}
 }
 
-func TestURLValidatorReturnFalseForDifferentHostname(t *testing.T) {
-	i := newURLValidator("foo.com", nil, nil)
+func TestLinkValidatorReturnFalseForDifferentHostname(t *testing.T) {
+	i := newLinkValidator("foo.com", nil, nil)
 
 	u, err := url.Parse("http://bar.com")
 	assert.Nil(t, err)
 	assert.False(t, i.Validate(u))
 }
 
-func TestURLValidatorValidateWithSitemap(t *testing.T) {
-	i := newURLValidator(
+func TestLinkValidatorValidateWithSitemap(t *testing.T) {
+	i := newLinkValidator(
 		"foo.com",
 		nil,
 		map[string]struct{}{"http://foo.com/foo": {}},
@@ -46,14 +46,14 @@ func TestURLValidatorValidateWithSitemap(t *testing.T) {
 	assert.False(t, i.Validate(u))
 }
 
-func TestURLValidatorValidateWithRobotsTxt(t *testing.T) {
+func TestLinkValidatorValidateWithRobotsTxt(t *testing.T) {
 	r, err := robotstxt.FromString(`
 		User-Agent: *
 		Disallow: /bar
 	`)
 	assert.Nil(t, err)
 
-	i := newURLValidator("foo.com", r, nil)
+	i := newLinkValidator("foo.com", r, nil)
 
 	u, err := url.Parse("http://foo.com/foo")
 	assert.Nil(t, err)
