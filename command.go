@@ -36,7 +36,7 @@ func (c command) Run(rawArgs []string) (bool, error) {
 		args.Timeout,
 	)
 
-	pp := newPageParser(newScraper(args.ExcludedPatterns), args.FollowURLParams)
+	pp := newPageParser(newLinkFinder(args.ExcludedPatterns), args.FollowURLParams)
 
 	f := newFetcher(
 		client,

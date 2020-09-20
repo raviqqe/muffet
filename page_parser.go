@@ -10,11 +10,11 @@ import (
 )
 
 type pageParser struct {
-	scraper         scraper
+	linkFinder      linkFinder
 	followURLParams bool
 }
 
-func newPageParser(s scraper, followURLParams bool) *pageParser {
+func newPageParser(s linkFinder, followURLParams bool) *pageParser {
 	return &pageParser{s, followURLParams}
 }
 
@@ -58,5 +58,5 @@ func (p pageParser) Parse(rawURL string, body []byte) (*page, error) {
 		base = base.ResolveReference(u)
 	}
 
-	return &page{u, ids, p.scraper.Scrape(n, base)}, nil
+	return &page{u, ids, p.linkFinder.Find(n, base)}, nil
 }

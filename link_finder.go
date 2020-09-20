@@ -28,15 +28,15 @@ var atomToAttributes = map[atom.Atom][]string{
 	atom.Track:  {"src"},
 }
 
-type scraper struct {
+type linkFinder struct {
 	excludedPatterns []*regexp.Regexp
 }
 
-func newScraper(rs []*regexp.Regexp) scraper {
-	return scraper{rs}
+func newLinkFinder(rs []*regexp.Regexp) linkFinder {
+	return linkFinder{rs}
 }
 
-func (sc scraper) Scrape(n *html.Node, base *url.URL) map[string]error {
+func (f linkFinder) Find(n *html.Node, base *url.URL) map[string]error {
 	us := map[string]error{}
 
 	for _, n := range scrape.FindAllNested(n, func(n *html.Node) bool {
@@ -46,7 +46,7 @@ func (sc scraper) Scrape(n *html.Node, base *url.URL) map[string]error {
 		for _, a := range atomToAttributes[n.DataAtom] {
 			s := normalizeURL(scrape.Attr(n, a))
 
-			if s == "" || sc.isURLExcluded(s) {
+			if s == "" || f.isURLExcluded(s) {
 				continue
 			}
 
@@ -67,8 +67,8 @@ func (sc scraper) Scrape(n *html.Node, base *url.URL) map[string]error {
 	return us
 }
 
-func (sc scraper) isURLExcluded(u string) bool {
-	for _, r := range sc.excludedPatterns {
+func (f linkFinder) isURLExcluded(u string) bool {
+	for _, r := range f.excludedPatterns {
 		if r.MatchString(u) {
 			return true
 		}
