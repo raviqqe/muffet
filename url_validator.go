@@ -16,16 +16,16 @@ func newURLValidator(hostname string, robotsData *robotstxt.RobotsData, sitemap 
 	return urlValidator{hostname, sitemap, robotsData}
 }
 
-func (i urlValidator) Validate(u *url.URL) bool {
-	if i.sitemapURLs != nil {
-		if _, ok := i.sitemapURLs[u.String()]; !ok {
+func (v urlValidator) Validate(u *url.URL) bool {
+	if v.sitemapURLs != nil {
+		if _, ok := v.sitemapURLs[u.String()]; !ok {
 			return false
 		}
 	}
 
-	if i.robotsData != nil && !i.robotsData.TestAgent(u.Path, "muffet") {
+	if v.robotsData != nil && !v.robotsData.TestAgent(u.Path, "muffet") {
 		return false
 	}
 
-	return u.Hostname() == i.hostname
+	return u.Hostname() == v.hostname
 }
