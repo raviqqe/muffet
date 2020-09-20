@@ -2,9 +2,11 @@ package main
 
 import "github.com/valyala/fasthttp"
 
-type fasthttpHTTPResponse struct{ response fasthttp.Response }
+type fasthttpHTTPResponse struct {
+	response *fasthttp.Response
+}
 
-func newFasthttpHTTPResponse(r fasthttp.Response) httpResponse {
+func newFasthttpHTTPResponse(r *fasthttp.Response) httpResponse {
 	return fasthttpHTTPResponse{r}
 }
 

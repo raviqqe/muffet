@@ -29,5 +29,5 @@ func (c fasthttpHTTPClient) Get(u *url.URL, headers map[string]string, timeout t
 		return nil, err
 	}
 
-	return newFasthttpHTTPResponse(res), nil
+	return newFasthttpHTTPResponse(&res), nil
 }
