@@ -7,7 +7,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestFetchRobotsTxt(t *testing.T) {
+func TestRobotsTxtFetcherFetchRobotsTxt(t *testing.T) {
 	s := "http://foo.com"
 	u, err := url.Parse(s)
 	assert.Nil(t, err)
