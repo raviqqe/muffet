@@ -32,16 +32,19 @@ func (c command) Run(rawArgs []string) (bool, error) {
 		},
 	})
 
-	f := newFetcher(client, fetcherOptions{
-		args.Concurrency,
-		args.ExcludedPatterns,
-		args.Headers,
-		args.IgnoreFragments,
-		args.FollowURLParams,
-		args.MaxRedirections,
-		args.Timeout,
-		args.OnePageOnly,
-	})
+	pp := newPageParser(newScraper(args.ExcludedPatterns), args.FollowURLParams)
+
+	f := newFetcher(
+		client,
+		pp,
+		fetcherOptions{
+			args.Concurrency,
+			args.Headers,
+			args.IgnoreFragments,
+			args.MaxRedirections,
+			args.Timeout,
+		},
+	)
 
 	r, err := f.Fetch(args.URL)
 	if err != nil {
@@ -74,7 +77,12 @@ func (c command) Run(rawArgs []string) (bool, error) {
 		}
 	}
 
-	checker := newChecker(f, newURLValidator(p.URL().Hostname(), rd, sm), args.Concurrency)
+	checker := newChecker(
+		f,
+		newURLValidator(p.URL().Hostname(), rd, sm),
+		args.Concurrency,
+		args.OnePageOnly,
+	)
 
 	go checker.Check(p)
 

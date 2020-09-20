@@ -12,15 +12,17 @@ type checker struct {
 	daemonManager daemonManager
 	results       chan pageResult
 	donePages     concurrentStringSet
+	onePageOnly   bool
 }
 
-func newChecker(f fetcher, uv urlValidator, concurrency int) checker {
+func newChecker(f fetcher, uv urlValidator, concurrency int, onePageOnly bool) checker {
 	return checker{
 		f,
 		uv,
 		newDaemonManager(concurrency),
 		make(chan pageResult, concurrency),
 		newConcurrentStringSet(),
+		onePageOnly,
 	}
 }
 
@@ -61,7 +63,7 @@ func (c checker) checkPage(p *page) {
 				ec <- formatLinkError(u, err)
 			}
 
-			if !c.fetcher.options.OnePageOnly {
+			if !c.onePageOnly {
 				if p, ok := r.Page(); ok && c.urlValidator.Validate(p.URL()) {
 					c.addPage(p)
 				}

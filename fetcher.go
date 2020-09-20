@@ -1,33 +1,28 @@
 package main
 
 import (
-	"bytes"
 	"errors"
 	"fmt"
 	"mime"
 	"net/url"
 	"strings"
-
-	"golang.org/x/net/html"
 )
 
 type fetcher struct {
 	client              httpClient
+	pageParser          *pageParser
 	connectionSemaphore semaphore
 	cache               cache
 	options             fetcherOptions
-	scraper
 }
 
-func newFetcher(c httpClient, o fetcherOptions) fetcher {
-	o.Initialize()
-
+func newFetcher(c httpClient, pp *pageParser, o fetcherOptions) fetcher {
 	return fetcher{
 		c,
+		pp,
 		newSemaphore(o.Concurrency),
 		newCache(),
 		o,
-		newScraper(o.ExcludedPatterns, o.FollowURLParams),
 	}
 }
 
@@ -122,12 +117,7 @@ func (f fetcher) handle200(r httpResponse, u string) (fetchResult, error) {
 		}
 	}
 
-	n, err := html.Parse(bytes.NewReader(r.Body()))
-	if err != nil {
-		return fetchResult{}, err
-	}
-
-	p, err := newPage(u, n, f.scraper)
+	p, err := f.pageParser.Parse(u, r.Body())
 	if err != nil {
 		return fetchResult{}, err
 	}
