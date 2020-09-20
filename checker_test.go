@@ -1,81 +1,84 @@
+// +build !v2
+
 package main
 
 import (
+	"regexp"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
 
-// TODO Enable them.
-// func TestCheckerCheck(t *testing.T) {
-// 	for _, s := range []string{rootURL, fragmentURL, baseURL, redirectURL} {
-// 		c, err := newChecker(s, checkerOptions{})
-// 		assert.Nil(t, err)
+func TestCheckerCheck(t *testing.T) {
+	for _, s := range []string{rootURL, fragmentURL, baseURL, redirectURL} {
+		c, err := newChecker(s, checkerOptions{})
+		assert.Nil(t, err)
 
-// 		go c.Check()
+		go c.Check()
 
-// 		for r := range c.Results() {
-// 			assert.True(t, r.OK())
-// 		}
-// 	}
-// }
+		for r := range c.Results() {
+			assert.True(t, r.OK())
+		}
+	}
+}
 
-// func TestCheckerCheckMultiplePages(t *testing.T) {
-// 	c, _ := newChecker(rootURL, checkerOptions{})
+func TestCheckerCheckMultiplePages(t *testing.T) {
+	c, _ := newChecker(rootURL, checkerOptions{})
 
-// 	go c.Check()
+	go c.Check()
 
-// 	i := 0
+	i := 0
 
-// 	for r := range c.Results() {
-// 		i += strings.Count(r.String(true), "\n") + 1
-// 	}
+	for r := range c.Results() {
+		i += strings.Count(r.String(true), "\n") + 1
+	}
 
-// 	assert.Equal(t, 4, i)
-// }
+	assert.Equal(t, 4, i)
+}
 
-// func TestCheckerCheckPage(t *testing.T) {
-// 	c, _ := newChecker(rootURL, checkerOptions{})
+func TestCheckerCheckPage(t *testing.T) {
+	c, _ := newChecker(rootURL, checkerOptions{})
 
-// 	r, err := c.fetcher.Fetch(existentURL)
-// 	assert.Nil(t, err)
+	r, err := c.fetcher.Fetch(existentURL)
+	assert.Nil(t, err)
 
-// 	p, ok := r.Page()
-// 	assert.True(t, ok)
+	p, ok := r.Page()
+	assert.True(t, ok)
 
-// 	go c.checkPage(p)
+	go c.checkPage(p)
 
-// 	assert.True(t, (<-c.Results()).OK())
-// }
+	assert.True(t, (<-c.Results()).OK())
+}
 
-// func TestCheckerCheckWithExcludedURLs(t *testing.T) {
-// 	r, err := regexp.Compile("bar")
-// 	assert.Nil(t, err)
+func TestCheckerCheckWithExcludedURLs(t *testing.T) {
+	r, err := regexp.Compile("bar")
+	assert.Nil(t, err)
 
-// 	c, _ := newChecker(erroneousURL, checkerOptions{
-// 		fetcherOptions: fetcherOptions{ExcludedPatterns: []*regexp.Regexp{r}},
-// 	})
+	c, _ := newChecker(erroneousURL, checkerOptions{
+		fetcherOptions: fetcherOptions{ExcludedPatterns: []*regexp.Regexp{r}},
+	})
 
-// 	go c.Check()
+	go c.Check()
 
-// 	assert.Equal(t, 2, strings.Count((<-c.Results()).String(true), "\n"))
-// }
+	assert.Equal(t, 2, strings.Count((<-c.Results()).String(true), "\n"))
+}
 
-// func TestCheckerCheckPageError(t *testing.T) {
-// 	for _, s := range []string{erroneousURL} {
-// 		c, _ := newChecker(rootURL, checkerOptions{})
+func TestCheckerCheckPageError(t *testing.T) {
+	for _, s := range []string{erroneousURL} {
+		c, _ := newChecker(rootURL, checkerOptions{})
 
-// 		r, err := c.fetcher.Fetch(s)
-// 		assert.Nil(t, err)
+		r, err := c.fetcher.Fetch(s)
+		assert.Nil(t, err)
 
-// 		p, ok := r.Page()
-// 		assert.True(t, ok)
+		p, ok := r.Page()
+		assert.True(t, ok)
 
-// 		go c.checkPage(p)
+		go c.checkPage(p)
 
-// 		assert.False(t, (<-c.Results()).OK())
-// 	}
-// }
+		assert.False(t, (<-c.Results()).OK())
+	}
+}
 
 func TestStringChannelToSlice(t *testing.T) {
 	for _, c := range []struct {
