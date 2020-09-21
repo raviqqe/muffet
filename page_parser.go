@@ -58,5 +58,5 @@ func (p pageParser) Parse(rawURL string, body []byte) (*page, error) {
 		base = base.ResolveReference(u)
 	}
 
-	return &page{u, ids, p.linkFinder.Find(n, base)}, nil
+	return newPage(u, ids, p.linkFinder.Find(n, base)), nil
 }
