@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"net/url"
 	"testing"
 
@@ -14,8 +15,12 @@ func TestRobotsTxtFetcherFetchRobotsTxt(t *testing.T) {
 
 	r, err := newRobotsTxtFetcher(
 		newFakeHTTPClient(
-			map[string]*fakeHTTPResponse{
-				s + "/robots.txt": newFakeHTTPResponse(
+			func(u *url.URL) (*fakeHTTPResponse, error) {
+				if u.String() != s+"/robots.txt" {
+					return nil, errors.New("")
+				}
+
+				return newFakeHTTPResponse(
 					200,
 					s,
 					"text/plain",
@@ -23,7 +28,7 @@ func TestRobotsTxtFetcherFetchRobotsTxt(t *testing.T) {
 						User-Agent: *
 						Disallow: /bar
 					`),
-				),
+				), nil
 			})).Fetch(u)
 
 	assert.Nil(t, err)

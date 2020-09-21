@@ -21,6 +21,8 @@ type fetchResult struct {
 }
 
 func newLinkFetcher(c httpClient, pp *pageParser, o linkFetcherOptions) linkFetcher {
+	o.Initialize()
+
 	return linkFetcher{
 		c,
 		pp,

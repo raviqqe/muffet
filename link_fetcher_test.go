@@ -1,8 +1,8 @@
-// +build !v2
-
 package main
 
 import (
+	"errors"
+	"net/url"
 	"sync"
 	"testing"
 	"time"
@@ -10,153 +10,160 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func createTestLinkFetcher(c *fakeHTTPClient) linkFetcher {
+	return newLinkFetcher(c, newPageParser(newLinkFinder(nil), false), linkFetcherOptions{})
+}
+
+func createTestLinkFetcherWithOptions(c *fakeHTTPClient, o linkFetcherOptions) linkFetcher {
+	return newLinkFetcher(c, newPageParser(newLinkFinder(nil), false), o)
+}
+
 func TestNewFetcher(t *testing.T) {
-	newLinkFetcher(newFakeHTTPClient(nil), fetcherOptions{})
+	createTestLinkFetcher(newFakeHTTPClient(nil))
 }
 
-func TestFetcherFetch(t *testing.T) {
-	f := newLinkFetcher(newFakeHTTPClient(nil), fetcherOptions{})
+func TestLinkFetcherFetch(t *testing.T) {
+	f := createTestLinkFetcher(
+		newFakeHTTPClient(
+			func(u *url.URL) (*fakeHTTPResponse, error) {
+				if u.String() != "http://foo.com" {
+					return nil, errors.New("")
+				}
 
-	for _, s := range []string{rootURL, existentURL, fragmentURL, erroneousURL} {
-		r, err := f.Fetch(s)
-		_, ok := r.Page()
+				return newFakeHTTPResponse(
+					200,
+					"http://foo.com",
+					"text/html",
+					nil,
+				), nil
+			}),
+	)
 
-		assert.Equal(t, 200, r.StatusCode())
-		assert.True(t, ok)
-		assert.Nil(t, err)
-	}
-}
+	s, p, err := f.Fetch("http://foo.com")
 
-func TestFetcherFetchCache(t *testing.T) {
-	f := newLinkFetcher(newFakeHTTPClient(nil), fetcherOptions{})
-
-	r, err := f.Fetch(rootURL)
-	assert.NotEqual(t, fetchResult{}, r)
+	assert.Equal(t, 200, s)
+	assert.NotNil(t, p)
 	assert.Nil(t, err)
-	_, ok := r.Page()
-	assert.True(t, ok)
-
-	_, err = f.Fetch(nonExistentURL)
-	assert.NotNil(t, err)
-
-	r, err = f.Fetch(rootURL)
-	assert.NotEqual(t, fetchResult{}, r)
-	assert.Nil(t, err)
-	_, ok = r.Page()
-	assert.True(t, ok)
-
-	_, err = f.Fetch(nonExistentURL)
-	assert.NotNil(t, err)
 }
 
-func TestFetcherFetchCacheConcurrency(t *testing.T) {
+func TestLinkFetcherFetchFromCache(t *testing.T) {
+	ok := true
+	s := "http://foo.com"
+
+	f := createTestLinkFetcher(
+		newFakeHTTPClient(
+			func(u *url.URL) (*fakeHTTPResponse, error) {
+				if !ok {
+					return nil, errors.New("")
+				}
+
+				ok = false
+
+				return newFakeHTTPResponse(
+					200,
+					s,
+					"text/html",
+					nil,
+				), nil
+			}),
+	)
+
+	sc, p, err := f.Fetch(s)
+	assert.Equal(t, 200, sc)
+	assert.NotNil(t, p)
+	assert.Nil(t, err)
+
+	sc, p, err = f.Fetch(s)
+	assert.Equal(t, 200, sc)
+	assert.NotNil(t, p)
+	assert.Nil(t, err)
+}
+
+func TestLinkFetcherFetchCacheConcurrency(t *testing.T) {
+	c := 0
+
+	f := createTestLinkFetcher(
+		newFakeHTTPClient(
+			func(u *url.URL) (*fakeHTTPResponse, error) {
+				c++
+
+				return newFakeHTTPResponse(200, "http://foo.com", "text/html", nil), nil
+			}),
+	)
+
 	g := &sync.WaitGroup{}
-	f := newLinkFetcher(newFakeHTTPClient(nil), fetcherOptions{})
 
 	for i := 0; i < 1000; i++ {
 		g.Add(1)
 		go func() {
-			_, err := f.Fetch(countingURL)
+			defer g.Done()
+
+			time.Sleep(time.Millisecond)
+
+			_, _, err := f.Fetch(countingURL)
 			assert.Nil(t, err)
-			g.Done()
 		}()
 	}
 
 	g.Wait()
 
-	assert.Equal(t, 1, testCountingHandler.Count())
+	assert.Equal(t, 1, c)
 }
 
-func TestFetcherFetchWithFragments(t *testing.T) {
-	f := newLinkFetcher(newFakeHTTPClient(nil), fetcherOptions{})
+func TestLinkFetcherFetchWithFragments(t *testing.T) {
+	s := "http://foo.com"
+	f := createTestLinkFetcher(
+		newFakeHTTPClient(
+			func(u *url.URL) (*fakeHTTPResponse, error) {
+				if u.String() != s {
+					return nil, errors.New("")
+				}
 
-	r, err := f.Fetch(existentIDURL)
-	_, ok := r.Page()
+				return newFakeHTTPResponse(200, s, "text/html", []byte(`<p id="foo" />`)), nil
+			},
+		),
+	)
 
-	assert.Equal(t, 200, r.StatusCode())
-	assert.True(t, ok)
+	sc, p, err := f.Fetch(s + "#foo")
+
+	assert.Equal(t, 200, sc)
+	assert.NotNil(t, p)
 	assert.Nil(t, err)
 
-	_, err = f.Fetch(nonExistentIDURL)
+	sc, p, err = f.Fetch(s + "#bar")
+
 	assert.Equal(t, "id #bar not found", err.Error())
 }
 
-func TestFetcherFetchIgnoreFragments(t *testing.T) {
-	_, err := newLinkFetcher(newFakeHTTPClient(nil), fetcherOptions{}).Fetch(nonExistentIDURL)
+func TestLinkFetcherFetchIgnoringFragments(t *testing.T) {
+	s := "http://foo.com"
+	f := createTestLinkFetcherWithOptions(
+		newFakeHTTPClient(
+			func(u *url.URL) (*fakeHTTPResponse, error) {
+				if u.String() != s {
+					return nil, errors.New("")
+				}
 
-	assert.NotNil(t, err)
+				return newFakeHTTPResponse(200, s, "text/html", nil), nil
+			},
+		),
+		linkFetcherOptions{IgnoreFragments: true},
+	)
 
-	r, err := newLinkFetcher(newFakeHTTPClient(nil), fetcherOptions{IgnoreFragments: true}).Fetch(nonExistentIDURL)
-
-	assert.NotEqual(t, fetchResult{}, r)
+	_, _, err := f.Fetch(s + "#bar")
 	assert.Nil(t, err)
 }
 
-func TestFetcherFetchWithInfiniteRedirections(t *testing.T) {
-	_, err := newLinkFetcher(newFakeHTTPClient(nil), fetcherOptions{}).Fetch(infiniteRedirectURL)
+func TestLinkFetcherFailToFetch(t *testing.T) {
+	f := createTestLinkFetcher(
+		newFakeHTTPClient(func(*url.URL) (*fakeHTTPResponse, error) {
+			return nil, errors.New("")
+		}))
+
+	_, _, err := f.Fetch("http://foo.com")
+
 	assert.NotNil(t, err)
 }
-
-func TestFetcherFetchError(t *testing.T) {
-	f := newLinkFetcher(newFakeHTTPClient(nil), fetcherOptions{})
-
-	for _, s := range []string{nonExistentURL, ":"} {
-		_, err := f.Fetch(s)
-
-		assert.NotNil(t, err)
-	}
-}
-
-func TestFetcherSendRequest(t *testing.T) {
-	f := newLinkFetcher(newFakeHTTPClient(nil), fetcherOptions{})
-
-	for _, s := range []string{rootURL, existentURL, fragmentURL, erroneousURL, redirectURL} {
-		r, err := f.sendRequest(s)
-		_, ok := r.Page()
-
-		assert.Equal(t, 200, r.StatusCode())
-		assert.True(t, ok)
-		assert.Nil(t, err)
-	}
-}
-
-func TestFetcherSendRequestWithMissingLocationHeader(t *testing.T) {
-	_, err := newLinkFetcher(newFakeHTTPClient(nil), fetcherOptions{}).sendRequest(invalidRedirectURL)
-	assert.NotNil(t, err)
-}
-
-func TestFetcherSendRequestWithInvalidMIMEType(t *testing.T) {
-	_, err := newLinkFetcher(newFakeHTTPClient(nil), fetcherOptions{}).sendRequest(invalidMIMETypeURL)
-	assert.Equal(t, "mime: no media type", err.Error())
-}
-
-func TestFetcherSendRequestWithTimeout(t *testing.T) {
-	_, err := newLinkFetcher(newFakeHTTPClient(nil), fetcherOptions{Timeout: 1 * time.Second}).sendRequest(timeoutURL)
-	assert.NotNil(t, err)
-
-	r, err := newLinkFetcher(newFakeHTTPClient(nil), fetcherOptions{Timeout: 60 * time.Second}).sendRequest(timeoutURL)
-	assert.Equal(t, 200, r.StatusCode())
-	assert.Nil(t, err)
-}
-
-// TODO Eanble it fixing its flakiness.
-// func TestFetcherSendRequestConcurrency(t *testing.T) {
-// 	c := 900
-// 	f := newFetcher(&fasthttp.Client{MaxConnsPerHost: c}, fetcherOptions{Concurrency: c})
-
-// 	g := sync.WaitGroup{}
-
-// 	for i := 0; i < 10000; i++ {
-// 		g.Add(1)
-// 		go func() {
-// 			_, err := f.sendRequest("http://httpbin.org/get")
-// 			assert.Nil(t, err)
-// 			g.Done()
-// 		}()
-// 	}
-
-// 	g.Wait()
-// }
 
 func TestSeparateFragment(t *testing.T) {
 	for _, ss := range [][3]string{
@@ -171,7 +178,7 @@ func TestSeparateFragment(t *testing.T) {
 	}
 }
 
-func TestSeparateFragmentError(t *testing.T) {
+func TestFailToSeparateFragment(t *testing.T) {
 	_, _, err := separateFragment(":")
 
 	assert.NotNil(t, err)

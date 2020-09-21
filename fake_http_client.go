@@ -1,22 +1,17 @@
 package main
 
 import (
-	"errors"
 	"net/url"
 )
 
 type fakeHTTPClient struct {
-	data map[string]*fakeHTTPResponse
+	handler func(*url.URL) (*fakeHTTPResponse, error)
 }
 
-func newFakeHTTPClient(data map[string]*fakeHTTPResponse) httpClient {
-	return &fakeHTTPClient{data}
+func newFakeHTTPClient(h func(*url.URL) (*fakeHTTPResponse, error)) *fakeHTTPClient {
+	return &fakeHTTPClient{h}
 }
 
 func (c *fakeHTTPClient) Get(u *url.URL, headers map[string]string) (httpResponse, error) {
-	if r, ok := c.data[u.String()]; ok {
-		return r, nil
-	}
-
-	return nil, errors.New("fake http request failed")
+	return c.handler(u)
 }

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"net/url"
 	"testing"
 
@@ -14,8 +15,12 @@ func TestSitemapFetcherFetchSitemap(t *testing.T) {
 
 	sm, err := newSitemapFetcher(
 		newFakeHTTPClient(
-			map[string]*fakeHTTPResponse{
-				s + "/sitemap.xml": newFakeHTTPResponse(
+			func(u *url.URL) (*fakeHTTPResponse, error) {
+				if u.String() != s+"/sitemap.xml" {
+					return nil, errors.New("")
+				}
+
+				return newFakeHTTPResponse(
 					200,
 					s,
 					"text/xml",
@@ -27,7 +32,7 @@ func TestSitemapFetcherFetchSitemap(t *testing.T) {
 							</url>
 						</urlset>
 					`),
-				),
+				), nil
 			})).Fetch(u)
 
 	assert.Nil(t, err)
