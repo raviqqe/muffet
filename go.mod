@@ -32,7 +32,7 @@ require (
 	github.com/m3ng9i/go-utils v0.0.0-20160811013010-f9b7dc669fde // indirect
 	github.com/m3ng9i/ran v0.1.4 // indirect
 	github.com/magiconair/properties v1.8.1 // indirect
-	github.com/mattn/go-colorable v0.1.4
+	github.com/mattn/go-colorable v0.1.7
 	github.com/mitchellh/go-ps v0.0.0-20190716172923-621e5597135b // indirect
 	github.com/mozilla/tls-observatory v0.0.0-20190404164649-a3c1b6cfecfd // indirect
 	github.com/mwitkow/go-conntrack v0.0.0-20190716064945-2f068394615f // indirect
