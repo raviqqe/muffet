@@ -15,6 +15,11 @@ type linkFetcher struct {
 	options             linkFetcherOptions
 }
 
+type fetchResult struct {
+	StatusCode int
+	Page       *page
+}
+
 func newLinkFetcher(c httpClient, pp *pageParser, o linkFetcherOptions) linkFetcher {
 	return linkFetcher{
 		c,
@@ -25,77 +30,80 @@ func newLinkFetcher(c httpClient, pp *pageParser, o linkFetcherOptions) linkFetc
 	}
 }
 
-func (f linkFetcher) Fetch(u string) (fetchResult, error) {
+// Fetch fetches a link and returns a successful status code and optionally HTML page, or an error.
+func (f linkFetcher) Fetch(u string) (int, *page, error) {
 	u, fr, err := separateFragment(u)
 	if err != nil {
-		return fetchResult{}, err
+		return 0, nil, err
 	}
 
-	r, err := f.sendRequestWithCache(u)
+	s, p, err := f.sendRequestWithCache(u)
 	if err != nil {
-		return fetchResult{}, err
+		return 0, nil, err
 	}
 
-	if p, ok := r.Page(); ok && !f.options.IgnoreFragments && fr != "" {
+	if p != nil && !f.options.IgnoreFragments && fr != "" {
 		if _, ok := p.IDs()[fr]; !ok {
-			return fetchResult{}, fmt.Errorf("id #%v not found", fr)
+			return 0, nil, fmt.Errorf("id #%v not found", fr)
 		}
 	}
 
-	return r, nil
+	return s, p, nil
 }
 
-func (f linkFetcher) sendRequestWithCache(u string) (fetchResult, error) {
+func (f linkFetcher) sendRequestWithCache(u string) (int, *page, error) {
 	x, store := f.cache.LoadOrStore(u)
 
 	if store == nil {
 		if err, ok := x.(error); ok {
-			return fetchResult{}, err
+			return 0, nil, err
 		}
 
-		return x.(fetchResult), nil
+		r := x.(fetchResult)
+
+		return r.StatusCode, r.Page, nil
 	}
 
-	r, err := f.sendRequest(u)
+	s, p, err := f.sendRequest(u)
 
 	if err == nil {
-		store(r)
+		store(fetchResult{s, p})
 	} else {
 		store(err)
 	}
 
-	return r, err
+	return s, p, err
 }
 
-func (f linkFetcher) sendRequest(s string) (fetchResult, error) {
+func (f linkFetcher) sendRequest(s string) (int, *page, error) {
 	f.connectionSemaphore.Request()
 	defer f.connectionSemaphore.Release()
 
 	u, err := url.Parse(s)
 	if err != nil {
-		return fetchResult{}, err
+		return 0, nil, err
 	}
 
 	r, err := f.client.Get(u, f.options.Headers)
 
 	if err != nil {
-		return fetchResult{}, err
+		return 0, nil, err
 	} else if s := strings.TrimSpace(r.Header("Content-Type")); s != "" {
 		t, _, err := mime.ParseMediaType(s)
 
 		if err != nil {
-			return fetchResult{}, err
+			return 0, nil, err
 		} else if t != "text/html" {
-			return newFetchResult(r.StatusCode(), nil), nil
+			return r.StatusCode(), nil, nil
 		}
 	}
 
 	p, err := f.pageParser.Parse(r.URL(), r.Body())
 	if err != nil {
-		return fetchResult{}, err
+		return 0, nil, err
 	}
 
-	return newFetchResult(r.StatusCode(), p), nil
+	return r.StatusCode(), p, nil
 }
 
 func separateFragment(s string) (string, string, error) {

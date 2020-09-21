@@ -55,18 +55,16 @@ func (c checker) checkPage(p *page) {
 		go func(u string) {
 			defer w.Done()
 
-			r, err := c.fetcher.Fetch(u)
+			status, p, err := c.fetcher.Fetch(u)
 
 			if err == nil {
-				sc <- formatLinkSuccess(u, r.StatusCode())
+				sc <- formatLinkSuccess(u, status)
 			} else {
 				ec <- formatLinkError(u, err)
 			}
 
-			if !c.onePageOnly {
-				if p, ok := r.Page(); ok && c.linkValidator.Validate(p.URL()) {
-					c.addPage(p)
-				}
+			if !c.onePageOnly && p != nil && c.linkValidator.Validate(p.URL()) {
+				c.addPage(p)
 			}
 		}(u)
 	}

@@ -50,14 +50,10 @@ func (c command) Run(rawArgs []string) (bool, error) {
 		},
 	)
 
-	r, err := f.Fetch(args.URL)
+	_, p, err := f.Fetch(args.URL)
 	if err != nil {
 		return false, err
-	}
-
-	p, ok := r.Page()
-
-	if !ok {
+	} else if p == nil {
 		return false, errors.New("non-HTML page")
 	}
 
@@ -90,7 +86,7 @@ func (c command) Run(rawArgs []string) (bool, error) {
 
 	go checker.Check(p)
 
-	ok = true
+	ok := true
 
 	for r := range checker.Results() {
 		if !r.OK() || args.Verbose {
