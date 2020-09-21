@@ -14,10 +14,9 @@ func TestCommand(t *testing.T) {
 		{"-j", authorizationHeader("me:password"), basicAuthURL},
 		{"-e", ".*", erroneousURL},
 	} {
-		ok, err := newCommand(ioutil.Discard).Run(args)
+		ok := newCommand(ioutil.Discard, ioutil.Discard).Run(args)
 
 		assert.True(t, ok)
-		assert.Nil(t, err)
 	}
 }
 
@@ -25,10 +24,9 @@ func TestCommandErroneousResult(t *testing.T) {
 	for _, args := range [][]string{
 		{erroneousURL},
 	} {
-		ok, err := newCommand(ioutil.Discard).Run(args)
+		ok := newCommand(ioutil.Discard, ioutil.Discard).Run(args)
 
 		assert.False(t, ok)
-		assert.Nil(t, err)
 	}
 }
 
@@ -38,9 +36,9 @@ func TestCommandError(t *testing.T) {
 		{"-t", "foo", rootURL},
 		{"-j", authorizationHeader("you:password"), basicAuthURL},
 	} {
-		_, err := newCommand(ioutil.Discard).Run(args)
+		ok := newCommand(ioutil.Discard, ioutil.Discard).Run(args)
 
-		assert.NotNil(t, err)
+		assert.False(t, ok)
 	}
 }
 

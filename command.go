@@ -11,15 +11,25 @@ import (
 )
 
 type command struct {
-	writer io.Writer
+	stdout, stderr io.Writer
 }
 
-func newCommand(writer io.Writer) command {
-	return command{writer}
+func newCommand(stdout, stderr io.Writer) *command {
+	return &command{stdout, stderr}
 }
 
-func (c command) Run(rawArgs []string) (bool, error) {
-	args, err := getArguments(rawArgs)
+func (c *command) Run(args []string) bool {
+	ok, err := c.runWithError(args)
+
+	if err != nil {
+		c.printError(err)
+	}
+
+	return ok
+}
+
+func (c *command) runWithError(ss []string) (bool, error) {
+	args, err := getArguments(ss)
 	if err != nil {
 		return false, err
 	}
@@ -100,7 +110,13 @@ func (c command) Run(rawArgs []string) (bool, error) {
 }
 
 func (c command) print(xs ...interface{}) {
-	if _, err := fmt.Fprintln(c.writer, xs...); err != nil {
+	if _, err := fmt.Fprintln(c.stdout, xs...); err != nil {
+		panic(err)
+	}
+}
+
+func (c command) printError(xs ...interface{}) {
+	if _, err := fmt.Fprintln(c.stderr, xs...); err != nil {
 		panic(err)
 	}
 }
