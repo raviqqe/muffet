@@ -45,8 +45,6 @@ func (c command) Run(rawArgs []string) (bool, error) {
 			args.Concurrency,
 			args.Headers,
 			args.IgnoreFragments,
-			args.MaxRedirections,
-			args.Timeout,
 		},
 	)
 
