@@ -34,16 +34,19 @@ func (c *command) runWithError(ss []string) (bool, error) {
 		return false, err
 	}
 
-	client := newFasthttpHTTPClient(
-		&fasthttp.Client{
-			MaxConnsPerHost: args.Concurrency,
-			ReadBufferSize:  args.BufferSize,
-			TLSConfig: &tls.Config{
-				InsecureSkipVerify: args.SkipTLSVerification,
+	client := newThrottledHTTPClient(
+		newFasthttpHTTPClient(
+			&fasthttp.Client{
+				MaxConnsPerHost: args.Concurrency,
+				ReadBufferSize:  args.BufferSize,
+				TLSConfig: &tls.Config{
+					InsecureSkipVerify: args.SkipTLSVerification,
+				},
 			},
-		},
-		args.MaxRedirections,
-		args.Timeout,
+			args.MaxRedirections,
+			args.Timeout,
+		),
+		args.Concurrency,
 	)
 
 	pp := newPageParser(newLinkFinder(args.ExcludedPatterns), args.FollowURLParams)
@@ -52,7 +55,6 @@ func (c *command) runWithError(ss []string) (bool, error) {
 		client,
 		pp,
 		linkFetcherOptions{
-			args.Concurrency,
 			args.Headers,
 			args.IgnoreFragments,
 		},
