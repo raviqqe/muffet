@@ -84,7 +84,7 @@ func TestPageParserResolveLinksWithBlankBaseTag(t *testing.T) {
 	assert.Equal(t, map[string]error{"http://foo.com/bar": nil}, p.Links())
 }
 
-func TestPageParserParseIDs(t *testing.T) {
+func TestPageParserParseID(t *testing.T) {
 	p, err := newPageParser(newLinkFinder(nil), false).Parse(
 		"http://foo.com",
 		[]byte(`<p id="foo" />`),
@@ -93,13 +93,22 @@ func TestPageParserParseIDs(t *testing.T) {
 	assert.Equal(t, map[string]struct{}{"foo": {}}, p.Fragments())
 }
 
-func TestPageParserParseNames(t *testing.T) {
+func TestPageParserParseName(t *testing.T) {
 	p, err := newPageParser(newLinkFinder(nil), false).Parse(
 		"http://foo.com",
 		[]byte(`<p name="foo" />`),
 	)
 	assert.Nil(t, err)
 	assert.Equal(t, map[string]struct{}{"foo": {}}, p.Fragments())
+}
+
+func TestPageParserParseIDAndName(t *testing.T) {
+	p, err := newPageParser(newLinkFinder(nil), false).Parse(
+		"http://foo.com",
+		[]byte(`<p id="foo" name="bar" />`),
+	)
+	assert.Nil(t, err)
+	assert.Equal(t, map[string]struct{}{"foo": {}, "bar": {}}, p.Fragments())
 }
 
 func TestPageParserParseLinks(t *testing.T) {

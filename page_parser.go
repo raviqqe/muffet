@@ -40,7 +40,9 @@ func (p pageParser) Parse(rawURL string, body []byte) (*page, error) {
 	scrape.FindAllNested(n, func(n *html.Node) bool {
 		if s := scrape.Attr(n, "id"); s != "" {
 			frs[s] = struct{}{}
-		} else if s := scrape.Attr(n, "name"); s != "" {
+		}
+
+		if s := scrape.Attr(n, "name"); s != "" {
 			frs[s] = struct{}{}
 		}
 
