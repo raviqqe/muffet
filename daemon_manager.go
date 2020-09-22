@@ -7,8 +7,8 @@ type daemonManager struct {
 	waitGroup *sync.WaitGroup
 }
 
-func newDaemonManager(capacity int) daemonManager {
-	return daemonManager{make(chan func(), capacity), &sync.WaitGroup{}}
+func newDaemonManager(capacity int) *daemonManager {
+	return &daemonManager{make(chan func(), capacity), &sync.WaitGroup{}}
 }
 
 func (m daemonManager) Add(f func()) {

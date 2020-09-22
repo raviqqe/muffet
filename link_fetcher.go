@@ -19,12 +19,12 @@ type fetchResult struct {
 	Page       *page
 }
 
-func newLinkFetcher(c httpClient, pp *pageParser, o linkFetcherOptions) linkFetcher {
-	return linkFetcher{c, pp, newCache(), o}
+func newLinkFetcher(c httpClient, pp *pageParser, o linkFetcherOptions) *linkFetcher {
+	return &linkFetcher{c, pp, newCache(), o}
 }
 
 // Fetch fetches a link and returns a successful status code and optionally HTML page, or an error.
-func (f linkFetcher) Fetch(u string) (int, *page, error) {
+func (f *linkFetcher) Fetch(u string) (int, *page, error) {
 	u, fr, err := separateFragment(u)
 	if err != nil {
 		return 0, nil, err
@@ -44,7 +44,7 @@ func (f linkFetcher) Fetch(u string) (int, *page, error) {
 	return s, p, nil
 }
 
-func (f linkFetcher) sendRequestWithCache(u string) (int, *page, error) {
+func (f *linkFetcher) sendRequestWithCache(u string) (int, *page, error) {
 	x, store := f.cache.LoadOrStore(u)
 
 	if store == nil {
@@ -68,7 +68,7 @@ func (f linkFetcher) sendRequestWithCache(u string) (int, *page, error) {
 	return s, p, err
 }
 
-func (f linkFetcher) sendRequest(s string) (int, *page, error) {
+func (f *linkFetcher) sendRequest(s string) (int, *page, error) {
 	u, err := url.Parse(s)
 	if err != nil {
 		return 0, nil, err
