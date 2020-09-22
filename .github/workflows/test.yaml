@@ -11,3 +11,4 @@ jobs:
       - run: tools/build.sh
       - run: tools/lint.sh
       - run: tools/test.sh
+      - uses: codecov/codecov-action@v1
