@@ -21,11 +21,11 @@ func createTestChecker(c *fakeHTTPClient) *checker {
 	)
 }
 
-func createTestPage(t *testing.T, ids map[string]struct{}, links map[string]error) *page {
+func createTestPage(t *testing.T, fragments map[string]struct{}, links map[string]error) *page {
 	u, err := url.Parse("http://foo.com")
 	assert.Nil(t, err)
 
-	return newPage(u, ids, links)
+	return newPage(u, fragments, links)
 }
 
 func TestCheckerCheckOnePage(t *testing.T) {
