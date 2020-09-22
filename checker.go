@@ -15,10 +15,10 @@ type checker struct {
 	onePageOnly   bool
 }
 
-func newChecker(f *linkFetcher, uv *linkValidator, concurrency int, onePageOnly bool) *checker {
+func newChecker(f *linkFetcher, v *linkValidator, concurrency int, onePageOnly bool) *checker {
 	return &checker{
 		f,
-		uv,
+		v,
 		newDaemonManager(concurrency),
 		make(chan pageResult, concurrency),
 		newConcurrentStringSet(),
