@@ -1,0 +1,28 @@
+name: release
+on:
+  push:
+    branches:
+      - master
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    container:
+      image: golang
+    steps:
+      - uses: actions/checkout@master
+      - run: tools/release.sh
+        env:
+          GIT_USER: ${{ secrets.GIT_USER }}
+          GIT_EMAIL: ${{ secrets.GIT_EMAIL }}
+  docker:
+    needs: release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - uses: elgohr/Publish-Docker-Github-Action@master
+        with:
+          name: raviqqe/muffet
+          dockerfile: Dockerfile
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+          tag_semver: true
