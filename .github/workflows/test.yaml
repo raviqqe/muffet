@@ -7,7 +7,7 @@ jobs:
     container:
       image: golang
     steps:
-      - uses: actions/checkout@master
+      - uses: actions/checkout@v2
       - run: tools/build.sh
       - run: tools/lint.sh
       - run: tools/test.sh
