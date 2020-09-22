@@ -90,7 +90,16 @@ func TestPageParserParseIDs(t *testing.T) {
 		[]byte(`<p id="foo" />`),
 	)
 	assert.Nil(t, err)
-	assert.Equal(t, map[string]struct{}{"foo": {}}, p.IDs())
+	assert.Equal(t, map[string]struct{}{"foo": {}}, p.Fragments())
+}
+
+func TestPageParserParseNames(t *testing.T) {
+	p, err := newPageParser(newLinkFinder(nil), false).Parse(
+		"http://foo.com",
+		[]byte(`<p name="foo" />`),
+	)
+	assert.Nil(t, err)
+	assert.Equal(t, map[string]struct{}{"foo": {}}, p.Fragments())
 }
 
 func TestPageParserParseLinks(t *testing.T) {

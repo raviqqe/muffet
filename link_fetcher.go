@@ -35,7 +35,7 @@ func (f *linkFetcher) Fetch(u string) (int, *page, error) {
 		return 0, nil, err
 	} else if p == nil || f.options.IgnoreFragments || fr == "" {
 		return s, p, nil
-	} else if _, ok := p.IDs()[fr]; !ok {
+	} else if _, ok := p.Fragments()[fr]; !ok {
 		return 0, nil, fmt.Errorf("id #%v not found", fr)
 	}
 

@@ -35,11 +35,13 @@ func (p pageParser) Parse(rawURL string, body []byte) (*page, error) {
 		u.RawQuery = ""
 	}
 
-	ids := map[string]struct{}{}
+	frs := map[string]struct{}{}
 
 	scrape.FindAllNested(n, func(n *html.Node) bool {
 		if s := scrape.Attr(n, "id"); s != "" {
-			ids[s] = struct{}{}
+			frs[s] = struct{}{}
+		} else if s := scrape.Attr(n, "name"); s != "" {
+			frs[s] = struct{}{}
 		}
 
 		return false
@@ -58,5 +60,5 @@ func (p pageParser) Parse(rawURL string, body []byte) (*page, error) {
 		base = base.ResolveReference(u)
 	}
 
-	return newPage(u, ids, p.linkFinder.Find(n, base)), nil
+	return newPage(u, frs, p.linkFinder.Find(n, base)), nil
 }
