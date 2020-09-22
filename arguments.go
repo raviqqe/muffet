@@ -104,7 +104,7 @@ func getArguments(regexps []string) (arguments, error) {
 }
 
 func parseArguments(u string, ss []string) map[string]interface{} {
-	args, err := docopt.ParseArgs(u, ss, "1.3.3")
+	args, err := docopt.ParseArgs(u, ss, version)
 	if err != nil {
 		panic(err)
 	}
