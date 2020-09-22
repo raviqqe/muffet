@@ -6,7 +6,7 @@ if [ -z $CI ]; then
   exit 1
 fi
 
-version=$(go run . --version)
+version=v$(go run . --version)
 
 if git tag -l | grep $version; then
   exit
