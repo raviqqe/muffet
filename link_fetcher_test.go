@@ -130,7 +130,7 @@ func TestLinkFetcherFetchWithFragments(t *testing.T) {
 	assert.NotNil(t, p)
 	assert.Nil(t, err)
 
-	sc, p, err = f.Fetch(s + "#bar")
+	_, _, err = f.Fetch(s + "#bar")
 
 	assert.Equal(t, "id #bar not found", err.Error())
 }

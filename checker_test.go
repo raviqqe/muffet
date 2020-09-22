@@ -1,83 +1,97 @@
-// +build !v2
-
 package main
 
 import (
-	"regexp"
-	"strings"
+	"errors"
+	"net/url"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
 
-func TestCheckerCheck(t *testing.T) {
-	for _, s := range []string{rootURL, fragmentURL, baseURL, redirectURL} {
-		c, err := newChecker(s, checkerOptions{})
-		assert.Nil(t, err)
-
-		go c.Check()
-
-		for r := range c.Results() {
-			assert.True(t, r.OK())
-		}
-	}
+func createTestChecker(c *fakeHTTPClient) *checker {
+	return newChecker(
+		newLinkFetcher(
+			c,
+			newPageParser(newLinkFinder(nil), false),
+			linkFetcherOptions{},
+		),
+		newLinkValidator("foo.com", nil, nil),
+		512,
+		false,
+	)
 }
 
-func TestCheckerCheckMultiplePages(t *testing.T) {
-	c, _ := newChecker(rootURL, checkerOptions{})
+func createTestPage(t *testing.T, ids map[string]struct{}, links map[string]error) *page {
+	u, err := url.Parse("http://foo.com")
+	assert.Nil(t, err)
 
-	go c.Check()
+	return newPage(u, ids, links)
+}
+
+func TestCheckerCheckOnePage(t *testing.T) {
+	c := createTestChecker(
+		newFakeHTTPClient(
+			func(u *url.URL) (*fakeHTTPResponse, error) {
+				return nil, errors.New("")
+			},
+		),
+	)
+
+	go c.Check(createTestPage(t, nil, nil))
 
 	i := 0
 
 	for r := range c.Results() {
-		i += strings.Count(r.String(true), "\n") + 1
+		i++
+		assert.True(t, r.OK())
 	}
 
-	assert.Equal(t, 4, i)
+	assert.Equal(t, 1, i)
 }
 
-func TestCheckerCheckPage(t *testing.T) {
-	c, _ := newChecker(rootURL, checkerOptions{})
+func TestCheckerCheckTwoPages(t *testing.T) {
+	c := createTestChecker(
+		newFakeHTTPClient(
+			func(u *url.URL) (*fakeHTTPResponse, error) {
+				s := "http://foo.com/foo"
 
-	r, err := c.fetcher.Fetch(existentURL)
-	assert.Nil(t, err)
+				if u.String() != s {
+					return nil, errors.New("")
+				}
 
-	p, ok := r.Page()
-	assert.True(t, ok)
+				return newFakeHTTPResponse(200, s, "text/html", nil), nil
+			},
+		),
+	)
 
-	go c.checkPage(p)
+	go c.Check(
+		createTestPage(t, nil, map[string]error{"http://foo.com/foo": nil}),
+	)
 
-	assert.True(t, (<-c.Results()).OK())
-}
+	i := 0
 
-func TestCheckerCheckWithExcludedURLs(t *testing.T) {
-	r, err := regexp.Compile("bar")
-	assert.Nil(t, err)
-
-	c, _ := newChecker(erroneousURL, checkerOptions{
-		fetcherOptions: fetcherOptions{ExcludedPatterns: []*regexp.Regexp{r}},
-	})
-
-	go c.Check()
-
-	assert.Equal(t, 2, strings.Count((<-c.Results()).String(true), "\n"))
-}
-
-func TestCheckerCheckPageError(t *testing.T) {
-	for _, s := range []string{erroneousURL} {
-		c, _ := newChecker(rootURL, checkerOptions{})
-
-		r, err := c.fetcher.Fetch(s)
-		assert.Nil(t, err)
-
-		p, ok := r.Page()
-		assert.True(t, ok)
-
-		go c.checkPage(p)
-
-		assert.False(t, (<-c.Results()).OK())
+	for r := range c.Results() {
+		i++
+		assert.True(t, r.OK())
 	}
+
+	assert.Equal(t, 2, i)
+}
+
+func TestCheckerFailToCheckPage(t *testing.T) {
+	c := createTestChecker(
+		newFakeHTTPClient(
+			func(u *url.URL) (*fakeHTTPResponse, error) {
+				return nil, errors.New("")
+			},
+		),
+	)
+
+	go c.Check(
+		createTestPage(t, nil, map[string]error{"http://foo.com/foo": nil}),
+	)
+
+	assert.False(t, (<-c.Results()).OK())
 }
 
 func TestStringChannelToSlice(t *testing.T) {

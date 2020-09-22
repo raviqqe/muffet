@@ -14,32 +14,16 @@ import (
 	"sync/atomic"
 	"testing"
 	"time"
-
-	"github.com/stretchr/testify/assert"
-	"golang.org/x/net/html"
 )
 
 const (
-	rootURL          = "http://localhost:8080"
-	existentURL      = "http://localhost:8080/foo"
-	nonExistentURL   = "http://localhost:8080/bar"
-	erroneousURL     = "http://localhost:8080/erroneous"
-	fragmentURL      = "http://localhost:8080/fragment"
-	existentIDURL    = "http://localhost:8080/fragment#foo"
-	nonExistentIDURL = "http://localhost:8080/fragment#bar"
+	rootURL      = "http://localhost:8080"
+	existentURL  = "http://localhost:8080/foo"
+	erroneousURL = "http://localhost:8080/erroneous"
+	fragmentURL  = "http://localhost:8080/fragment"
+	basicAuthURL = "http://localhost:8080/basic-auth"
 	// TODO Write test for it.
-	// baseURL = "http://localhost:8080/base"
-	// TODO Write test for it.
-	// invalidBaseURL = "http://localhost:8080/invalid-base"
-	redirectURL         = "http://localhost:8080/redirect"
-	infiniteRedirectURL = "http://localhost:8080/infinite-redirect"
-	invalidRedirectURL  = "http://localhost:8080/invalid-redirect"
-	timeoutURL          = "http://localhost:8080/timeout"
-	basicAuthURL        = "http://localhost:8080/basic-auth"
-	// TODO Write test for it.
-	// robotsTxtURL = "http://localhost:8080/robots.txt"
-	invalidMIMETypeURL = "http://localhost:8083"
-	countingURL        = "http://localhost:8084"
+	countingURL = "http://localhost:8084"
 )
 
 type handler struct{}
@@ -251,10 +235,4 @@ func prepareTLSServer(a string) (func(), func(), error) {
 
 	s := http.Server{Addr: a, ErrorLog: log.New(ioutil.Discard, "", 0), Handler: handler{}}
 	return func() { s.ListenAndServeTLS(c, k) }, func() { os.Remove(d) }, nil
-}
-
-func dummyHTML(t *testing.T) *html.Node {
-	n, err := html.Parse(strings.NewReader("hello"))
-	assert.Nil(t, err)
-	return n
 }
