@@ -10,11 +10,11 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func createTestLinkFetcher(c *fakeHTTPClient) linkFetcher {
-	return newLinkFetcher(c, newPageParser(newLinkFinder(nil), false), linkFetcherOptions{})
+func createTestLinkFetcher(c *fakeHTTPClient) *linkFetcher {
+	return createTestLinkFetcherWithOptions(c, linkFetcherOptions{})
 }
 
-func createTestLinkFetcherWithOptions(c *fakeHTTPClient, o linkFetcherOptions) linkFetcher {
+func createTestLinkFetcherWithOptions(c *fakeHTTPClient, o linkFetcherOptions) *linkFetcher {
 	return newLinkFetcher(c, newPageParser(newLinkFinder(nil), false), o)
 }
 
