@@ -33,12 +33,10 @@ func (f *linkFetcher) Fetch(u string) (int, *page, error) {
 	s, p, err := f.sendRequestWithCache(u)
 	if err != nil {
 		return 0, nil, err
-	}
-
-	if p != nil && !f.options.IgnoreFragments && fr != "" {
-		if _, ok := p.IDs()[fr]; !ok {
-			return 0, nil, fmt.Errorf("id #%v not found", fr)
-		}
+	} else if p == nil || f.options.IgnoreFragments || fr == "" {
+		return s, p, nil
+	} else if _, ok := p.IDs()[fr]; !ok {
+		return 0, nil, fmt.Errorf("id #%v not found", fr)
 	}
 
 	return s, p, nil
