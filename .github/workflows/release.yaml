@@ -15,6 +15,7 @@ jobs:
           GIT_USER: ${{ secrets.GIT_USER }}
           GIT_EMAIL: ${{ secrets.GIT_EMAIL }}
   docker:
+    needs: release
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
