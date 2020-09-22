@@ -1,0 +1,13 @@
+name: test
+on:
+  push:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    container:
+      image: golang
+    steps:
+      - uses: actions/checkout@master
+      - run: tools/build.sh
+      - run: tools/lint.sh
+      - run: tools/test.sh
