@@ -10,6 +10,8 @@ jobs:
       image: golang
     steps:
       - uses: actions/checkout@master
+        with:
+          fetch-depth: 0
       - run: tools/release.sh
         env:
           GIT_USER: ${{ secrets.GIT_USER }}
