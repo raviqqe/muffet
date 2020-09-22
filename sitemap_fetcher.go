@@ -1,7 +1,6 @@
 package main
 
 import (
-	"errors"
 	"net/url"
 
 	"github.com/yterajima/go-sitemap"
@@ -22,8 +21,6 @@ func newSitemapFetcher(c httpClient) *sitemapFetcher {
 
 		if err != nil {
 			return nil, err
-		} else if r.StatusCode() != 200 {
-			return nil, errors.New("failed to load sitemap")
 		}
 
 		return r.Body(), err
