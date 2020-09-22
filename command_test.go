@@ -1,47 +1,44 @@
 package main
 
 import (
-	"encoding/base64"
+	"errors"
 	"io/ioutil"
+	"net/url"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
 
+func createTestCommand(h func(*url.URL) (*fakeHTTPResponse, error)) *command {
+	return newCommand(
+		ioutil.Discard,
+		ioutil.Discard,
+		newFakeHTTPClientFactory(h),
+	)
+}
+
 func TestCommand(t *testing.T) {
-	for _, args := range [][]string{
-		{"-x", rootURL},
-		{"-j", authorizationHeader("me:password"), basicAuthURL},
-		{"-e", ".*", erroneousURL},
-	} {
-		ok := newCommand(ioutil.Discard, ioutil.Discard).Run(args)
+	ok := createTestCommand(
+		func(u *url.URL) (*fakeHTTPResponse, error) {
+			s := "http://foo.com"
 
-		assert.True(t, ok)
-	}
+			if u.String() != s {
+				return nil, errors.New("")
+			}
+
+			return newFakeHTTPResponse(200, s, "text/html", nil), nil
+		},
+	).Run([]string{"http://foo.com"})
+
+	assert.True(t, ok)
 }
 
-func TestCommandErroneousResult(t *testing.T) {
-	for _, args := range [][]string{
-		{erroneousURL},
-	} {
-		ok := newCommand(ioutil.Discard, ioutil.Discard).Run(args)
+func TestCommandFailToRun(t *testing.T) {
+	ok := createTestCommand(
+		func(u *url.URL) (*fakeHTTPResponse, error) {
+			return nil, errors.New("")
+		},
+	).Run([]string{"http://foo.com"})
 
-		assert.False(t, ok)
-	}
-}
-
-func TestCommandError(t *testing.T) {
-	for _, args := range [][]string{
-		{":"},
-		{"-t", "foo", rootURL},
-		{"-j", authorizationHeader("you:password"), basicAuthURL},
-	} {
-		ok := newCommand(ioutil.Discard, ioutil.Discard).Run(args)
-
-		assert.False(t, ok)
-	}
-}
-
-func authorizationHeader(s string) string {
-	return "Authorization: Basic " + base64.StdEncoding.EncodeToString([]byte(s))
+	assert.False(t, ok)
 }

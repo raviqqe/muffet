@@ -1,21 +1,20 @@
 package main
 
 import (
-	"crypto/tls"
 	"errors"
 	"fmt"
 	"io"
 
 	"github.com/temoto/robotstxt"
-	"github.com/valyala/fasthttp"
 )
 
 type command struct {
-	stdout, stderr io.Writer
+	stdout, stderr    io.Writer
+	httpClientFactory httpClientFactory
 }
 
-func newCommand(stdout, stderr io.Writer) *command {
-	return &command{stdout, stderr}
+func newCommand(stdout, stderr io.Writer, f httpClientFactory) *command {
+	return &command{stdout, stderr, f}
 }
 
 func (c *command) Run(args []string) bool {
@@ -35,16 +34,14 @@ func (c *command) runWithError(ss []string) (bool, error) {
 	}
 
 	client := newThrottledHTTPClient(
-		newFasthttpHTTPClient(
-			&fasthttp.Client{
-				MaxConnsPerHost: args.Concurrency,
-				ReadBufferSize:  args.BufferSize,
-				TLSConfig: &tls.Config{
-					InsecureSkipVerify: args.SkipTLSVerification,
-				},
+		c.httpClientFactory.Create(
+			httpClientOptions{
+				Concurrency:         args.Concurrency,
+				BufferSize:          args.BufferSize,
+				MaxRedirections:     args.MaxRedirections,
+				SkipTLSVerification: args.SkipTLSVerification,
+				Timeout:             args.Timeout,
 			},
-			args.MaxRedirections,
-			args.Timeout,
 		),
 		args.Concurrency,
 	)

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"net/url"
 	"strings"
 	"testing"
@@ -91,4 +92,8 @@ func TestLinkFinderIsLinkExcluded(t *testing.T) {
 
 		assert.Equal(t, x.answer, newLinkFinder(rs).isLinkExcluded("http://foo.com"))
 	}
+}
+
+func htmlWithBody(b string) string {
+	return fmt.Sprintf(`<html><body>%v</body></html>`, b)
 }

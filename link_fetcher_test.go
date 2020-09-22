@@ -100,7 +100,7 @@ func TestLinkFetcherFetchCacheConcurrency(t *testing.T) {
 
 			time.Sleep(time.Millisecond)
 
-			_, _, err := f.Fetch(countingURL)
+			_, _, err := f.Fetch("http://foo.com")
 			assert.Nil(t, err)
 		}()
 	}
