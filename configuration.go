@@ -3,7 +3,7 @@ package main
 import "time"
 
 const (
-	version                = "1.5.0"
+	version                = "1.5.1"
 	defaultBufferSize      = 4096
 	defaultConcurrency     = 512
 	defaultMaxRedirections = 64
