@@ -28,9 +28,10 @@ func (r pageResult) String(v bool) string {
 	}
 
 	return strings.Join(
-		append(append([]string{color.YellowString(r.url)},
-			ss...),
-			formatMessages(r.errorMessages)...),
+		append(
+			append([]string{color.YellowString(r.url)}, ss...),
+			formatMessages(r.errorMessages)...,
+		),
 		"\n")
 }
 

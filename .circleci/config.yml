@@ -25,11 +25,9 @@ jobs:
     working_directory: /go/src/github.com/raviqqe/muffet
     steps:
       - checkout
-      - run: tools/dependencies.sh
-      - run: tools/lint.sh
       - run: tools/build.sh
-      - run: tools/unit_test.sh
-      - run: tools/integration_test.sh
+      - run: tools/lint.sh
+      - run: tools/test.sh
       - persist_to_workspace:
           root: .
           paths:

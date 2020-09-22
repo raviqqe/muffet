@@ -50,46 +50,37 @@ type arguments struct {
 	OnePageOnly bool
 }
 
-func getArguments(ss []string) (arguments, error) {
-	args := parseArguments(usage, ss)
+func getArguments(regexps []string) (arguments, error) {
+	args := parseArguments(usage, regexps)
 
 	b, err := parseInt(args["--buffer-size"].(string))
-
 	if err != nil {
 		return arguments{}, err
 	}
 
 	c, err := parseInt(args["--concurrency"].(string))
-
 	if err != nil {
 		return arguments{}, err
 	}
 
-	ss, _ = args["--exclude"].([]string)
+	ss, _ := args["--exclude"].([]string)
 	rs, err := compileRegexps(ss)
-
 	if err != nil {
 		return arguments{}, err
 	}
 
-	hs := map[string]string(nil)
-
-	if ss := args["--header"]; ss != nil {
-		hs, err = parseHeaders(ss.([]string))
-
-		if err != nil {
-			return arguments{}, err
-		}
+	ss, _ = args["--header"].([]string)
+	hs, err := parseHeaders(ss)
+	if err != nil {
+		return arguments{}, err
 	}
 
 	r, err := parseInt(args["--limit-redirections"].(string))
-
 	if err != nil {
 		return arguments{}, err
 	}
 
 	t, err := parseInt(args["--timeout"].(string))
-
 	if err != nil {
 		return arguments{}, err
 	}
@@ -113,8 +104,7 @@ func getArguments(ss []string) (arguments, error) {
 }
 
 func parseArguments(u string, ss []string) map[string]interface{} {
-	args, err := docopt.ParseArgs(u, ss, "1.3.3")
-
+	args, err := docopt.ParseArgs(u, ss, version)
 	if err != nil {
 		panic(err)
 	}
@@ -127,12 +117,11 @@ func parseInt(s string) (int, error) {
 	return int(i), err
 }
 
-func compileRegexps(ss []string) ([]*regexp.Regexp, error) {
-	rs := make([]*regexp.Regexp, 0, len(ss))
+func compileRegexps(regexps []string) ([]*regexp.Regexp, error) {
+	rs := make([]*regexp.Regexp, 0, len(regexps))
 
-	for _, s := range ss {
+	for _, s := range regexps {
 		r, err := regexp.Compile(s)
-
 		if err != nil {
 			return nil, err
 		}
@@ -143,10 +132,10 @@ func compileRegexps(ss []string) ([]*regexp.Regexp, error) {
 	return rs, nil
 }
 
-func parseHeaders(ss []string) (map[string]string, error) {
-	m := make(map[string]string, len(ss))
+func parseHeaders(headers []string) (map[string]string, error) {
+	m := make(map[string]string, len(headers))
 
-	for _, s := range ss {
+	for _, s := range headers {
 		i := strings.IndexRune(s, ':')
 
 		if i < 0 {

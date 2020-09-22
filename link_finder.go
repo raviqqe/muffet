@@ -28,17 +28,16 @@ var atomToAttributes = map[atom.Atom][]string{
 	atom.Track:  {"src"},
 }
 
-type scraper struct {
+type linkFinder struct {
 	excludedPatterns []*regexp.Regexp
-	followURLParams  bool
 }
 
-func newScraper(rs []*regexp.Regexp, followURLParams bool) scraper {
-	return scraper{rs, followURLParams}
+func newLinkFinder(rs []*regexp.Regexp) linkFinder {
+	return linkFinder{rs}
 }
 
-func (sc scraper) Scrape(n *html.Node, base *url.URL) map[string]error {
-	us := map[string]error{}
+func (f linkFinder) Find(n *html.Node, base *url.URL) map[string]error {
+	ls := map[string]error{}
 
 	for _, n := range scrape.FindAllNested(n, func(n *html.Node) bool {
 		_, ok := atomToAttributes[n.DataAtom]
@@ -47,30 +46,25 @@ func (sc scraper) Scrape(n *html.Node, base *url.URL) map[string]error {
 		for _, a := range atomToAttributes[n.DataAtom] {
 			s := normalizeURL(scrape.Attr(n, a))
 
-			if s == "" || sc.isURLExcluded(s) {
+			if s == "" || f.isLinkExcluded(s) {
 				continue
 			}
 
 			u, err := url.Parse(s)
-
 			if err != nil {
-				us[s] = err
+				ls[s] = err
 				continue
+			} else if _, ok := validSchemes[u.Scheme]; ok {
+				ls[base.ResolveReference(u).String()] = nil
 			}
-
-			if _, ok := validSchemes[u.Scheme]; !ok {
-				continue
-			}
-
-			us[base.ResolveReference(u).String()] = nil
 		}
 	}
 
-	return us
+	return ls
 }
 
-func (sc scraper) isURLExcluded(u string) bool {
-	for _, r := range sc.excludedPatterns {
+func (f linkFinder) isLinkExcluded(u string) bool {
+	for _, r := range f.excludedPatterns {
 		if r.MatchString(u) {
 			return true
 		}
