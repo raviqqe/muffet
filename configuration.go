@@ -9,4 +9,5 @@ const (
 	defaultMaxRedirections = 64
 	defaultTimeout         = 10 * time.Second
 	agentName              = "muffet"
+	tcpTimeout             = time.Minute
 )
