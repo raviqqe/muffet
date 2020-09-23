@@ -20,8 +20,7 @@ func TestLinkFinderFindLinks(t *testing.T) {
 	}{
 		{``, 0},
 		{`<a href="/" />`, 1},
-		{`<a href="/f
-		o 	o" />`, 1},
+		{`<a href="/foo" />`, 1},
 		// TODO: Test <frame> tag.
 		{`<iframe src="/iframe"></iframe>`, 1},
 		{`<img src="/foo.jpg" />`, 1},
@@ -52,7 +51,55 @@ func TestLinkFinderFindLinks(t *testing.T) {
 	}
 }
 
-func TestLinkFinderScrapePageError(t *testing.T) {
+func TestLinkFinderFindLinkWithoutEncodedSpaces(t *testing.T) {
+	b, err := url.Parse("http://foo.com")
+	assert.Nil(t, err)
+
+	n, err := html.Parse(strings.NewReader(
+		htmlWithBody(`<a href="http://foo.com/a%20b" />`)),
+	)
+	assert.Nil(t, err)
+
+	ls := newLinkFinder(nil).Find(n, b)
+
+	err, ok := ls["http://foo.com/a%20b"]
+	assert.True(t, ok)
+	assert.Nil(t, err)
+}
+
+func TestLinkFinderFindLinkWithoutSpacesNotEncoded(t *testing.T) {
+	b, err := url.Parse("http://foo.com")
+	assert.Nil(t, err)
+
+	n, err := html.Parse(strings.NewReader(
+		htmlWithBody(`<a href="http://foo.com/a b" />`)),
+	)
+	assert.Nil(t, err)
+
+	ls := newLinkFinder(nil).Find(n, b)
+
+	err, ok := ls["http://foo.com/a%20b"]
+	assert.True(t, ok)
+	assert.Nil(t, err)
+}
+
+func TestLinkFinderFindLinkWithLeadingAndTrailingSpaces(t *testing.T) {
+	b, err := url.Parse("http://foo.com")
+	assert.Nil(t, err)
+
+	n, err := html.Parse(strings.NewReader(
+		htmlWithBody(`<a href=" http://foo.com " />`)),
+	)
+	assert.Nil(t, err)
+
+	ls := newLinkFinder(nil).Find(n, b)
+
+	err, ok := ls["http://foo.com"]
+	assert.True(t, ok)
+	assert.Nil(t, err)
+}
+
+func TestLinkFinderFailWithInvalidURL(t *testing.T) {
 	b, err := url.Parse("http://foo.com")
 	assert.Nil(t, err)
 
