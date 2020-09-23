@@ -52,7 +52,37 @@ func TestLinkFinderFindLinks(t *testing.T) {
 	}
 }
 
-func TestLinkFinderScrapePageError(t *testing.T) {
+func TestLinkFinderFindLinksWithoutEncodedSpaces(t *testing.T) {
+	b, err := url.Parse("http://foo.com")
+	assert.Nil(t, err)
+
+	n, err := html.Parse(strings.NewReader(
+		htmlWithBody(`<a href="http://foo.com/a%20b" />`)),
+	)
+	assert.Nil(t, err)
+
+	ls := newLinkFinder(nil).Find(n, b)
+
+	_, ok := ls["http://foo.com/a%20b"]
+	assert.True(t, ok)
+}
+
+func TestLinkFinderFindLinksWithoutSpacesNotEncoded(t *testing.T) {
+	b, err := url.Parse("http://foo.com")
+	assert.Nil(t, err)
+
+	n, err := html.Parse(strings.NewReader(
+		htmlWithBody(`<a href="http://foo.com/a b" />`)),
+	)
+	assert.Nil(t, err)
+
+	ls := newLinkFinder(nil).Find(n, b)
+
+	_, ok := ls["http://foo.com/ab"]
+	assert.True(t, ok)
+}
+
+func TestLinkFinderFailWithInvalidURL(t *testing.T) {
 	b, err := url.Parse("http://foo.com")
 	assert.Nil(t, err)
 
