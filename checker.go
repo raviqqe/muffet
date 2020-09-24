@@ -61,7 +61,10 @@ func (c *checker) checkPage(p *page) {
 				ec <- &errorLinkResult{u, err}
 			}
 
-			if !c.onePageOnly && p != nil && c.linkValidator.Validate(p.URL()) {
+			if !c.onePageOnly &&
+				p != nil &&
+				c.linkValidator.Validate(p.URL()) &&
+				!c.donePages.Add(p.URL().String()) {
 				c.addPage(p)
 			}
 		}(u)
@@ -88,7 +91,5 @@ func (c *checker) checkPage(p *page) {
 }
 
 func (c *checker) addPage(p *page) {
-	if !c.donePages.Add(p.URL().String()) {
-		c.daemonManager.Add(func() { c.checkPage(p) })
-	}
+	c.daemonManager.Add(func() { c.checkPage(p) })
 }
