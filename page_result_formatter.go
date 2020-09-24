@@ -1,39 +1,43 @@
 package main
 
 import (
+	"fmt"
 	"sort"
 	"strings"
 
 	"github.com/fatih/color"
+	"github.com/logrusorgru/aurora/v3"
 )
 
 type pageResultFormatter struct {
 	verbose bool
+	aurora  aurora.Aurora
 }
 
-func newPageResultFormatter(verbose bool) *pageResultFormatter {
-	return &pageResultFormatter{verbose}
+func newPageResultFormatter(verbose bool, color bool) *pageResultFormatter {
+	return &pageResultFormatter{verbose, aurora.NewAurora(color)}
 }
 
 func (f *pageResultFormatter) Format(r *pageResult) string {
 	ss := []string(nil)
 
 	if f.verbose {
-		ss = append(ss, formatSuccessLinkResults(r.SuccessLinkResults)...)
+		ss = append(ss, f.formatSuccessLinkResults(r.SuccessLinkResults)...)
 	}
 
-	ss = append(ss, formatErrorLinkResults(r.ErrorLinkResults)...)
+	ss = append(ss, f.formatErrorLinkResults(r.ErrorLinkResults)...)
 
 	return strings.Join(
 		append([]string{color.YellowString(r.URL)}, formatMessages(ss)...),
-		"\n")
+		"\n",
+	)
 }
 
-func formatSuccessLinkResults(rs []*successLinkResult) []string {
+func (f *pageResultFormatter) formatSuccessLinkResults(rs []*successLinkResult) []string {
 	ss := make([]string, 0, len(rs))
 
 	for _, r := range rs {
-		ss = append(ss, color.GreenString("%v", r.StatusCode)+"\t"+r.URL)
+		ss = append(ss, fmt.Sprintf("%v", f.aurora.Green(r.StatusCode))+"\t"+r.URL)
 	}
 
 	sort.Strings(ss)
@@ -41,11 +45,11 @@ func formatSuccessLinkResults(rs []*successLinkResult) []string {
 	return ss
 }
 
-func formatErrorLinkResults(rs []*errorLinkResult) []string {
+func (f *pageResultFormatter) formatErrorLinkResults(rs []*errorLinkResult) []string {
 	ss := make([]string, 0, len(rs))
 
 	for _, r := range rs {
-		ss = append(ss, color.RedString("%v", r.Error)+"\t"+r.URL)
+		ss = append(ss, fmt.Sprintf("%v", f.aurora.Red(r.Error))+"\t"+r.URL)
 	}
 
 	sort.Strings(ss)

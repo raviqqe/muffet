@@ -9,7 +9,7 @@ import (
 
 func TestPageResultFormatterFormatEmptyResult(t *testing.T) {
 	cupaloy.SnapshotT(t,
-		newPageResultFormatter(false).Format(
+		newPageResultFormatter(false, true).Format(
 			&pageResult{"http://foo.com", nil, nil},
 		),
 	)
@@ -17,7 +17,7 @@ func TestPageResultFormatterFormatEmptyResult(t *testing.T) {
 
 func TestPageResultFormatterFormatSuccessLinkResults(t *testing.T) {
 	cupaloy.SnapshotT(t,
-		newPageResultFormatter(false).Format(
+		newPageResultFormatter(false, true).Format(
 			&pageResult{
 				"http://foo.com",
 				[]*successLinkResult{
@@ -31,7 +31,7 @@ func TestPageResultFormatterFormatSuccessLinkResults(t *testing.T) {
 
 func TestPageResultFormatterFormatErrorLinkResults(t *testing.T) {
 	cupaloy.SnapshotT(t,
-		newPageResultFormatter(false).Format(
+		newPageResultFormatter(false, true).Format(
 			&pageResult{
 				"http://foo.com",
 				[]*successLinkResult{
@@ -47,7 +47,7 @@ func TestPageResultFormatterFormatErrorLinkResults(t *testing.T) {
 
 func TestPageResultFormatterFormatSuccessLinkResultsVerbosely(t *testing.T) {
 	cupaloy.SnapshotT(t,
-		newPageResultFormatter(true).Format(
+		newPageResultFormatter(true, true).Format(
 			&pageResult{
 				"http://foo.com",
 				[]*successLinkResult{
@@ -61,7 +61,7 @@ func TestPageResultFormatterFormatSuccessLinkResultsVerbosely(t *testing.T) {
 
 func TestPageResultFormatterFormatErrorLinkResultsVerbosely(t *testing.T) {
 	cupaloy.SnapshotT(t,
-		newPageResultFormatter(true).Format(
+		newPageResultFormatter(true, true).Format(
 			&pageResult{
 				"http://foo.com",
 				[]*successLinkResult{
@@ -77,7 +77,7 @@ func TestPageResultFormatterFormatErrorLinkResultsVerbosely(t *testing.T) {
 
 func TestPageResultFormatterSortSuccessLinkResults(t *testing.T) {
 	cupaloy.SnapshotT(t,
-		newPageResultFormatter(true).Format(
+		newPageResultFormatter(true, true).Format(
 			&pageResult{
 				"http://foo.com",
 				[]*successLinkResult{
@@ -92,7 +92,7 @@ func TestPageResultFormatterSortSuccessLinkResults(t *testing.T) {
 
 func TestPageResultFormatterSortormatErrorLinkResults(t *testing.T) {
 	cupaloy.SnapshotT(t,
-		newPageResultFormatter(false).Format(
+		newPageResultFormatter(false, true).Format(
 			&pageResult{
 				"http://foo.com",
 				nil,
