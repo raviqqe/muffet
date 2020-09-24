@@ -5,7 +5,6 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/fatih/color"
 	"github.com/logrusorgru/aurora/v3"
 )
 
@@ -28,7 +27,7 @@ func (f *pageResultFormatter) Format(r *pageResult) string {
 	ss = append(ss, f.formatErrorLinkResults(r.ErrorLinkResults)...)
 
 	return strings.Join(
-		append([]string{color.YellowString(r.URL)}, formatMessages(ss)...),
+		append([]string{fmt.Sprint(f.aurora.Yellow(r.URL))}, formatMessages(ss)...),
 		"\n",
 	)
 }
