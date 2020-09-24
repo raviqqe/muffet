@@ -10,11 +10,12 @@ import (
 
 type command struct {
 	stdout, stderr    io.Writer
+	terminal          bool
 	httpClientFactory httpClientFactory
 }
 
-func newCommand(stdout, stderr io.Writer, f httpClientFactory) *command {
-	return &command{stdout, stderr, f}
+func newCommand(stdout, stderr io.Writer, terminal bool, f httpClientFactory) *command {
+	return &command{stdout, stderr, terminal, f}
 }
 
 func (c *command) Run(args []string) bool {
@@ -93,7 +94,7 @@ func (c *command) runWithError(ss []string) (bool, error) {
 
 	go checker.Check(p)
 
-	formatter := newPageResultFormatter(args.Verbose, true)
+	formatter := newPageResultFormatter(args.Verbose, c.terminal)
 	ok := true
 
 	for r := range checker.Results() {

@@ -13,6 +13,7 @@ func createTestCommand(h func(*url.URL) (*fakeHTTPResponse, error)) *command {
 	return newCommand(
 		ioutil.Discard,
 		ioutil.Discard,
+		false,
 		newFakeHTTPClientFactory(h),
 	)
 }
