@@ -21,8 +21,6 @@ func TestGetArguments(t *testing.T) {
 		{"--limit-redirections", "4", "https://foo.com"},
 		{"-s", "https://foo.com"},
 		{"--follow-sitemap-xml", "https://foo.com"},
-		{"-u", "https://foo.com"},
-		{"--follow-url-params", "https://foo.com"},
 		{"-t", "10", "https://foo.com"},
 		{"--timeout", "10", "https://foo.com"},
 		{"-x", "https://foo.com"},

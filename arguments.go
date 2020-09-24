@@ -14,7 +14,7 @@ import (
 var usage = fmt.Sprintf(`Muffet, the web repairgirl
 
 Usage:
-	muffet [-b <size>] [-c <concurrency>] [-e <pattern>...] [-f] [-j <header>...] [-l <times>] [-p] [-r] [-s] [-u] [-t <seconds>] [-v] [-x] <url>
+	muffet [-b <size>] [-c <concurrency>] [-e <pattern>...] [-f] [-j <header>...] [-l <times>] [-p] [-r] [-s] [-t <seconds>] [-v] [-x] <url>
 
 Options:
 	-b, --buffer-size <size>          Set HTTP response buffer size in bytes. [default: %v]
@@ -27,7 +27,6 @@ Options:
 	-p, --one-page-only               Only check links found in the given URL, do not follow links.
 	-r, --follow-robots-txt           Follow robots.txt when scraping.
 	-s, --follow-sitemap-xml          Scrape only pages listed in sitemap.xml.
-	-u, --follow-url-params           Will not cut off the URL parameters.
 	-t, --timeout <seconds>           Set timeout for HTTP requests in seconds. [default: %v]
 	-v, --verbose                     Show successful results too.
 	-x, --skip-tls-verification       Skip TLS certificates verification.`,
@@ -38,8 +37,7 @@ type arguments struct {
 	Concurrency      int
 	ExcludedPatterns []*regexp.Regexp
 	FollowRobotsTxt,
-	FollowSitemapXML,
-	FollowURLParams bool
+	FollowSitemapXML bool
 	Headers         map[string]string
 	IgnoreFragments bool
 	MaxRedirections int
@@ -91,7 +89,6 @@ func getArguments(regexps []string) (arguments, error) {
 		rs,
 		args["--follow-robots-txt"].(bool),
 		args["--follow-sitemap-xml"].(bool),
-		args["--follow-url-params"].(bool),
 		hs,
 		args["--ignore-fragments"].(bool),
 		r,

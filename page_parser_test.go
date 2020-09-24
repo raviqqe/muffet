@@ -7,19 +7,19 @@ import (
 )
 
 func TestPageParserParsePage(t *testing.T) {
-	_, err := newPageParser(newLinkFinder(nil), false).Parse("http://foo.com", nil)
+	_, err := newPageParser(newLinkFinder(nil)).Parse("http://foo.com", nil)
 	assert.Nil(t, err)
 }
 
 func TestPageParserFailWithInvalidURL(t *testing.T) {
-	_, err := newPageParser(newLinkFinder(nil), false).Parse(":", nil)
+	_, err := newPageParser(newLinkFinder(nil)).Parse(":", nil)
 	assert.NotNil(t, err)
 }
 
 func TestPageParserSetCorrectURL(t *testing.T) {
 	s := "http://foo.com"
 
-	p, err := newPageParser(newLinkFinder(nil), false).Parse(s, nil)
+	p, err := newPageParser(newLinkFinder(nil)).Parse(s, nil)
 	assert.Nil(t, err)
 	assert.Equal(t, s, p.URL().String())
 }
@@ -27,29 +27,21 @@ func TestPageParserSetCorrectURL(t *testing.T) {
 func TestPageParserIgnorePageURLFragment(t *testing.T) {
 	s := "http://foo.com#id"
 
-	p, err := newPageParser(newLinkFinder(nil), false).Parse(s, nil)
+	p, err := newPageParser(newLinkFinder(nil)).Parse(s, nil)
 	assert.Nil(t, err)
 	assert.Equal(t, "http://foo.com", p.URL().String())
 }
 
-func TestPageParserIgnoreQueryParameters(t *testing.T) {
+func TestPageParserKeepQuery(t *testing.T) {
 	s := "http://foo.com?bar=baz"
 
-	p, err := newPageParser(newLinkFinder(nil), false).Parse(s, nil)
-	assert.Nil(t, err)
-	assert.Equal(t, "http://foo.com", p.URL().String())
-}
-
-func TestPageParserKeepQueryParameters(t *testing.T) {
-	s := "http://foo.com?bar=baz"
-
-	p, err := newPageParser(newLinkFinder(nil), true).Parse(s, nil)
+	p, err := newPageParser(newLinkFinder(nil)).Parse(s, nil)
 	assert.Nil(t, err)
 	assert.Equal(t, s, p.URL().String())
 }
 
 func TestPageParserResolveLinksWithBaseTag(t *testing.T) {
-	p, err := newPageParser(newLinkFinder(nil), false).Parse(
+	p, err := newPageParser(newLinkFinder(nil)).Parse(
 		"http://foo.com",
 		[]byte(`
 			<html>
@@ -67,7 +59,7 @@ func TestPageParserResolveLinksWithBaseTag(t *testing.T) {
 }
 
 func TestPageParserResolveLinksWithBlankBaseTag(t *testing.T) {
-	p, err := newPageParser(newLinkFinder(nil), false).Parse(
+	p, err := newPageParser(newLinkFinder(nil)).Parse(
 		"http://foo.com",
 		[]byte(`
 			<html>
@@ -85,7 +77,7 @@ func TestPageParserResolveLinksWithBlankBaseTag(t *testing.T) {
 }
 
 func TestPageParserParseID(t *testing.T) {
-	p, err := newPageParser(newLinkFinder(nil), false).Parse(
+	p, err := newPageParser(newLinkFinder(nil)).Parse(
 		"http://foo.com",
 		[]byte(`<p id="foo" />`),
 	)
@@ -94,7 +86,7 @@ func TestPageParserParseID(t *testing.T) {
 }
 
 func TestPageParserParseName(t *testing.T) {
-	p, err := newPageParser(newLinkFinder(nil), false).Parse(
+	p, err := newPageParser(newLinkFinder(nil)).Parse(
 		"http://foo.com",
 		[]byte(`<p name="foo" />`),
 	)
@@ -103,7 +95,7 @@ func TestPageParserParseName(t *testing.T) {
 }
 
 func TestPageParserParseIDAndName(t *testing.T) {
-	p, err := newPageParser(newLinkFinder(nil), false).Parse(
+	p, err := newPageParser(newLinkFinder(nil)).Parse(
 		"http://foo.com",
 		[]byte(`<p id="foo" name="bar" />`),
 	)
@@ -122,7 +114,7 @@ func TestPageParserParseLinks(t *testing.T) {
 			"http://foo.com/foo.img",
 		},
 	} {
-		p, err := newPageParser(newLinkFinder(nil), false).Parse(
+		p, err := newPageParser(newLinkFinder(nil)).Parse(
 			"http://foo.com",
 			[]byte(ss[0]),
 		)

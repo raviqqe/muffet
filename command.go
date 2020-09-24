@@ -47,7 +47,7 @@ func (c *command) runWithError(ss []string) (bool, error) {
 		args.Concurrency,
 	)
 
-	pp := newPageParser(newLinkFinder(args.ExcludedPatterns), args.FollowURLParams)
+	pp := newPageParser(newLinkFinder(args.ExcludedPatterns))
 
 	f := newLinkFetcher(
 		client,

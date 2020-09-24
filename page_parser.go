@@ -10,12 +10,11 @@ import (
 )
 
 type pageParser struct {
-	linkFinder      linkFinder
-	followURLParams bool
+	linkFinder linkFinder
 }
 
-func newPageParser(s linkFinder, followURLParams bool) *pageParser {
-	return &pageParser{s, followURLParams}
+func newPageParser(f linkFinder) *pageParser {
+	return &pageParser{f}
 }
 
 func (p pageParser) Parse(rawURL string, body []byte) (*page, error) {
@@ -30,10 +29,6 @@ func (p pageParser) Parse(rawURL string, body []byte) (*page, error) {
 	}
 
 	u.Fragment = ""
-
-	if !p.followURLParams {
-		u.RawQuery = ""
-	}
 
 	frs := map[string]struct{}{}
 
