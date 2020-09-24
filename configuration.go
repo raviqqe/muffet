@@ -5,7 +5,7 @@ import "time"
 const (
 	version                = "1.5.7"
 	agentName              = "muffet"
-	concurrency            = 4096
+	concurrency            = 1024
 	tcpTimeout             = time.Minute
 	defaultBufferSize      = 4096
 	defaultMaxConnections  = 512
