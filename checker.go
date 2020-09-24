@@ -83,10 +83,10 @@ func (c *checker) addPage(p *page) {
 	}
 }
 
-func stringChannelToSlice(sc <-chan string) []string {
-	ss := make([]string, 0, len(sc))
+func stringChannelToSlice(c <-chan string) []string {
+	ss := make([]string, 0, len(c))
 
-	for s := range sc {
+	for s := range c {
 		ss = append(ss, s)
 	}
 
