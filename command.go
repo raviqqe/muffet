@@ -93,11 +93,12 @@ func (c *command) runWithError(ss []string) (bool, error) {
 
 	go checker.Check(p)
 
+	formatter := newPageResultFormatter(args.Verbose)
 	ok := true
 
 	for r := range checker.Results() {
 		if !r.OK() || args.Verbose {
-			c.print(r.String(args.Verbose))
+			c.print(formatter.Format(r))
 		}
 
 		if !r.OK() {

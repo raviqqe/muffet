@@ -17,7 +17,7 @@ func createTestCommand(h func(*url.URL) (*fakeHTTPResponse, error)) *command {
 	)
 }
 
-func TestCommand(t *testing.T) {
+func TestCommandRun(t *testing.T) {
 	ok := createTestCommand(
 		func(u *url.URL) (*fakeHTTPResponse, error) {
 			s := "http://foo.com"
