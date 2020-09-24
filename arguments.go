@@ -27,7 +27,7 @@ Options:
 	-p, --one-page-only               Only check links found in the given URL, do not follow links.
 	-r, --follow-robots-txt           Follow robots.txt when scraping pages.
 	-s, --follow-sitemap-xml          Scrape only pages listed in sitemap.xml.
-	-t, --timeout <seconds>           Set timeout for HTTP requests in seconds. [default: %v]
+	-t, --timeout <seconds>           Timeout for HTTP requests in seconds. [default: %v]
 	-v, --verbose                     Show successful results too.
 	-x, --skip-tls-verification       Skip TLS certificates verification.`,
 	defaultBufferSize, defaultMaxConnections, defaultMaxRedirections, defaultHTTPTimeout.Seconds())
