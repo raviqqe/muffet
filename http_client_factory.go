@@ -3,7 +3,7 @@ package main
 import "time"
 
 type httpClientOptions struct {
-	Concurrency,
+	MaxConnectionsPerHost,
 	BufferSize,
 	MaxRedirections int
 	SkipTLSVerification bool

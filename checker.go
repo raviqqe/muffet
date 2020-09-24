@@ -13,7 +13,7 @@ type checker struct {
 	onePageOnly   bool
 }
 
-func newChecker(f *linkFetcher, v *linkValidator, concurrency int, onePageOnly bool) *checker {
+func newChecker(f *linkFetcher, v *linkValidator, onePageOnly bool) *checker {
 	return &checker{
 		f,
 		v,

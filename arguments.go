@@ -17,24 +17,24 @@ Usage:
 	muffet [-b <size>] [-c <concurrency>] [-e <pattern>...] [-f] [-j <header>...] [-l <times>] [-p] [-r] [-s] [-t <seconds>] [-v] [-x] <url>
 
 Options:
-	-b, --buffer-size <size>          Set HTTP response buffer size in bytes. [default: %v]
-	-c, --concurrency <concurrency>   Roughly maximum number of concurrent HTTP connections. [default: %v]
+	-b, --buffer-size <size>          HTTP response buffer size in bytes. [default: %v]
+	-c, --max-connections <count>     Maximum number of concurrent HTTP connections. [default: %v]
 	-e, --exclude <pattern>...        Exclude URLs matched with given regular expressions.
 	-f, --ignore-fragments            Ignore URL fragments.
 	-h, --help                        Show this help.
-	-j, --header <header>...          Set custom headers.
-	-l, --limit-redirections <times>  Limit a number of redirections. [default: %v]
+	-j, --header <header>...          Custom headers.
+	-l, --max-redirections <count>    Maximum number of redirections. [default: %v]
 	-p, --one-page-only               Only check links found in the given URL, do not follow links.
-	-r, --follow-robots-txt           Follow robots.txt when scraping.
+	-r, --follow-robots-txt           Follow robots.txt when scraping pages.
 	-s, --follow-sitemap-xml          Scrape only pages listed in sitemap.xml.
 	-t, --timeout <seconds>           Set timeout for HTTP requests in seconds. [default: %v]
 	-v, --verbose                     Show successful results too.
 	-x, --skip-tls-verification       Skip TLS certificates verification.`,
-	defaultBufferSize, defaultConcurrency, defaultMaxRedirections, defaultTimeout.Seconds())
+	defaultBufferSize, defaultMaxConnections, defaultMaxRedirections, defaultHTTPTimeout.Seconds())
 
 type arguments struct {
 	BufferSize       int
-	Concurrency      int
+	MaxConnections   int
 	ExcludedPatterns []*regexp.Regexp
 	FollowRobotsTxt,
 	FollowSitemapXML bool
@@ -56,7 +56,7 @@ func getArguments(regexps []string) (arguments, error) {
 		return arguments{}, err
 	}
 
-	c, err := parseInt(args["--concurrency"].(string))
+	c, err := parseInt(args["--max-connections"].(string))
 	if err != nil {
 		return arguments{}, err
 	}
@@ -73,7 +73,7 @@ func getArguments(regexps []string) (arguments, error) {
 		return arguments{}, err
 	}
 
-	r, err := parseInt(args["--limit-redirections"].(string))
+	r, err := parseInt(args["--max-redirections"].(string))
 	if err != nil {
 		return arguments{}, err
 	}

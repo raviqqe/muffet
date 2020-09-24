@@ -16,7 +16,6 @@ func createTestChecker(c *fakeHTTPClient) *checker {
 			linkFetcherOptions{},
 		),
 		newLinkValidator("foo.com", nil, nil),
-		512,
 		false,
 	)
 }

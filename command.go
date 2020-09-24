@@ -37,14 +37,14 @@ func (c *command) runWithError(ss []string) (bool, error) {
 	client := newThrottledHTTPClient(
 		c.httpClientFactory.Create(
 			httpClientOptions{
-				Concurrency:         args.Concurrency,
-				BufferSize:          args.BufferSize,
-				MaxRedirections:     args.MaxRedirections,
-				SkipTLSVerification: args.SkipTLSVerification,
-				Timeout:             args.Timeout,
+				MaxConnectionsPerHost: args.MaxConnections,
+				BufferSize:            args.BufferSize,
+				MaxRedirections:       args.MaxRedirections,
+				SkipTLSVerification:   args.SkipTLSVerification,
+				Timeout:               args.Timeout,
 			},
 		),
-		args.Concurrency,
+		args.MaxConnections,
 	)
 
 	pp := newPageParser(newLinkFinder(args.ExcludedPatterns))
@@ -88,7 +88,6 @@ func (c *command) runWithError(ss []string) (bool, error) {
 	checker := newChecker(
 		f,
 		newLinkValidator(p.URL().Hostname(), rd, sm),
-		args.Concurrency,
 		args.OnePageOnly,
 	)
 
