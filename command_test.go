@@ -13,11 +13,12 @@ func createTestCommand(h func(*url.URL) (*fakeHTTPResponse, error)) *command {
 	return newCommand(
 		ioutil.Discard,
 		ioutil.Discard,
+		false,
 		newFakeHTTPClientFactory(h),
 	)
 }
 
-func TestCommand(t *testing.T) {
+func TestCommandRun(t *testing.T) {
 	ok := createTestCommand(
 		func(u *url.URL) (*fakeHTTPResponse, error) {
 			s := "http://foo.com"

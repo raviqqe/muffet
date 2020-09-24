@@ -4,12 +4,14 @@ import (
 	"os"
 
 	"github.com/mattn/go-colorable"
+	"github.com/mattn/go-isatty"
 )
 
 func main() {
 	ok := newCommand(
 		colorable.NewColorableStdout(),
 		os.Stderr,
+		isatty.IsTerminal(os.Stdout.Fd()),
 		newFasthttpHTTPClientFactory(),
 	).Run(os.Args[1:])
 
