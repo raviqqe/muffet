@@ -10,20 +10,20 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func createTestLinkFetcher(c *fakeHTTPClient) *linkFetcher {
-	return createTestLinkFetcherWithOptions(c, linkFetcherOptions{})
+func newTestLinkFetcher(c *fakeHTTPClient) *linkFetcher {
+	return newTestLinkFetcherWithOptions(c, linkFetcherOptions{})
 }
 
-func createTestLinkFetcherWithOptions(c *fakeHTTPClient, o linkFetcherOptions) *linkFetcher {
+func newTestLinkFetcherWithOptions(c *fakeHTTPClient, o linkFetcherOptions) *linkFetcher {
 	return newLinkFetcher(c, newPageParser(newLinkFinder(nil)), o)
 }
 
 func TestNewFetcher(t *testing.T) {
-	createTestLinkFetcher(newFakeHTTPClient(nil))
+	newTestLinkFetcher(newFakeHTTPClient(nil))
 }
 
 func TestLinkFetcherFetch(t *testing.T) {
-	f := createTestLinkFetcher(
+	f := newTestLinkFetcher(
 		newFakeHTTPClient(
 			func(u *url.URL) (*fakeHTTPResponse, error) {
 				if u.String() != "http://foo.com" {
@@ -50,7 +50,7 @@ func TestLinkFetcherFetchFromCache(t *testing.T) {
 	ok := true
 	s := "http://foo.com"
 
-	f := createTestLinkFetcher(
+	f := newTestLinkFetcher(
 		newFakeHTTPClient(
 			func(u *url.URL) (*fakeHTTPResponse, error) {
 				if !ok {
@@ -82,7 +82,7 @@ func TestLinkFetcherFetchFromCache(t *testing.T) {
 func TestLinkFetcherFetchCacheConcurrency(t *testing.T) {
 	c := 0
 
-	f := createTestLinkFetcher(
+	f := newTestLinkFetcher(
 		newFakeHTTPClient(
 			func(u *url.URL) (*fakeHTTPResponse, error) {
 				c++
@@ -112,7 +112,7 @@ func TestLinkFetcherFetchCacheConcurrency(t *testing.T) {
 
 func TestLinkFetcherFetchWithFragments(t *testing.T) {
 	s := "http://foo.com"
-	f := createTestLinkFetcher(
+	f := newTestLinkFetcher(
 		newFakeHTTPClient(
 			func(u *url.URL) (*fakeHTTPResponse, error) {
 				if u.String() != s {
@@ -137,7 +137,7 @@ func TestLinkFetcherFetchWithFragments(t *testing.T) {
 
 func TestLinkFetcherFetchIgnoringFragments(t *testing.T) {
 	s := "http://foo.com"
-	f := createTestLinkFetcherWithOptions(
+	f := newTestLinkFetcherWithOptions(
 		newFakeHTTPClient(
 			func(u *url.URL) (*fakeHTTPResponse, error) {
 				if u.String() != s {
@@ -155,7 +155,7 @@ func TestLinkFetcherFetchIgnoringFragments(t *testing.T) {
 }
 
 func TestLinkFetcherFailToFetch(t *testing.T) {
-	f := createTestLinkFetcher(
+	f := newTestLinkFetcher(
 		newFakeHTTPClient(func(*url.URL) (*fakeHTTPResponse, error) {
 			return nil, errors.New("")
 		}))

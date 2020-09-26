@@ -5,6 +5,7 @@ import (
 	"net/url"
 	"testing"
 
+	"github.com/bradleyjkemp/cupaloy"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -33,4 +34,17 @@ func TestRobotsTxtFetcherFetchRobotsTxt(t *testing.T) {
 
 	assert.Nil(t, err)
 	assert.False(t, r.TestAgent("/bar", "foo"))
+}
+
+func TestRobotsTxtFetcherFailToFetchRobotsTxt(t *testing.T) {
+	u, err := url.Parse("http://foo.com")
+	assert.Nil(t, err)
+
+	_, err = newRobotsTxtFetcher(
+		newFakeHTTPClient(
+			func(u *url.URL) (*fakeHTTPResponse, error) {
+				return nil, errors.New("foo")
+			})).Fetch(u)
+
+	cupaloy.SnapshotT(t, err.Error())
 }

@@ -1,25 +1,32 @@
 package main
 
 import (
+	"bytes"
 	"errors"
+	"io"
 	"io/ioutil"
 	"net/url"
 	"testing"
 
+	"github.com/bradleyjkemp/cupaloy"
 	"github.com/stretchr/testify/assert"
 )
 
-func createTestCommand(h func(*url.URL) (*fakeHTTPResponse, error)) *command {
+func newTestCommand(h func(*url.URL) (*fakeHTTPResponse, error)) *command {
+	return newTestCommandWithStderr(ioutil.Discard, h)
+}
+
+func newTestCommandWithStderr(stderr io.Writer, h func(*url.URL) (*fakeHTTPResponse, error)) *command {
 	return newCommand(
 		ioutil.Discard,
-		ioutil.Discard,
+		stderr,
 		false,
 		newFakeHTTPClientFactory(h),
 	)
 }
 
 func TestCommandRun(t *testing.T) {
-	ok := createTestCommand(
+	ok := newTestCommand(
 		func(u *url.URL) (*fakeHTTPResponse, error) {
 			s := "http://foo.com"
 
@@ -35,11 +42,57 @@ func TestCommandRun(t *testing.T) {
 }
 
 func TestCommandFailToRun(t *testing.T) {
-	ok := createTestCommand(
+	ok := newTestCommand(
 		func(u *url.URL) (*fakeHTTPResponse, error) {
 			return nil, errors.New("")
 		},
 	).Run([]string{"http://foo.com"})
 
 	assert.False(t, ok)
+}
+
+func TestCommandFailToFetchRootPage(t *testing.T) {
+	b := &bytes.Buffer{}
+
+	ok := newTestCommandWithStderr(
+		b,
+		func(u *url.URL) (*fakeHTTPResponse, error) {
+			return nil, errors.New("foo")
+		},
+	).Run([]string{"http://foo.com"})
+
+	assert.False(t, ok)
+	cupaloy.SnapshotT(t, b.Bytes())
+}
+
+func TestCommandFailToGetHTMLRootPage(t *testing.T) {
+	b := &bytes.Buffer{}
+
+	ok := newTestCommandWithStderr(
+		b,
+		func(u *url.URL) (*fakeHTTPResponse, error) {
+			return newFakeHTTPResponse(200, "", "image/png", nil), nil
+		},
+	).Run([]string{"http://foo.com"})
+
+	assert.False(t, ok)
+	cupaloy.SnapshotT(t, b.Bytes())
+}
+
+func TestCommandColorErrorMessage(t *testing.T) {
+	b := &bytes.Buffer{}
+
+	c := newCommand(
+		ioutil.Discard,
+		b,
+		true,
+		newFakeHTTPClientFactory(func(u *url.URL) (*fakeHTTPResponse, error) {
+			return nil, errors.New("foo")
+		}),
+	)
+
+	ok := c.Run([]string{"http://foo.com"})
+
+	assert.False(t, ok)
+	cupaloy.SnapshotT(t, b.Bytes())
 }

@@ -8,7 +8,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func createTestChecker(c *fakeHTTPClient) *checker {
+func newTestChecker(c *fakeHTTPClient) *checker {
 	return newChecker(
 		newLinkFetcher(
 			c,
@@ -20,7 +20,7 @@ func createTestChecker(c *fakeHTTPClient) *checker {
 	)
 }
 
-func createTestPage(t *testing.T, fragments map[string]struct{}, links map[string]error) *page {
+func newTestPage(t *testing.T, fragments map[string]struct{}, links map[string]error) *page {
 	u, err := url.Parse("http://foo.com")
 	assert.Nil(t, err)
 
@@ -28,7 +28,7 @@ func createTestPage(t *testing.T, fragments map[string]struct{}, links map[strin
 }
 
 func TestCheckerCheckOnePage(t *testing.T) {
-	c := createTestChecker(
+	c := newTestChecker(
 		newFakeHTTPClient(
 			func(u *url.URL) (*fakeHTTPResponse, error) {
 				return nil, errors.New("")
@@ -36,7 +36,7 @@ func TestCheckerCheckOnePage(t *testing.T) {
 		),
 	)
 
-	go c.Check(createTestPage(t, nil, nil))
+	go c.Check(newTestPage(t, nil, nil))
 
 	i := 0
 
@@ -49,7 +49,7 @@ func TestCheckerCheckOnePage(t *testing.T) {
 }
 
 func TestCheckerCheckTwoPages(t *testing.T) {
-	c := createTestChecker(
+	c := newTestChecker(
 		newFakeHTTPClient(
 			func(u *url.URL) (*fakeHTTPResponse, error) {
 				s := "http://foo.com/foo"
@@ -64,7 +64,7 @@ func TestCheckerCheckTwoPages(t *testing.T) {
 	)
 
 	go c.Check(
-		createTestPage(t, nil, map[string]error{"http://foo.com/foo": nil}),
+		newTestPage(t, nil, map[string]error{"http://foo.com/foo": nil}),
 	)
 
 	i := 0
@@ -78,7 +78,7 @@ func TestCheckerCheckTwoPages(t *testing.T) {
 }
 
 func TestCheckerFailToCheckPage(t *testing.T) {
-	c := createTestChecker(
+	c := newTestChecker(
 		newFakeHTTPClient(
 			func(u *url.URL) (*fakeHTTPResponse, error) {
 				return nil, errors.New("")
@@ -87,7 +87,7 @@ func TestCheckerFailToCheckPage(t *testing.T) {
 	)
 
 	go c.Check(
-		createTestPage(t, nil, map[string]error{"http://foo.com/foo": nil}),
+		newTestPage(t, nil, map[string]error{"http://foo.com/foo": nil}),
 	)
 
 	assert.False(t, (<-c.Results()).OK())
