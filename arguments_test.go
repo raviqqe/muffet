@@ -13,6 +13,7 @@ func TestGetArguments(t *testing.T) {
 		{"--buffer-size", "42", "https://foo.com"},
 		{"-c", "1", "https://foo.com"},
 		{"--max-connections", "1", "https://foo.com"},
+		{"--max-connections-per-host", "1", "https://foo.com"},
 		{"-e", "regex1", "-e", "regex2", "https://foo.com"},
 		{"--exclude", "regex1", "--exclude", "regex2", "https://foo.com"},
 		{"--header", "MyHeader: foo", "--header", "YourHeader: bar", "https://foo.com"},
