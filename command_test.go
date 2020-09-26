@@ -78,3 +78,21 @@ func TestCommandFailToGetHTMLRootPage(t *testing.T) {
 	assert.False(t, ok)
 	cupaloy.SnapshotT(t, b.Bytes())
 }
+
+func TestCommandColorErrorMessage(t *testing.T) {
+	b := &bytes.Buffer{}
+
+	c := newCommand(
+		ioutil.Discard,
+		b,
+		true,
+		newFakeHTTPClientFactory(func(u *url.URL) (*fakeHTTPResponse, error) {
+			return nil, errors.New("foo")
+		}),
+	)
+
+	ok := c.Run([]string{"http://foo.com"})
+
+	assert.False(t, ok)
+	cupaloy.SnapshotT(t, b.Bytes())
+}
