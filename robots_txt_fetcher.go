@@ -1,7 +1,7 @@
 package main
 
 import (
-	"errors"
+	"fmt"
 	"net/url"
 
 	"github.com/temoto/robotstxt"
@@ -21,9 +21,7 @@ func (f *robotsTxtFetcher) Fetch(uu *url.URL) (*robotstxt.RobotsData, error) {
 	r, err := f.client.Get(&u, nil)
 
 	if err != nil {
-		return nil, err
-	} else if r.StatusCode() != 200 {
-		return nil, errors.New("failed to load robots.txt")
+		return nil, fmt.Errorf("failed to fetch robots.txt: %v", err)
 	}
 
 	return robotstxt.FromBytes(r.Body())
