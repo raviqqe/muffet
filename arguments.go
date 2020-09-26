@@ -2,6 +2,8 @@ package main
 
 import (
 	"errors"
+	"fmt"
+	"os"
 	"regexp"
 	"strings"
 
@@ -22,6 +24,8 @@ type arguments struct {
 	Verbose               bool     `short:"v" long:"verbose" description:"Show successful results too"`
 	SkipTLSVerification   bool     `long:"skip-tls-verification" description:"Skip TLS certificates verification"`
 	OnePageOnly           bool     `short:"p" long:"one-page-only" description:"Only check links found in the given URL"`
+	Help                  bool     `short:"h" long:"help" description:"Show this help"`
+	Version               bool     `long:"version" description:"Show version"`
 	URL                   string
 	ExcludedPatterns      []*regexp.Regexp
 	Headers               map[string]string
@@ -29,10 +33,20 @@ type arguments struct {
 
 func getArguments(ss []string) (*arguments, error) {
 	args := arguments{}
-	ss, err := flags.NewParser(&args, flags.HelpFlag|flags.PassDoubleDash).ParseArgs(ss)
+
+	p := flags.NewParser(&args, flags.PassDoubleDash)
+	p.Usage = "[options] <url>"
+
+	ss, err := p.ParseArgs(ss)
 
 	if err != nil {
 		return nil, err
+	} else if args.Version {
+		fmt.Println(version)
+		os.Exit(0)
+	} else if args.Help {
+		p.WriteHelp(os.Stderr)
+		os.Exit(0)
 	} else if len(ss) != 1 {
 		return nil, errors.New("invalid number of arguments")
 	}
