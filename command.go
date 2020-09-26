@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 
+	"github.com/logrusorgru/aurora/v3"
 	"github.com/temoto/robotstxt"
 )
 
@@ -60,9 +61,9 @@ func (c *command) runWithError(ss []string) (bool, error) {
 
 	_, p, err := f.Fetch(args.URL)
 	if err != nil {
-		return false, err
+		return false, fmt.Errorf("failed to fetch root page: %v", err)
 	} else if p == nil {
-		return false, errors.New("non-HTML page")
+		return false, errors.New("root page is not HTML")
 	}
 
 	rd := (*robotstxt.RobotsData)(nil)
@@ -117,7 +118,13 @@ func (c command) print(xs ...interface{}) {
 }
 
 func (c command) printError(xs ...interface{}) {
-	if _, err := fmt.Fprintln(c.stderr, xs...); err != nil {
+	s := fmt.Sprint(xs...)
+
+	if c.terminal {
+		s = aurora.Red(s).String()
+	}
+
+	if _, err := fmt.Fprintln(c.stderr, s); err != nil {
 		panic(err)
 	}
 }

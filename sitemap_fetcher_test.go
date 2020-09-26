@@ -5,6 +5,7 @@ import (
 	"net/url"
 	"testing"
 
+	"github.com/bradleyjkemp/cupaloy"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -39,4 +40,34 @@ func TestSitemapFetcherFetchSitemap(t *testing.T) {
 
 	_, ok := sm["http://foo.com/bar"]
 	assert.True(t, ok)
+}
+
+func TestSitemapFetcherFailToFetchSitemap(t *testing.T) {
+	u, err := url.Parse("http://foo.com")
+	assert.Nil(t, err)
+
+	_, err = newSitemapFetcher(
+		newFakeHTTPClient(
+			func(u *url.URL) (*fakeHTTPResponse, error) {
+				return nil, errors.New("foo")
+			},
+		),
+	).Fetch(u)
+
+	cupaloy.SnapshotT(t, err.Error())
+}
+
+func TestSitemapFetcherFailToParseSitemap(t *testing.T) {
+	u, err := url.Parse("http://foo.com")
+	assert.Nil(t, err)
+
+	_, err = newSitemapFetcher(
+		newFakeHTTPClient(
+			func(u *url.URL) (*fakeHTTPResponse, error) {
+				return newFakeHTTPResponse(200, "", "text/xml", []byte(`<`)), nil
+			},
+		),
+	).Fetch(u)
+
+	cupaloy.SnapshotT(t, err.Error())
 }

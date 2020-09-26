@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"fmt"
 	"net/url"
 
 	sitemap "github.com/oxffaa/gopher-parse-sitemap"
@@ -22,7 +23,7 @@ func (f *sitemapFetcher) Fetch(uu *url.URL) (map[string]struct{}, error) {
 	r, err := f.client.Get(&u, nil)
 
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to GET sitemap.xml: %v", err)
 	}
 
 	us := map[string]struct{}{}
@@ -34,7 +35,7 @@ func (f *sitemapFetcher) Fetch(uu *url.URL) (map[string]struct{}, error) {
 	})
 
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to parse sitemap.xml: %v", err)
 	}
 
 	return us, nil
