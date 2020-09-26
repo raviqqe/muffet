@@ -5,7 +5,7 @@ go 1.12
 require (
 	github.com/bradleyjkemp/cupaloy v2.3.0+incompatible
 	github.com/davecgh/go-spew v1.1.1 // indirect
-	github.com/docopt/docopt-go v0.0.0-20180111231733-ee0de3bc6815
+	github.com/jessevdk/go-flags v1.4.0
 	github.com/klauspost/compress v1.11.0 // indirect
 	github.com/kr/text v0.2.0 // indirect
 	github.com/logrusorgru/aurora/v3 v3.0.0

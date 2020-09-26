@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"time"
 
 	"github.com/logrusorgru/aurora/v3"
 	"github.com/temoto/robotstxt"
@@ -38,11 +39,11 @@ func (c *command) runWithError(ss []string) (bool, error) {
 	client := newThrottledHTTPClient(
 		c.httpClientFactory.Create(
 			httpClientOptions{
-				MaxConnectionsPerHost: args.MaxConnections,
+				MaxConnectionsPerHost: args.MaxConnectionsPerHost,
 				BufferSize:            args.BufferSize,
 				MaxRedirections:       args.MaxRedirections,
 				SkipTLSVerification:   args.SkipTLSVerification,
-				Timeout:               args.Timeout,
+				Timeout:               time.Duration(args.Timeout) * time.Second,
 			},
 		),
 		args.MaxConnections,

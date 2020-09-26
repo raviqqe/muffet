@@ -15,15 +15,12 @@ func TestGetArguments(t *testing.T) {
 		{"--max-connections", "1", "https://foo.com"},
 		{"-e", "regex1", "-e", "regex2", "https://foo.com"},
 		{"--exclude", "regex1", "--exclude", "regex2", "https://foo.com"},
-		{"-j", "MyHeader: foo", "-j", "YourHeader: bar", "https://foo.com"},
 		{"--header", "MyHeader: foo", "--header", "YourHeader: bar", "https://foo.com"},
-		{"-l", "4", "https://foo.com"},
+		{"-r", "4", "https://foo.com"},
 		{"--max-redirections", "4", "https://foo.com"},
-		{"-s", "https://foo.com"},
 		{"--follow-sitemap-xml", "https://foo.com"},
 		{"-t", "10", "https://foo.com"},
 		{"--timeout", "10", "https://foo.com"},
-		{"-x", "https://foo.com"},
 		{"--skip-tls-verification", "https://foo.com"},
 		{"-v", "https://foo.com"},
 		{"--verbose", "https://foo.com"},
@@ -54,12 +51,6 @@ func TestGetArgumentsError(t *testing.T) {
 		_, err := getArguments(ss)
 		assert.NotNil(t, err)
 	}
-}
-
-func TestParseArguments(t *testing.T) {
-	assert.Panics(t, func() {
-		parseArguments("", nil)
-	})
 }
 
 func TestParseHeaders(t *testing.T) {
