@@ -92,7 +92,7 @@ func (c *command) runWithError(ss []string) (bool, error) {
 		}
 	}
 
-	checker := newChecker(
+	checker := newPageChecker(
 		f,
 		newLinkValidator(p.URL().Hostname(), rd, sm),
 		args.OnePageOnly,

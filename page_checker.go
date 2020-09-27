@@ -4,7 +4,7 @@ import (
 	"sync"
 )
 
-type checker struct {
+type pageChecker struct {
 	fetcher       *linkFetcher
 	linkValidator *linkValidator
 	daemonManager *daemonManager
@@ -13,8 +13,8 @@ type checker struct {
 	onePageOnly   bool
 }
 
-func newChecker(f *linkFetcher, v *linkValidator, onePageOnly bool) *checker {
-	return &checker{
+func newPageChecker(f *linkFetcher, v *linkValidator, onePageOnly bool) *pageChecker {
+	return &pageChecker{
 		f,
 		v,
 		newDaemonManager(concurrency),
@@ -24,18 +24,18 @@ func newChecker(f *linkFetcher, v *linkValidator, onePageOnly bool) *checker {
 	}
 }
 
-func (c *checker) Results() <-chan *pageResult {
+func (c *pageChecker) Results() <-chan *pageResult {
 	return c.results
 }
 
-func (c *checker) Check(page *page) {
+func (c *pageChecker) Check(page *page) {
 	c.addPage(page)
 	c.daemonManager.Run()
 
 	close(c.results)
 }
 
-func (c *checker) checkPage(p *page) {
+func (c *pageChecker) checkPage(p *page) {
 	us := p.Links()
 
 	sc := make(chan *successLinkResult, len(us))
@@ -87,7 +87,7 @@ func (c *checker) checkPage(p *page) {
 	c.results <- &pageResult{p.URL().String(), ss, es}
 }
 
-func (c *checker) addPage(p *page) {
+func (c *pageChecker) addPage(p *page) {
 	if !c.donePages.Add(p.URL().String()) {
 		c.daemonManager.Add(func() { c.checkPage(p) })
 	}
