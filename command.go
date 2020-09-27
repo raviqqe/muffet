@@ -127,9 +127,8 @@ func (c *command) printResultsInJSON(rc <-chan *pageResult) (bool, error) {
 	ok := true
 
 	for r := range rc {
-		rs = append(rs, newJSONPageResult(r))
-
 		if !r.OK() {
+			rs = append(rs, newJSONPageResult(r))
 			ok = false
 		}
 	}

@@ -243,3 +243,17 @@ func TestCommandFailToRunWithJSONOutput(t *testing.T) {
 	assert.False(t, ok)
 	assert.Greater(t, b.Len(), 0)
 }
+
+func TestCommandDoNotIncludeSuccessfulPageInJSONOutput(t *testing.T) {
+	b := &bytes.Buffer{}
+
+	ok := newTestCommandWithStdout(
+		b,
+		func(u *url.URL) (*fakeHTTPResponse, error) {
+			return newFakeHTTPResponse(200, "", "text/html", nil), nil
+		},
+	).Run([]string{"--json", "http://foo.com"})
+
+	assert.True(t, ok)
+	assert.Equal(t, strings.TrimSpace(b.String()), "[]")
+}
