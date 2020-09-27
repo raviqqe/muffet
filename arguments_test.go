@@ -1,7 +1,6 @@
 package main
 
 import (
-	"bytes"
 	"testing"
 
 	"github.com/bradleyjkemp/cupaloy"
@@ -60,10 +59,8 @@ func TestGetArgumentsError(t *testing.T) {
 	}
 }
 
-func TestPrintHelp(t *testing.T) {
-	b := &bytes.Buffer{}
-	printHelp(b)
-	cupaloy.SnapshotT(t, b.String())
+func TestHelp(t *testing.T) {
+	cupaloy.SnapshotT(t, help())
 }
 
 func TestParseHeaders(t *testing.T) {

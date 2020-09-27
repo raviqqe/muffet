@@ -1,8 +1,8 @@
 package main
 
 import (
+	"bytes"
 	"errors"
-	"io"
 	"regexp"
 	"strings"
 
@@ -61,7 +61,7 @@ func getArguments(ss []string) (*arguments, error) {
 	return &args, nil
 }
 
-func printHelp(w io.Writer) {
+func help() string {
 	p := flags.NewParser(&arguments{}, flags.PassDoubleDash)
 	p.Usage = "[options] <url>"
 
@@ -69,7 +69,9 @@ func printHelp(w io.Writer) {
 	// This seems to be a bug in go-flags.
 	p.Parse()
 
-	p.WriteHelp(w)
+	b := &bytes.Buffer{}
+	p.WriteHelp(b)
+	return b.String()
 }
 
 func compileRegexps(regexps []string) ([]*regexp.Regexp, error) {
