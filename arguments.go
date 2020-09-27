@@ -67,7 +67,7 @@ func help() string {
 
 	// Parse() is run here to show default values in help.
 	// This seems to be a bug in go-flags.
-	p.Parse()
+	p.Parse() // nolint:errcheck
 
 	b := &bytes.Buffer{}
 	p.WriteHelp(b)
