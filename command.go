@@ -35,10 +35,10 @@ func (c *command) runWithError(ss []string) (bool, error) {
 	if err != nil {
 		return false, err
 	} else if args.Help {
-		printHelp(c.stderr)
+		printHelp(c.stdout)
 		return true, nil
 	} else if args.Version {
-		_, err := fmt.Fprintln(c.stderr, version)
+		c.print(version)
 		return err == nil, err
 	}
 

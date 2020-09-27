@@ -6,6 +6,8 @@ import (
 	"io"
 	"io/ioutil"
 	"net/url"
+	"regexp"
+	"strings"
 	"testing"
 
 	"github.com/bradleyjkemp/cupaloy"
@@ -77,6 +79,22 @@ func TestCommandFailToRun(t *testing.T) {
 	assert.False(t, ok)
 }
 
+func TestCommandFailToParseArguments(t *testing.T) {
+	b := &bytes.Buffer{}
+
+	c := newTestCommandWithStderr(
+		b,
+		func(u *url.URL) (*fakeHTTPResponse, error) {
+			return newFakeHTTPResponse(200, "", "text/html", nil), nil
+		},
+	)
+
+	ok := c.Run(nil)
+
+	assert.False(t, ok)
+	assert.Greater(t, b.Len(), 0)
+}
+
 func TestCommandFailToFetchRootPage(t *testing.T) {
 	b := &bytes.Buffer{}
 
@@ -121,4 +139,46 @@ func TestCommandColorErrorMessage(t *testing.T) {
 
 	assert.False(t, ok)
 	cupaloy.SnapshotT(t, b.Bytes())
+}
+
+func TestCommandShowHelp(t *testing.T) {
+	b := &bytes.Buffer{}
+
+	c := newCommand(
+		b,
+		ioutil.Discard,
+		false,
+		newFakeHTTPClientFactory(
+			func(u *url.URL) (*fakeHTTPResponse, error) {
+				return newFakeHTTPResponse(200, "", "text/html", nil), nil
+			},
+		),
+	)
+
+	ok := c.Run([]string{"--help"})
+
+	assert.True(t, ok)
+	assert.Greater(t, b.Len(), 0)
+}
+
+func TestCommandShowVersion(t *testing.T) {
+	b := &bytes.Buffer{}
+
+	c := newCommand(
+		b,
+		ioutil.Discard,
+		false,
+		newFakeHTTPClientFactory(
+			func(u *url.URL) (*fakeHTTPResponse, error) {
+				return newFakeHTTPResponse(200, "", "text/html", nil), nil
+			},
+		),
+	)
+
+	ok := c.Run([]string{"--version"})
+	assert.True(t, ok)
+
+	r, err := regexp.Compile(`^[0-9]+\.[0-9]+\.[0-9]+$`)
+	assert.Nil(t, err)
+	assert.True(t, r.MatchString(strings.TrimSpace(string(b.Bytes()))))
 }
