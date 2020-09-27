@@ -24,7 +24,8 @@ func (*fasthttpHTTPClientFactory) Create(o httpClientOptions) httpClient {
 			},
 			Dial: func(addr string) (net.Conn, error) {
 				return fasthttp.DialTimeout(addr, tcpTimeout)
-			}},
+			},
+		},
 		o.MaxRedirections,
 		o.Timeout,
 	)
