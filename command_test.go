@@ -102,6 +102,29 @@ func TestCommandFailToRun(t *testing.T) {
 	assert.False(t, ok)
 }
 
+func TestCommandFailToRunWithInvalidLink(t *testing.T) {
+	b := &bytes.Buffer{}
+
+	ok := newTestCommandWithStdout(
+		b,
+		func(u *url.URL) (*fakeHTTPResponse, error) {
+			if u.String() == "http://foo.com" {
+				return newFakeHTTPResponse(
+					200,
+					"http://foo.com",
+					"text/html",
+					[]byte(`<html><body><a href="/foo" /></body></html>`),
+				), nil
+			}
+
+			return nil, errors.New("")
+		},
+	).Run([]string{"http://foo.com"})
+
+	assert.False(t, ok)
+	assert.Regexp(t, `http://foo\.com/foo`, b.String())
+}
+
 func TestCommandFailToParseArguments(t *testing.T) {
 	b := &bytes.Buffer{}
 
