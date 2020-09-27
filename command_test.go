@@ -41,6 +41,32 @@ func TestCommandRun(t *testing.T) {
 	assert.True(t, ok)
 }
 
+func TestCommandRunWithLinks(t *testing.T) {
+	visited := false
+
+	ok := newTestCommand(
+		func(u *url.URL) (*fakeHTTPResponse, error) {
+			switch u.String() {
+			case "http://foo.com":
+				return newFakeHTTPResponse(
+					200,
+					"http://foo.com",
+					"text/html",
+					[]byte(`<html><body><a href="/foo" /></body></html>`),
+				), nil
+			case "http://foo.com/foo":
+				visited = true
+				return newFakeHTTPResponse(200, "http://foo.com", "text/html", nil), nil
+			}
+
+			return nil, errors.New("")
+		},
+	).Run([]string{"http://foo.com"})
+
+	assert.True(t, ok)
+	assert.True(t, visited)
+}
+
 func TestCommandFailToRun(t *testing.T) {
 	ok := newTestCommand(
 		func(u *url.URL) (*fakeHTTPResponse, error) {
