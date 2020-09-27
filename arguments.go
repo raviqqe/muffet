@@ -18,6 +18,7 @@ type arguments struct {
 	FollowSitemapXML      bool     `long:"follow-sitemap-xml" description:"Scrape only pages listed in sitemap.xml"`
 	RawHeaders            []string `long:"header" value-name:"<header>..." description:"Custom headers"`
 	IgnoreFragments       bool     `short:"f" long:"ignore-fragments" description:"Ignore URL fragments"`
+	JSONOutput            bool     `long:"json" description:"Output results in JSON"`
 	MaxRedirections       int      `short:"r" long:"max-redirections" value-name:"<count>" default:"64" description:"Maximum number of redirections"`
 	Timeout               int      `short:"t" long:"timeout" value-name:"<seconds>" default:"10" description:"Timeout for HTTP requests in seconds"`
 	Verbose               bool     `short:"v" long:"verbose" description:"Show successful results too"`

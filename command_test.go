@@ -220,3 +220,40 @@ func TestCommandShowVersion(t *testing.T) {
 	assert.Nil(t, err)
 	assert.True(t, r.MatchString(strings.TrimSpace(b.String())))
 }
+
+func TestCommandFailToRunWithJSONOutput(t *testing.T) {
+	b := &bytes.Buffer{}
+
+	ok := newTestCommandWithStdout(
+		b,
+		func(u *url.URL) (*fakeHTTPResponse, error) {
+			if u.String() == "http://foo.com" {
+				return newFakeHTTPResponse(
+					200,
+					"http://foo.com",
+					"text/html",
+					[]byte(`<html><body><a href="/foo" /></body></html>`),
+				), nil
+			}
+
+			return nil, errors.New("foo")
+		},
+	).Run([]string{"--json", "http://foo.com"})
+
+	assert.False(t, ok)
+	assert.Greater(t, b.Len(), 0)
+}
+
+func TestCommandDoNotIncludeSuccessfulPageInJSONOutput(t *testing.T) {
+	b := &bytes.Buffer{}
+
+	ok := newTestCommandWithStdout(
+		b,
+		func(u *url.URL) (*fakeHTTPResponse, error) {
+			return newFakeHTTPResponse(200, "", "text/html", nil), nil
+		},
+	).Run([]string{"--json", "http://foo.com"})
+
+	assert.True(t, ok)
+	assert.Equal(t, strings.TrimSpace(b.String()), "[]")
+}
