@@ -8,10 +8,6 @@ type throttledHTTPClient struct {
 }
 
 func newThrottledHTTPClient(c httpClient, maxConnections int) httpClient {
-	if maxConnections < 1 {
-		maxConnections = defaultMaxConnections
-	}
-
 	return &throttledHTTPClient{c, newSemaphore(maxConnections)}
 }
 
