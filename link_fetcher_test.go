@@ -165,6 +165,17 @@ func TestLinkFetcherFailToFetch(t *testing.T) {
 	assert.NotNil(t, err)
 }
 
+func TestLinkFetcherFailToParseURL(t *testing.T) {
+	f := newTestLinkFetcher(
+		newFakeHTTPClient(func(*url.URL) (*fakeHTTPResponse, error) {
+			return newFakeHTTPResponse(200, "", "text/html", nil), nil
+		}))
+
+	_, _, err := f.Fetch(":")
+
+	assert.NotNil(t, err)
+}
+
 func TestSeparateFragment(t *testing.T) {
 	for _, ss := range [][3]string{
 		{"http://foo.com#bar", "http://foo.com", "bar"},
