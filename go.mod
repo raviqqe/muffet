@@ -1,4 +1,4 @@
-module github.com/raviqqe/muffet
+module github.com/raviqqe/muffet/v2
 
 go 1.12
 
