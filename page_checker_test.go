@@ -8,8 +8,8 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func newTestChecker(c *fakeHTTPClient) *checker {
-	return newChecker(
+func newTestPageChecker(c *fakeHTTPClient) *pageChecker {
+	return newPageChecker(
 		newLinkFetcher(
 			c,
 			newPageParser(newLinkFinder(nil)),
@@ -27,8 +27,8 @@ func newTestPage(t *testing.T, fragments map[string]struct{}, links map[string]e
 	return newPage(u, fragments, links)
 }
 
-func TestCheckerCheckOnePage(t *testing.T) {
-	c := newTestChecker(
+func TestPageCheckerCheckOnePage(t *testing.T) {
+	c := newTestPageChecker(
 		newFakeHTTPClient(
 			func(u *url.URL) (*fakeHTTPResponse, error) {
 				return nil, errors.New("")
@@ -48,8 +48,8 @@ func TestCheckerCheckOnePage(t *testing.T) {
 	assert.Equal(t, 1, i)
 }
 
-func TestCheckerCheckTwoPages(t *testing.T) {
-	c := newTestChecker(
+func TestPageCheckerCheckTwoPages(t *testing.T) {
+	c := newTestPageChecker(
 		newFakeHTTPClient(
 			func(u *url.URL) (*fakeHTTPResponse, error) {
 				s := "http://foo.com/foo"
@@ -77,8 +77,8 @@ func TestCheckerCheckTwoPages(t *testing.T) {
 	assert.Equal(t, 2, i)
 }
 
-func TestCheckerFailToCheckPage(t *testing.T) {
-	c := newTestChecker(
+func TestPageCheckerFailToCheckPage(t *testing.T) {
+	c := newTestPageChecker(
 		newFakeHTTPClient(
 			func(u *url.URL) (*fakeHTTPResponse, error) {
 				return nil, errors.New("")
@@ -93,8 +93,8 @@ func TestCheckerFailToCheckPage(t *testing.T) {
 	assert.False(t, (<-c.Results()).OK())
 }
 
-func TestCheckerDoNotCheckSamePageTwice(t *testing.T) {
-	c := newTestChecker(
+func TestPageCheckerDoNotCheckSamePageTwice(t *testing.T) {
+	c := newTestPageChecker(
 		newFakeHTTPClient(
 			func(u *url.URL) (*fakeHTTPResponse, error) {
 				return newFakeHTTPResponse(200, "http://foo.com", "text/html", nil), nil
