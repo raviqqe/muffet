@@ -1,8 +1,10 @@
 package main
 
 import (
+	"bytes"
 	"testing"
 
+	"github.com/bradleyjkemp/cupaloy"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -30,6 +32,9 @@ func TestGetArguments(t *testing.T) {
 		{"-v", "--ignore-fragments", "https://foo.com"},
 		{"-p", "https://foo.com"},
 		{"--one-page-only", "https://foo.com"},
+		{"-h"},
+		{"--help"},
+		{"--version"},
 	} {
 		_, err := getArguments(ss)
 		assert.Nil(t, err)
@@ -38,6 +43,7 @@ func TestGetArguments(t *testing.T) {
 
 func TestGetArgumentsError(t *testing.T) {
 	for _, ss := range [][]string{
+		{},
 		{"-b", "foo", "https://foo.com"},
 		{"--buffer-size", "foo", "https://foo.com"},
 		{"-c", "foo", "https://foo.com"},
@@ -53,6 +59,12 @@ func TestGetArgumentsError(t *testing.T) {
 		_, err := getArguments(ss)
 		assert.NotNil(t, err)
 	}
+}
+
+func TestPrintHelp(t *testing.T) {
+	b := &bytes.Buffer{}
+	printHelp(b)
+	cupaloy.SnapshotT(t, b.Bytes())
 }
 
 func TestParseHeaders(t *testing.T) {
