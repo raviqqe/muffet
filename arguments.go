@@ -1,8 +1,8 @@
 package main
 
 import (
+	"bytes"
 	"errors"
-	"io"
 	"regexp"
 	"strings"
 
@@ -61,11 +61,17 @@ func getArguments(ss []string) (*arguments, error) {
 	return &args, nil
 }
 
-func printHelp(w io.Writer) {
+func help() string {
 	p := flags.NewParser(&arguments{}, flags.PassDoubleDash)
 	p.Usage = "[options] <url>"
 
-	p.WriteHelp(w)
+	// Parse() is run here to show default values in help.
+	// This seems to be a bug in go-flags.
+	p.Parse() // nolint:errcheck
+
+	b := &bytes.Buffer{}
+	p.WriteHelp(b)
+	return b.String()
 }
 
 func compileRegexps(regexps []string) ([]*regexp.Regexp, error) {

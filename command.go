@@ -34,7 +34,7 @@ func (c *command) runWithError(ss []string) (bool, error) {
 	if err != nil {
 		return false, err
 	} else if args.Help {
-		printHelp(c.stdout)
+		c.print(help())
 		return true, nil
 	} else if args.Version {
 		c.print(version)
