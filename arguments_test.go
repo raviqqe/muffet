@@ -30,6 +30,7 @@ func TestGetArguments(t *testing.T) {
 		{"-v", "-f", "https://foo.com"},
 		{"-v", "--ignore-fragments", "https://foo.com"},
 		{"--one-page-only", "https://foo.com"},
+		{"--json", "https://foo.com"},
 		{"-h"},
 		{"--help"},
 		{"--version"},
