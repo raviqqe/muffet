@@ -1,0 +1,21 @@
+Usage:
+  muffet.test [options] <url>
+
+Application Options:
+  -b, --buffer-size=              HTTP response buffer size in bytes
+  -c, --max-connections=          Maximum number of HTTP connections
+      --max-connections-per-host= Maximum number of HTTP connections per host
+  -e, --exclude=                  Exclude URLs matched with given regular
+                                  expressions
+      --follow-robots-txt         Follow robots.txt when scraping pages
+      --follow-sitemap-xml        Scrape only pages listed in sitemap.xml
+      --header=                   Custom headers
+  -f, --ignore-fragments          Ignore URL fragments
+  -r, --max-redirections=         Maximum number of redirections
+  -t, --timeout=                  Timeout for HTTP requests in seconds
+  -v, --verbose                   Show successful results too
+      --skip-tls-verification     Skip TLS certificate verification
+      --one-page-only             Only check links found in the given URL
+  -h, --help                      Show this help
+      --version                   Show version
+

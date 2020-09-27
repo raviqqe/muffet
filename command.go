@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"time"
 
 	"github.com/logrusorgru/aurora/v3"
 	"github.com/temoto/robotstxt"
@@ -33,22 +34,28 @@ func (c *command) runWithError(ss []string) (bool, error) {
 	args, err := getArguments(ss)
 	if err != nil {
 		return false, err
+	} else if args.Help {
+		printHelp(c.stdout)
+		return true, nil
+	} else if args.Version {
+		c.print(version)
+		return err == nil, err
 	}
 
 	client := newThrottledHTTPClient(
 		c.httpClientFactory.Create(
 			httpClientOptions{
-				Concurrency:         args.Concurrency,
-				BufferSize:          args.BufferSize,
-				MaxRedirections:     args.MaxRedirections,
-				SkipTLSVerification: args.SkipTLSVerification,
-				Timeout:             args.Timeout,
+				MaxConnectionsPerHost: args.MaxConnectionsPerHost,
+				BufferSize:            args.BufferSize,
+				MaxRedirections:       args.MaxRedirections,
+				SkipTLSVerification:   args.SkipTLSVerification,
+				Timeout:               time.Duration(args.Timeout) * time.Second,
 			},
 		),
-		args.Concurrency,
+		args.MaxConnections,
 	)
 
-	pp := newPageParser(newLinkFinder(args.ExcludedPatterns), args.FollowURLParams)
+	pp := newPageParser(newLinkFinder(args.ExcludedPatterns))
 
 	f := newLinkFetcher(
 		client,
@@ -89,7 +96,6 @@ func (c *command) runWithError(ss []string) (bool, error) {
 	checker := newChecker(
 		f,
 		newLinkValidator(p.URL().Hostname(), rd, sm),
-		args.Concurrency,
 		args.OnePageOnly,
 	)
 

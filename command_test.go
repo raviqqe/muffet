@@ -6,6 +6,8 @@ import (
 	"io"
 	"io/ioutil"
 	"net/url"
+	"regexp"
+	"strings"
 	"testing"
 
 	"github.com/bradleyjkemp/cupaloy"
@@ -41,6 +43,32 @@ func TestCommandRun(t *testing.T) {
 	assert.True(t, ok)
 }
 
+func TestCommandRunWithLinks(t *testing.T) {
+	visited := false
+
+	ok := newTestCommand(
+		func(u *url.URL) (*fakeHTTPResponse, error) {
+			switch u.String() {
+			case "http://foo.com":
+				return newFakeHTTPResponse(
+					200,
+					"http://foo.com",
+					"text/html",
+					[]byte(`<html><body><a href="/foo" /></body></html>`),
+				), nil
+			case "http://foo.com/foo":
+				visited = true
+				return newFakeHTTPResponse(200, "http://foo.com", "text/html", nil), nil
+			}
+
+			return nil, errors.New("")
+		},
+	).Run([]string{"http://foo.com"})
+
+	assert.True(t, ok)
+	assert.True(t, visited)
+}
+
 func TestCommandFailToRun(t *testing.T) {
 	ok := newTestCommand(
 		func(u *url.URL) (*fakeHTTPResponse, error) {
@@ -49,6 +77,22 @@ func TestCommandFailToRun(t *testing.T) {
 	).Run([]string{"http://foo.com"})
 
 	assert.False(t, ok)
+}
+
+func TestCommandFailToParseArguments(t *testing.T) {
+	b := &bytes.Buffer{}
+
+	c := newTestCommandWithStderr(
+		b,
+		func(u *url.URL) (*fakeHTTPResponse, error) {
+			return newFakeHTTPResponse(200, "", "text/html", nil), nil
+		},
+	)
+
+	ok := c.Run(nil)
+
+	assert.False(t, ok)
+	assert.Greater(t, b.Len(), 0)
 }
 
 func TestCommandFailToFetchRootPage(t *testing.T) {
@@ -62,7 +106,7 @@ func TestCommandFailToFetchRootPage(t *testing.T) {
 	).Run([]string{"http://foo.com"})
 
 	assert.False(t, ok)
-	cupaloy.SnapshotT(t, b.Bytes())
+	cupaloy.SnapshotT(t, b.String())
 }
 
 func TestCommandFailToGetHTMLRootPage(t *testing.T) {
@@ -76,7 +120,7 @@ func TestCommandFailToGetHTMLRootPage(t *testing.T) {
 	).Run([]string{"http://foo.com"})
 
 	assert.False(t, ok)
-	cupaloy.SnapshotT(t, b.Bytes())
+	cupaloy.SnapshotT(t, b.String())
 }
 
 func TestCommandColorErrorMessage(t *testing.T) {
@@ -94,5 +138,47 @@ func TestCommandColorErrorMessage(t *testing.T) {
 	ok := c.Run([]string{"http://foo.com"})
 
 	assert.False(t, ok)
-	cupaloy.SnapshotT(t, b.Bytes())
+	cupaloy.SnapshotT(t, b.String())
+}
+
+func TestCommandShowHelp(t *testing.T) {
+	b := &bytes.Buffer{}
+
+	c := newCommand(
+		b,
+		ioutil.Discard,
+		false,
+		newFakeHTTPClientFactory(
+			func(u *url.URL) (*fakeHTTPResponse, error) {
+				return newFakeHTTPResponse(200, "", "text/html", nil), nil
+			},
+		),
+	)
+
+	ok := c.Run([]string{"--help"})
+
+	assert.True(t, ok)
+	assert.Greater(t, b.Len(), 0)
+}
+
+func TestCommandShowVersion(t *testing.T) {
+	b := &bytes.Buffer{}
+
+	c := newCommand(
+		b,
+		ioutil.Discard,
+		false,
+		newFakeHTTPClientFactory(
+			func(u *url.URL) (*fakeHTTPResponse, error) {
+				return newFakeHTTPResponse(200, "", "text/html", nil), nil
+			},
+		),
+	)
+
+	ok := c.Run([]string{"--version"})
+	assert.True(t, ok)
+
+	r, err := regexp.Compile(`^[0-9]+\.[0-9]+\.[0-9]+$`)
+	assert.Nil(t, err)
+	assert.True(t, r.MatchString(strings.TrimSpace(b.String())))
 }

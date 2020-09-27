@@ -3,11 +3,9 @@ package main
 import "time"
 
 const (
-	version                = "1.5.7"
-	defaultBufferSize      = 4096
-	defaultConcurrency     = 512
-	defaultMaxRedirections = 64
-	defaultTimeout         = 10 * time.Second
-	agentName              = "muffet"
-	tcpTimeout             = time.Minute
+	version               = "2.0.0"
+	agentName             = "muffet"
+	concurrency           = 1024
+	tcpTimeout            = time.Minute
+	defaultMaxConnections = 512
 )

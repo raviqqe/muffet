@@ -1,8 +1,10 @@
 package main
 
 import (
+	"bytes"
 	"testing"
 
+	"github.com/bradleyjkemp/cupaloy"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -12,27 +14,26 @@ func TestGetArguments(t *testing.T) {
 		{"-b", "42", "https://foo.com"},
 		{"--buffer-size", "42", "https://foo.com"},
 		{"-c", "1", "https://foo.com"},
-		{"--concurrency", "1", "https://foo.com"},
+		{"--max-connections", "1", "https://foo.com"},
+		{"--max-connections-per-host", "1", "https://foo.com"},
 		{"-e", "regex1", "-e", "regex2", "https://foo.com"},
 		{"--exclude", "regex1", "--exclude", "regex2", "https://foo.com"},
-		{"-j", "MyHeader: foo", "-j", "YourHeader: bar", "https://foo.com"},
 		{"--header", "MyHeader: foo", "--header", "YourHeader: bar", "https://foo.com"},
-		{"-l", "4", "https://foo.com"},
-		{"--limit-redirections", "4", "https://foo.com"},
-		{"-s", "https://foo.com"},
+		{"-r", "4", "https://foo.com"},
+		{"--max-redirections", "4", "https://foo.com"},
+		{"--follow-robots-txt", "https://foo.com"},
 		{"--follow-sitemap-xml", "https://foo.com"},
-		{"-u", "https://foo.com"},
-		{"--follow-url-params", "https://foo.com"},
 		{"-t", "10", "https://foo.com"},
 		{"--timeout", "10", "https://foo.com"},
-		{"-x", "https://foo.com"},
 		{"--skip-tls-verification", "https://foo.com"},
 		{"-v", "https://foo.com"},
 		{"--verbose", "https://foo.com"},
 		{"-v", "-f", "https://foo.com"},
 		{"-v", "--ignore-fragments", "https://foo.com"},
-		{"-p", "https://foo.com"},
 		{"--one-page-only", "https://foo.com"},
+		{"-h"},
+		{"--help"},
+		{"--version"},
 	} {
 		_, err := getArguments(ss)
 		assert.Nil(t, err)
@@ -41,15 +42,16 @@ func TestGetArguments(t *testing.T) {
 
 func TestGetArgumentsError(t *testing.T) {
 	for _, ss := range [][]string{
+		{},
 		{"-b", "foo", "https://foo.com"},
 		{"--buffer-size", "foo", "https://foo.com"},
 		{"-c", "foo", "https://foo.com"},
-		{"--concurrency", "foo", "https://foo.com"},
+		{"--max-connections", "foo", "https://foo.com"},
 		{"-e", "(", "https://foo.com"},
 		{"-j", "MyHeader", "https://foo.com"},
 		{"--header", "MyHeader", "https://foo.com"},
 		{"-l", "foo", "https://foo.com"},
-		{"--limit-redirections", "foo", "https://foo.com"},
+		{"--max-redirections", "foo", "https://foo.com"},
 		{"-t", "foo", "https://foo.com"},
 		{"--timeout", "foo", "https://foo.com"},
 	} {
@@ -58,10 +60,10 @@ func TestGetArgumentsError(t *testing.T) {
 	}
 }
 
-func TestParseArguments(t *testing.T) {
-	assert.Panics(t, func() {
-		parseArguments("", nil)
-	})
+func TestPrintHelp(t *testing.T) {
+	b := &bytes.Buffer{}
+	printHelp(b)
+	cupaloy.SnapshotT(t, b.String())
 }
 
 func TestParseHeaders(t *testing.T) {

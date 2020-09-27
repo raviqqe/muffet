@@ -17,7 +17,7 @@ func newFasthttpHTTPClientFactory() *fasthttpHTTPClientFactory {
 func (*fasthttpHTTPClientFactory) Create(o httpClientOptions) httpClient {
 	return newFasthttpHTTPClient(
 		&fasthttp.Client{
-			MaxConnsPerHost: o.Concurrency,
+			MaxConnsPerHost: o.MaxConnectionsPerHost,
 			ReadBufferSize:  o.BufferSize,
 			TLSConfig: &tls.Config{
 				InsecureSkipVerify: o.SkipTLSVerification,

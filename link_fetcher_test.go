@@ -15,7 +15,7 @@ func newTestLinkFetcher(c *fakeHTTPClient) *linkFetcher {
 }
 
 func newTestLinkFetcherWithOptions(c *fakeHTTPClient, o linkFetcherOptions) *linkFetcher {
-	return newLinkFetcher(c, newPageParser(newLinkFinder(nil), false), o)
+	return newLinkFetcher(c, newPageParser(newLinkFinder(nil)), o)
 }
 
 func TestNewFetcher(t *testing.T) {
@@ -161,6 +161,17 @@ func TestLinkFetcherFailToFetch(t *testing.T) {
 		}))
 
 	_, _, err := f.Fetch("http://foo.com")
+
+	assert.NotNil(t, err)
+}
+
+func TestLinkFetcherFailToParseURL(t *testing.T) {
+	f := newTestLinkFetcher(
+		newFakeHTTPClient(func(*url.URL) (*fakeHTTPResponse, error) {
+			return newFakeHTTPResponse(200, "", "text/html", nil), nil
+		}))
+
+	_, _, err := f.Fetch(":")
 
 	assert.NotNil(t, err)
 }

@@ -7,12 +7,12 @@ type throttledHTTPClient struct {
 	semaphore semaphore
 }
 
-func newThrottledHTTPClient(c httpClient, concurrency int) httpClient {
-	if concurrency < 1 {
-		concurrency = defaultConcurrency
+func newThrottledHTTPClient(c httpClient, maxConnections int) httpClient {
+	if maxConnections < 1 {
+		maxConnections = defaultMaxConnections
 	}
 
-	return &throttledHTTPClient{c, newSemaphore(concurrency)}
+	return &throttledHTTPClient{c, newSemaphore(maxConnections)}
 }
 
 func (c *throttledHTTPClient) Get(u *url.URL, hs map[string]string) (httpResponse, error) {

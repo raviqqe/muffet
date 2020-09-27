@@ -12,11 +12,10 @@ func newTestChecker(c *fakeHTTPClient) *checker {
 	return newChecker(
 		newLinkFetcher(
 			c,
-			newPageParser(newLinkFinder(nil), false),
+			newPageParser(newLinkFinder(nil)),
 			linkFetcherOptions{},
 		),
 		newLinkValidator("foo.com", nil, nil),
-		512,
 		false,
 	)
 }

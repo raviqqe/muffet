@@ -8,7 +8,7 @@ jobs:
       image: golang
     steps:
       - uses: actions/checkout@v2
-      - run: tools/build.sh
-      - run: tools/lint.sh
-      - run: tools/test.sh
+      - run: go build
+      - uses: golangci/golangci-lint-action@v2
+      - run: go test -covermode atomic -coverprofile coverage.txt
       - uses: codecov/codecov-action@v1

@@ -2,119 +2,72 @@ package main
 
 import (
 	"errors"
-	"fmt"
+	"io"
 	"regexp"
-	"strconv"
 	"strings"
-	"time"
 
-	"github.com/docopt/docopt-go"
+	"github.com/jessevdk/go-flags"
 )
 
-var usage = fmt.Sprintf(`Muffet, the web repairgirl
-
-Usage:
-	muffet [-b <size>] [-c <concurrency>] [-e <pattern>...] [-f] [-j <header>...] [-l <times>] [-p] [-r] [-s] [-u] [-t <seconds>] [-v] [-x] <url>
-
-Options:
-	-b, --buffer-size <size>          Set HTTP response buffer size in bytes. [default: %v]
-	-c, --concurrency <concurrency>   Roughly maximum number of concurrent HTTP connections. [default: %v]
-	-e, --exclude <pattern>...        Exclude URLs matched with given regular expressions.
-	-f, --ignore-fragments            Ignore URL fragments.
-	-h, --help                        Show this help.
-	-j, --header <header>...          Set custom headers.
-	-l, --limit-redirections <times>  Limit a number of redirections. [default: %v]
-	-p, --one-page-only               Only check links found in the given URL, do not follow links.
-	-r, --follow-robots-txt           Follow robots.txt when scraping.
-	-s, --follow-sitemap-xml          Scrape only pages listed in sitemap.xml.
-	-u, --follow-url-params           Will not cut off the URL parameters.
-	-t, --timeout <seconds>           Set timeout for HTTP requests in seconds. [default: %v]
-	-v, --verbose                     Show successful results too.
-	-x, --skip-tls-verification       Skip TLS certificates verification.`,
-	defaultBufferSize, defaultConcurrency, defaultMaxRedirections, defaultTimeout.Seconds())
-
 type arguments struct {
-	BufferSize       int
-	Concurrency      int
-	ExcludedPatterns []*regexp.Regexp
-	FollowRobotsTxt,
-	FollowSitemapXML,
-	FollowURLParams bool
-	Headers         map[string]string
-	IgnoreFragments bool
-	MaxRedirections int
-	Timeout         time.Duration
-	URL             string
-	Verbose,
-	SkipTLSVerification bool
-	OnePageOnly bool
+	BufferSize            int      `short:"b" long:"buffer-size" default:"4096" description:"HTTP response buffer size in bytes"`
+	MaxConnections        int      `short:"c" long:"max-connections" default:"512" description:"Maximum number of HTTP connections"`
+	MaxConnectionsPerHost int      `long:"max-connections-per-host" default:"512" description:"Maximum number of HTTP connections per host"`
+	RawExcludedPatterns   []string `short:"e" long:"exclude" description:"Exclude URLs matched with given regular expressions"`
+	FollowRobotsTxt       bool     `long:"follow-robots-txt" description:"Follow robots.txt when scraping pages"`
+	FollowSitemapXML      bool     `long:"follow-sitemap-xml" description:"Scrape only pages listed in sitemap.xml"`
+	RawHeaders            []string `long:"header" description:"Custom headers"`
+	IgnoreFragments       bool     `short:"f" long:"ignore-fragments" description:"Ignore URL fragments"`
+	MaxRedirections       int      `short:"r" long:"max-redirections" default:"64" description:"Maximum number of redirections"`
+	Timeout               int      `short:"t" long:"timeout" default:"10" description:"Timeout for HTTP requests in seconds"`
+	Verbose               bool     `short:"v" long:"verbose" description:"Show successful results too"`
+	SkipTLSVerification   bool     `long:"skip-tls-verification" description:"Skip TLS certificate verification"`
+	OnePageOnly           bool     `long:"one-page-only" description:"Only check links found in the given URL"`
+	Help                  bool     `short:"h" long:"help" description:"Show this help"`
+	Version               bool     `long:"version" description:"Show version"`
+	URL                   string
+	ExcludedPatterns      []*regexp.Regexp
+	Headers               map[string]string
 }
 
-func getArguments(regexps []string) (arguments, error) {
-	args := parseArguments(usage, regexps)
+func getArguments(ss []string) (*arguments, error) {
+	args := arguments{}
+	ss, err := flags.NewParser(&args, flags.PassDoubleDash).ParseArgs(ss)
 
-	b, err := parseInt(args["--buffer-size"].(string))
 	if err != nil {
-		return arguments{}, err
+		return nil, err
+	} else if args.Version || args.Help {
+		return &args, nil
+	} else if len(ss) != 1 {
+		return nil, errors.New("invalid number of arguments")
 	}
 
-	c, err := parseInt(args["--concurrency"].(string))
+	args.URL = ss[0]
+
+	rs, err := compileRegexps(args.RawExcludedPatterns)
+
 	if err != nil {
-		return arguments{}, err
+		return nil, err
 	}
 
-	ss, _ := args["--exclude"].([]string)
-	rs, err := compileRegexps(ss)
+	args.ExcludedPatterns = rs
+
+	hs, err := parseHeaders(args.RawHeaders)
+
 	if err != nil {
-		return arguments{}, err
+		return nil, err
 	}
 
-	ss, _ = args["--header"].([]string)
-	hs, err := parseHeaders(ss)
-	if err != nil {
-		return arguments{}, err
-	}
+	args.Headers = hs
 
-	r, err := parseInt(args["--limit-redirections"].(string))
-	if err != nil {
-		return arguments{}, err
-	}
-
-	t, err := parseInt(args["--timeout"].(string))
-	if err != nil {
-		return arguments{}, err
-	}
-
-	return arguments{
-		b,
-		c,
-		rs,
-		args["--follow-robots-txt"].(bool),
-		args["--follow-sitemap-xml"].(bool),
-		args["--follow-url-params"].(bool),
-		hs,
-		args["--ignore-fragments"].(bool),
-		r,
-		time.Duration(t) * time.Second,
-		args["<url>"].(string),
-		args["--verbose"].(bool),
-		args["--skip-tls-verification"].(bool),
-		args["--one-page-only"].(bool),
-	}, nil
+	return &args, nil
 }
 
-func parseArguments(u string, ss []string) map[string]interface{} {
-	args, err := docopt.ParseArgs(u, ss, version)
-	if err != nil {
-		panic(err)
-	}
+func printHelp(w io.Writer) {
+	p := flags.NewParser(&arguments{}, flags.PassDoubleDash)
+	p.Usage = "[options] <url>"
 
-	return args
-}
-
-func parseInt(s string) (int, error) {
-	i, err := strconv.ParseInt(s, 10, 32)
-	return int(i), err
+	p.WriteHelp(w)
 }
 
 func compileRegexps(regexps []string) ([]*regexp.Regexp, error) {
