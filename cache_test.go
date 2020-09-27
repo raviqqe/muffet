@@ -38,6 +38,8 @@ func TestCacheLoadOrStoreConcurrency(t *testing.T) {
 		g.Add(1)
 
 		go func() {
+			defer g.Done()
+
 			x, f := c.LoadOrStore("https://foo.com")
 
 			if f == nil {
@@ -48,8 +50,6 @@ func TestCacheLoadOrStoreConcurrency(t *testing.T) {
 				f(42)
 				atomic.AddInt32(&s, 1)
 			}
-
-			g.Done()
 		}()
 	}
 
