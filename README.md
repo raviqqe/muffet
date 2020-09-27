@@ -20,7 +20,7 @@ website recursively.
 ## Installation
 
 ```
-go get -u github.com/raviqqe/muffet/v2
+GO111MODULE=on go get -u github.com/raviqqe/muffet/v2
 ```
 
 ## Usage
