@@ -2,8 +2,8 @@ package main
 
 import (
 	"sync"
-	"sync/atomic"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -31,32 +31,19 @@ func TestCacheLoadOrStore(t *testing.T) {
 func TestCacheLoadOrStoreConcurrency(t *testing.T) {
 	c := newCache()
 
-	l, s := int32(0), int32(0)
-	g := &sync.WaitGroup{}
+	x, f := c.LoadOrStore("key")
+	assert.Nil(t, x)
+	assert.NotNil(t, f)
 
-	for i := 0; i < 1000; i++ {
-		g.Add(1)
+	go func() {
+		x, f := c.LoadOrStore("key")
+		assert.Equal(t, 42, x)
+		assert.Nil(t, f)
+	}()
 
-		go func() {
-			defer g.Done()
+	time.Sleep(time.Millisecond)
 
-			x, f := c.LoadOrStore("https://foo.com")
-
-			if f == nil {
-				assert.Equal(t, 42, x)
-				atomic.AddInt32(&l, 1)
-			} else {
-				assert.Nil(t, x)
-				f(42)
-				atomic.AddInt32(&s, 1)
-			}
-		}()
-	}
-
-	g.Wait()
-
-	assert.Equal(t, int32(999), l)
-	assert.Equal(t, int32(1), s)
+	f(42)
 }
 
 func BenchmarkCacheLoadOrStore(b *testing.B) {
