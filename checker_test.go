@@ -92,3 +92,24 @@ func TestCheckerFailToCheckPage(t *testing.T) {
 
 	assert.False(t, (<-c.Results()).OK())
 }
+
+func TestCheckerDoNotCheckSamePageTwice(t *testing.T) {
+
+	c := newTestChecker(
+		newFakeHTTPClient(
+			func(u *url.URL) (*fakeHTTPResponse, error) {
+				return newFakeHTTPResponse(200, "http://foo.com", "text/html", nil), nil
+			},
+		),
+	)
+
+	go c.Check(newTestPage(t, nil, map[string]error{"http://foo.com": nil}))
+
+	i := 0
+
+	for range c.Results() {
+		i++
+	}
+
+	assert.Equal(t, 1, i)
+}
