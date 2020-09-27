@@ -15,7 +15,16 @@ import (
 )
 
 func newTestCommand(h func(*url.URL) (*fakeHTTPResponse, error)) *command {
-	return newTestCommandWithStderr(ioutil.Discard, h)
+	return newTestCommandWithStdout(ioutil.Discard, h)
+}
+
+func newTestCommandWithStdout(stdout io.Writer, h func(*url.URL) (*fakeHTTPResponse, error)) *command {
+	return newCommand(
+		stdout,
+		ioutil.Discard,
+		false,
+		newFakeHTTPClientFactory(h),
+	)
 }
 
 func newTestCommandWithStderr(stderr io.Writer, h func(*url.URL) (*fakeHTTPResponse, error)) *command {
@@ -67,6 +76,20 @@ func TestCommandRunWithLinks(t *testing.T) {
 
 	assert.True(t, ok)
 	assert.True(t, visited)
+}
+
+func TestCommandRunWithVerboseOption(t *testing.T) {
+	b := &bytes.Buffer{}
+
+	ok := newTestCommandWithStdout(
+		b,
+		func(u *url.URL) (*fakeHTTPResponse, error) {
+			return newFakeHTTPResponse(200, "http://foo.com", "text/html", nil), nil
+		},
+	).Run([]string{"-v", "http://foo.com"})
+
+	assert.True(t, ok)
+	assert.Greater(t, b.Len(), 0)
 }
 
 func TestCommandFailToRun(t *testing.T) {
@@ -144,15 +167,11 @@ func TestCommandColorErrorMessage(t *testing.T) {
 func TestCommandShowHelp(t *testing.T) {
 	b := &bytes.Buffer{}
 
-	c := newCommand(
+	c := newTestCommandWithStdout(
 		b,
-		ioutil.Discard,
-		false,
-		newFakeHTTPClientFactory(
-			func(u *url.URL) (*fakeHTTPResponse, error) {
-				return newFakeHTTPResponse(200, "", "text/html", nil), nil
-			},
-		),
+		func(u *url.URL) (*fakeHTTPResponse, error) {
+			return newFakeHTTPResponse(200, "", "text/html", nil), nil
+		},
 	)
 
 	ok := c.Run([]string{"--help"})
@@ -164,15 +183,11 @@ func TestCommandShowHelp(t *testing.T) {
 func TestCommandShowVersion(t *testing.T) {
 	b := &bytes.Buffer{}
 
-	c := newCommand(
+	c := newTestCommandWithStdout(
 		b,
-		ioutil.Discard,
-		false,
-		newFakeHTTPClientFactory(
-			func(u *url.URL) (*fakeHTTPResponse, error) {
-				return newFakeHTTPResponse(200, "", "text/html", nil), nil
-			},
-		),
+		func(u *url.URL) (*fakeHTTPResponse, error) {
+			return newFakeHTTPResponse(200, "", "text/html", nil), nil
+		},
 	)
 
 	ok := c.Run([]string{"--version"})
