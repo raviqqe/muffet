@@ -45,7 +45,6 @@ func getArguments(ss []string) (*arguments, error) {
 	args.URL = ss[0]
 
 	rs, err := compileRegexps(args.RawExcludedPatterns)
-
 	if err != nil {
 		return nil, err
 	}
@@ -53,7 +52,6 @@ func getArguments(ss []string) (*arguments, error) {
 	args.ExcludedPatterns = rs
 
 	hs, err := parseHeaders(args.RawHeaders)
-
 	if err != nil {
 		return nil, err
 	}

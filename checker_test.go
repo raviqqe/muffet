@@ -94,7 +94,6 @@ func TestCheckerFailToCheckPage(t *testing.T) {
 }
 
 func TestCheckerDoNotCheckSamePageTwice(t *testing.T) {
-
 	c := newTestChecker(
 		newFakeHTTPClient(
 			func(u *url.URL) (*fakeHTTPResponse, error) {

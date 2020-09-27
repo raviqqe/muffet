@@ -22,7 +22,6 @@ func newCommand(stdout, stderr io.Writer, terminal bool, f httpClientFactory) *c
 
 func (c *command) Run(args []string) bool {
 	ok, err := c.runWithError(args)
-
 	if err != nil {
 		c.printError(err)
 	}
