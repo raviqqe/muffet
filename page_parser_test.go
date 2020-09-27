@@ -76,6 +76,22 @@ func TestPageParserResolveLinksWithBlankBaseTag(t *testing.T) {
 	assert.Equal(t, map[string]error{"http://foo.com/bar": nil}, p.Links())
 }
 
+func TestPageParserFailToParseWithInvalidBaseTag(t *testing.T) {
+	_, err := newPageParser(newLinkFinder(nil)).Parse(
+		"http://foo.com",
+		[]byte(`
+			<html>
+			  <head>
+					<base href=":" />
+				</head>
+				<body>
+				</body>
+			</html>
+		`),
+	)
+	assert.NotNil(t, err)
+}
+
 func TestPageParserParseID(t *testing.T) {
 	p, err := newPageParser(newLinkFinder(nil)).Parse(
 		"http://foo.com",
