@@ -34,6 +34,12 @@ func (c *command) runWithError(ss []string) (bool, error) {
 	args, err := getArguments(ss)
 	if err != nil {
 		return false, err
+	} else if args.Help {
+		printHelp(c.stderr)
+		return true, nil
+	} else if args.Version {
+		_, err := fmt.Fprintln(c.stderr, version)
+		return err == nil, err
 	}
 
 	client := newThrottledHTTPClient(

@@ -2,8 +2,7 @@ package main
 
 import (
 	"errors"
-	"fmt"
-	"os"
+	"io"
 	"regexp"
 	"strings"
 
@@ -33,20 +32,12 @@ type arguments struct {
 
 func getArguments(ss []string) (*arguments, error) {
 	args := arguments{}
-
-	p := flags.NewParser(&args, flags.PassDoubleDash)
-	p.Usage = "[options] <url>"
-
-	ss, err := p.ParseArgs(ss)
+	ss, err := flags.NewParser(&args, flags.PassDoubleDash).ParseArgs(ss)
 
 	if err != nil {
 		return nil, err
-	} else if args.Version {
-		fmt.Println(version)
-		os.Exit(0)
-	} else if args.Help {
-		p.WriteHelp(os.Stderr)
-		os.Exit(0)
+	} else if args.Version || args.Help {
+		return &args, nil
 	} else if len(ss) != 1 {
 		return nil, errors.New("invalid number of arguments")
 	}
@@ -70,6 +61,13 @@ func getArguments(ss []string) (*arguments, error) {
 	args.Headers = hs
 
 	return &args, nil
+}
+
+func printHelp(w io.Writer) {
+	p := flags.NewParser(&arguments{}, flags.PassDoubleDash)
+	p.Usage = "[options] <url>"
+
+	p.WriteHelp(w)
 }
 
 func compileRegexps(regexps []string) ([]*regexp.Regexp, error) {
