@@ -21,7 +21,7 @@ type arguments struct {
 	MaxRedirections       int      `short:"r" long:"max-redirections" default:"64" description:"Maximum number of redirections"`
 	Timeout               int      `short:"t" long:"timeout" default:"10" description:"Timeout for HTTP requests in seconds"`
 	Verbose               bool     `short:"v" long:"verbose" description:"Show successful results too"`
-	SkipTLSVerification   bool     `long:"skip-tls-verification" description:"Skip TLS certificates verification"`
+	SkipTLSVerification   bool     `long:"skip-tls-verification" description:"Skip TLS certificate verification"`
 	OnePageOnly           bool     `short:"p" long:"one-page-only" description:"Only check links found in the given URL"`
 	Help                  bool     `short:"h" long:"help" description:"Show this help"`
 	Version               bool     `long:"version" description:"Show version"`
