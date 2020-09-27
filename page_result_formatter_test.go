@@ -90,7 +90,7 @@ func TestPageResultFormatterSortSuccessLinkResults(t *testing.T) {
 	)
 }
 
-func TestPageResultFormatterSortormatErrorLinkResults(t *testing.T) {
+func TestPageResultFormatterSortErrorLinkResults(t *testing.T) {
 	cupaloy.SnapshotT(t,
 		newPageResultFormatter(false, true).Format(
 			&pageResult{
