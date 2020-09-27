@@ -14,8 +14,8 @@ Application Options:
   -r, --max-redirections=         Maximum number of redirections
   -t, --timeout=                  Timeout for HTTP requests in seconds
   -v, --verbose                   Show successful results too
-      --skip-tls-verification     Skip TLS certificates verification
-  -p, --one-page-only             Only check links found in the given URL
+      --skip-tls-verification     Skip TLS certificate verification
+      --one-page-only             Only check links found in the given URL
   -h, --help                      Show this help
       --version                   Show version
 
