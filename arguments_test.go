@@ -64,7 +64,7 @@ func TestGetArgumentsError(t *testing.T) {
 func TestPrintHelp(t *testing.T) {
 	b := &bytes.Buffer{}
 	printHelp(b)
-	cupaloy.SnapshotT(t, b.Bytes())
+	cupaloy.SnapshotT(t, b.String())
 }
 
 func TestParseHeaders(t *testing.T) {

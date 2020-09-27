@@ -106,7 +106,7 @@ func TestCommandFailToFetchRootPage(t *testing.T) {
 	).Run([]string{"http://foo.com"})
 
 	assert.False(t, ok)
-	cupaloy.SnapshotT(t, b.Bytes())
+	cupaloy.SnapshotT(t, b.String())
 }
 
 func TestCommandFailToGetHTMLRootPage(t *testing.T) {
@@ -120,7 +120,7 @@ func TestCommandFailToGetHTMLRootPage(t *testing.T) {
 	).Run([]string{"http://foo.com"})
 
 	assert.False(t, ok)
-	cupaloy.SnapshotT(t, b.Bytes())
+	cupaloy.SnapshotT(t, b.String())
 }
 
 func TestCommandColorErrorMessage(t *testing.T) {
@@ -138,7 +138,7 @@ func TestCommandColorErrorMessage(t *testing.T) {
 	ok := c.Run([]string{"http://foo.com"})
 
 	assert.False(t, ok)
-	cupaloy.SnapshotT(t, b.Bytes())
+	cupaloy.SnapshotT(t, b.String())
 }
 
 func TestCommandShowHelp(t *testing.T) {
@@ -180,5 +180,5 @@ func TestCommandShowVersion(t *testing.T) {
 
 	r, err := regexp.Compile(`^[0-9]+\.[0-9]+\.[0-9]+$`)
 	assert.Nil(t, err)
-	assert.True(t, r.MatchString(strings.TrimSpace(string(b.Bytes()))))
+	assert.True(t, r.MatchString(strings.TrimSpace(b.String())))
 }
