@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"strings"
 	"time"
 
 	"github.com/logrusorgru/aurora/v3"
@@ -117,7 +118,7 @@ func (c *command) runWithError(ss []string) (bool, error) {
 }
 
 func (c command) print(xs ...interface{}) {
-	if _, err := fmt.Fprintln(c.stdout, xs...); err != nil {
+	if _, err := fmt.Fprintln(c.stdout, strings.TrimSpace(fmt.Sprint(xs...))); err != nil {
 		panic(err)
 	}
 }
