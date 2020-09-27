@@ -65,6 +65,10 @@ func printHelp(w io.Writer) {
 	p := flags.NewParser(&arguments{}, flags.PassDoubleDash)
 	p.Usage = "[options] <url>"
 
+	// Parse() is run here to show default values in help.
+	// This seems to be a bug in go-flags.
+	p.Parse()
+
 	p.WriteHelp(w)
 }
 
