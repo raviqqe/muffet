@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
@@ -101,6 +102,10 @@ func (c *command) runWithError(ss []string) (bool, error) {
 
 	go checker.Check(p)
 
+	if args.JSONOutput {
+		return c.printResultsInJSON(checker.Results())
+	}
+
 	formatter := newPageResultFormatter(args.Verbose, c.terminal)
 	ok := true
 
@@ -117,13 +122,36 @@ func (c *command) runWithError(ss []string) (bool, error) {
 	return ok, nil
 }
 
-func (c command) print(xs ...interface{}) {
+func (c *command) printResultsInJSON(rc <-chan *pageResult) (bool, error) {
+	rs := []*jsonPageResult{}
+	ok := true
+
+	for r := range rc {
+		rs = append(rs, newJSONPageResult(r))
+
+		if !r.OK() {
+			ok = false
+		}
+	}
+
+	bs, err := json.Marshal(rs)
+
+	if err != nil {
+		return false, err
+	}
+
+	c.print(string(bs))
+
+	return ok, nil
+}
+
+func (c *command) print(xs ...interface{}) {
 	if _, err := fmt.Fprintln(c.stdout, strings.TrimSpace(fmt.Sprint(xs...))); err != nil {
 		panic(err)
 	}
 }
 
-func (c command) printError(xs ...interface{}) {
+func (c *command) printError(xs ...interface{}) {
 	s := fmt.Sprint(xs...)
 
 	if c.terminal {
