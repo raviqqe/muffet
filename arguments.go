@@ -24,6 +24,7 @@ type arguments struct {
 	Verbose               bool     `short:"v" long:"verbose" description:"Show successful results too"`
 	SkipTLSVerification   bool     `long:"skip-tls-verification" description:"Skip TLS certificate verification"`
 	OnePageOnly           bool     `long:"one-page-only" description:"Only check links found in the given URL"`
+	Color                 color    `long:"color" description:"Color output." choice:"auto" choice:"always" choice:"never" default:"auto"`
 	Help                  bool     `short:"h" long:"help" description:"Show this help"`
 	Version               bool     `long:"version" description:"Show version"`
 	URL                   string
