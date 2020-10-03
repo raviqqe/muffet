@@ -25,7 +25,7 @@ Application Options:
       --skip-tls-verification               Skip TLS certificate verification
       --one-page-only                       Only check links found in the given
                                             URL
-      --color=[auto|always|never]           Color output. (default: auto)
+      --color=[auto|always|never]           Color output (default: auto)
   -h, --help                                Show this help
       --version                             Show version
 
