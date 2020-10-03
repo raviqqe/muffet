@@ -4,8 +4,8 @@ type color string
 
 const (
 	auto   color = "auto"
-	always       = "always"
-	never        = "never"
+	always color = "always"
+	never  color = "never"
 )
 
 func isColorEnabled(c color, terminal bool) bool {
