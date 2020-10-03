@@ -8,6 +8,6 @@ const (
 	never        = "never"
 )
 
-func isColorEnabled(color color, terminal bool) bool {
-	return color == always || terminal && color == auto
+func isColorEnabled(c color, terminal bool) bool {
+	return c == always || terminal && c == auto
 }
