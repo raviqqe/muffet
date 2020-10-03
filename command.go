@@ -106,7 +106,11 @@ func (c *command) runWithError(ss []string) (bool, error) {
 		return c.printResultsInJSON(checker.Results())
 	}
 
-	formatter := newPageResultFormatter(args.Verbose, c.terminal)
+	formatter := newPageResultFormatter(
+		args.Verbose,
+		isColorEnabled(args.Color, c.terminal),
+	)
+
 	ok := true
 
 	for r := range checker.Results() {
@@ -153,6 +157,7 @@ func (c *command) print(xs ...interface{}) {
 func (c *command) printError(xs ...interface{}) {
 	s := fmt.Sprint(xs...)
 
+	// Do not check --color option here because this can be used on argument parsing errors.
 	if c.terminal {
 		s = aurora.Red(s).String()
 	}
