@@ -1,6 +1,6 @@
 # Muffet
 
-[![Circle CI](https://img.shields.io/circleci/project/github/raviqqe/muffet/master.svg?style=flat-square)](https://circleci.com/gh/raviqqe/muffet)
+[![GitHub Action](https://img.shields.io/github/workflow/status/raviqqe/muffet/main?style=flat-square)](https://github.com/raviqqe/muffet/actions)
 [![Codecov](https://img.shields.io/codecov/c/github/raviqqe/muffet.svg?style=flat-square)](https://codecov.io/gh/raviqqe/muffet)
 [![Go Report Card](https://goreportcard.com/badge/github.com/raviqqe/muffet?style=flat-square)](https://goreportcard.com/report/github.com/raviqqe/muffet)
 [![Docker](https://img.shields.io/badge/docker-available-blue.svg?style=flat-square)](https://hub.docker.com/r/raviqqe/muffet)
