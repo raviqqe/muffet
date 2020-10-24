@@ -257,3 +257,14 @@ func TestCommandDoNotIncludeSuccessfulPageInJSONOutput(t *testing.T) {
 	assert.True(t, ok)
 	assert.Equal(t, strings.TrimSpace(b.String()), "[]")
 }
+
+func TestCommandFailWithVerboseAndJSONOptions(t *testing.T) {
+	b := &bytes.Buffer{}
+
+	ok := newTestCommandWithStderr(b, nil).Run(
+		[]string{"--json", "--verbose", "http://foo.com"},
+	)
+
+	assert.False(t, ok)
+	cupaloy.SnapshotT(t, b.String())
+}
