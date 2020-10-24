@@ -41,6 +41,8 @@ func (c *command) runWithError(ss []string) (bool, error) {
 	} else if args.Version {
 		c.print(version)
 		return err == nil, err
+	} else if args.JSONOutput && args.Verbose {
+		return false, errors.New("verbose option not supported for JSON output")
 	}
 
 	client := newThrottledHTTPClient(
