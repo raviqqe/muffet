@@ -22,6 +22,7 @@ Application Options:
   -t, --timeout=<seconds>                   Timeout for HTTP requests in
                                             seconds (default: 10)
   -v, --verbose                             Show successful results too
+      --proxy=<host>                        HTTP proxy host
       --skip-tls-verification               Skip TLS certificate verification
       --one-page-only                       Only check links found in the given
                                             URL

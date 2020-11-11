@@ -24,6 +24,7 @@ func TestGetArguments(t *testing.T) {
 		{"--follow-sitemap-xml", "https://foo.com"},
 		{"-t", "10", "https://foo.com"},
 		{"--timeout", "10", "https://foo.com"},
+		{"--proxy", "localhost:8080", "https://foo.com"},
 		{"--skip-tls-verification", "https://foo.com"},
 		{"-v", "https://foo.com"},
 		{"--verbose", "https://foo.com"},
