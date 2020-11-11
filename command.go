@@ -51,6 +51,7 @@ func (c *command) runWithError(ss []string) (bool, error) {
 				MaxConnectionsPerHost: args.MaxConnectionsPerHost,
 				BufferSize:            args.BufferSize,
 				MaxRedirections:       args.MaxRedirections,
+				Proxy:                 args.Proxy,
 				SkipTLSVerification:   args.SkipTLSVerification,
 				Timeout:               time.Duration(args.Timeout) * time.Second,
 			},
