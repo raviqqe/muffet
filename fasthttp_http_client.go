@@ -24,7 +24,6 @@ func (c *fasthttpHTTPClient) Get(u *url.URL, headers map[string]string) (httpRes
 	req.SetRequestURI(u.String())
 	req.SetConnectionClose()
 
-	req.Header.Add("User-Agent", agentName)
 	// Some websites require the "Accept" header to be set explicitly.
 	req.Header.Add("Accept", "*/*")
 
