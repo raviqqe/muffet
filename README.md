@@ -23,6 +23,12 @@ website recursively.
 GO111MODULE=on go get -u github.com/raviqqe/muffet/v2
 ```
 
+### Homebrew
+
+```
+brew install muffet
+```
+
 ## Usage
 
 ```
