@@ -29,6 +29,6 @@ func (r *fakeHTTPResponse) Header(name string) string {
 	return ""
 }
 
-func (r *fakeHTTPResponse) Body() []byte {
-	return r.body
+func (r *fakeHTTPResponse) Body() ([]byte, error) {
+	return r.body, nil
 }

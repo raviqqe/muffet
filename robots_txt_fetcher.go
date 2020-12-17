@@ -18,10 +18,20 @@ func newRobotsTxtFetcher(c httpClient) *robotsTxtFetcher {
 func (f *robotsTxtFetcher) Fetch(uu *url.URL) (*robotstxt.RobotsData, error) {
 	u := *uu
 	u.Path = "robots.txt"
+
 	r, err := f.client.Get(&u, nil)
 	if err != nil {
-		return nil, fmt.Errorf("failed to fetch robots.txt: %v", err)
+		return nil, f.formatError(err)
 	}
 
-	return robotstxt.FromBytes(r.Body())
+	bs, err := r.Body()
+	if err != nil {
+		return nil, f.formatError(err)
+	}
+
+	return robotstxt.FromBytes(bs)
+}
+
+func (*robotsTxtFetcher) formatError(err error) error {
+	return fmt.Errorf("failed to fetch robots.txt: %v", err)
 }
