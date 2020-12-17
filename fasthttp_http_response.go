@@ -25,6 +25,11 @@ func (r fasthttpHTTPResponse) Header(key string) string {
 	return string(r.response.Header.Peek(key))
 }
 
-func (r fasthttpHTTPResponse) Body() []byte {
-	return r.response.Body()
+func (r fasthttpHTTPResponse) Body() ([]byte, error) {
+	switch string(r.response.Header.Peek("Content-Encoding")) {
+	case "gzip":
+		return r.response.BodyGunzip()
+	}
+
+	return r.response.Body(), nil
 }

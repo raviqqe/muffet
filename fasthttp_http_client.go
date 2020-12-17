@@ -24,6 +24,9 @@ func (c *fasthttpHTTPClient) Get(u *url.URL, headers map[string]string) (httpRes
 	req.SetRequestURI(u.String())
 	req.SetConnectionClose()
 
+	// Some HTTP servers require "Accept" headers to be set explicitly.
+	req.Header.Add("Accept", "*/*")
+
 	for k, v := range headers {
 		req.Header.Add(k, v)
 	}

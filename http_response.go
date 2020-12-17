@@ -4,5 +4,5 @@ type httpResponse interface {
 	URL() string
 	StatusCode() int
 	Header(string) string
-	Body() []byte
+	Body() ([]byte, error)
 }

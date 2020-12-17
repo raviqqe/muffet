@@ -86,7 +86,12 @@ func (f *linkFetcher) sendRequest(s string) (int, *page, error) {
 		}
 	}
 
-	p, err := f.pageParser.Parse(r.URL(), r.Body())
+	bs, err := r.Body()
+	if err != nil {
+		return 0, nil, err
+	}
+
+	p, err := f.pageParser.Parse(r.URL(), bs)
 	if err != nil {
 		return 0, nil, err
 	}

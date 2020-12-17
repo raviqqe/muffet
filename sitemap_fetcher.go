@@ -22,12 +22,17 @@ func (f *sitemapFetcher) Fetch(uu *url.URL) (map[string]struct{}, error) {
 
 	r, err := f.client.Get(&u, nil)
 	if err != nil {
-		return nil, fmt.Errorf("failed to GET sitemap.xml: %v", err)
+		return nil, f.formatGetError(err)
 	}
 
 	us := map[string]struct{}{}
 
-	err = sitemap.Parse(bytes.NewReader(r.Body()), func(e sitemap.Entry) error {
+	bs, err := r.Body()
+	if err != nil {
+		return nil, f.formatGetError(err)
+	}
+
+	err = sitemap.Parse(bytes.NewReader(bs), func(e sitemap.Entry) error {
 		us[e.GetLocation()] = struct{}{}
 
 		return nil
@@ -38,4 +43,8 @@ func (f *sitemapFetcher) Fetch(uu *url.URL) (map[string]struct{}, error) {
 	}
 
 	return us, nil
+}
+
+func (*sitemapFetcher) formatGetError(err error) error {
+	return fmt.Errorf("failed to GET sitemap.xml: %v", err)
 }
