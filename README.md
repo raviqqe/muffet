@@ -41,7 +41,7 @@ For more information, see `muffet --help`.
 
 - [My Broken Link Checker](https://github.com/ruzickap/action-my-broken-link-checker)
 
-Currently, we do not provide any official one. Feel free to create an issue if you want one.
+Currently, we do not provide any official one. Feel free to create an issue if you want!
 
 ## License
 
