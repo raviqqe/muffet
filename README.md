@@ -37,6 +37,12 @@ muffet https://shady.bakery.hotland
 
 For more information, see `muffet --help`.
 
+## GitHub Action
+
+- [My Broken Link Checker](https://github.com/ruzickap/action-my-broken-link-checker)
+
+Currently, we do not provide any official one. Feel free to create an issue if you want!
+
 ## License
 
 [MIT](LICENSE)
