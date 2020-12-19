@@ -29,6 +29,10 @@ func (r fasthttpHTTPResponse) Body() ([]byte, error) {
 	switch string(r.response.Header.Peek("Content-Encoding")) {
 	case "gzip":
 		return r.response.BodyGunzip()
+	case "deflate":
+		return r.response.BodyInflate()
+	case "br":
+		return r.response.BodyUnbrotli()
 	}
 
 	return r.response.Body(), nil
