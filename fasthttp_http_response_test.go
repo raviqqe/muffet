@@ -14,8 +14,10 @@ import (
 func TestFastHTTPResponseDecodeGzipBody(t *testing.T) {
 	b := bytes.Buffer{}
 	w := gzip.NewWriter(&b)
-	w.Write([]byte("foo"))
-	w.Close()
+	_, err := w.Write([]byte("foo"))
+	assert.Nil(t, err)
+	err = w.Close()
+	assert.Nil(t, err)
 
 	r := fasthttp.Response{}
 	r.Header.Add("Content-Encoding", "gzip")
@@ -30,8 +32,10 @@ func TestFastHTTPResponseDecodeGzipBody(t *testing.T) {
 func TestFastHTTPResponseDecodeDeflateBody(t *testing.T) {
 	b := bytes.Buffer{}
 	w := zlib.NewWriter(&b)
-	w.Write([]byte("foo"))
-	w.Close()
+	_, err := w.Write([]byte("foo"))
+	assert.Nil(t, err)
+	err = w.Close()
+	assert.Nil(t, err)
 
 	r := fasthttp.Response{}
 	r.Header.Add("Content-Encoding", "deflate")
@@ -46,8 +50,10 @@ func TestFastHTTPResponseDecodeDeflateBody(t *testing.T) {
 func TestFastHTTPResponseDecodeBrotliBody(t *testing.T) {
 	b := bytes.Buffer{}
 	w := brotli.NewWriter(&b)
-	w.Write([]byte("foo"))
-	w.Close()
+	_, err := w.Write([]byte("foo"))
+	assert.Nil(t, err)
+	err = w.Close()
+	assert.Nil(t, err)
 
 	r := fasthttp.Response{}
 	r.Header.Add("Content-Encoding", "br")
