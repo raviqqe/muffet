@@ -6,9 +6,10 @@ type httpClientOptions struct {
 	MaxConnectionsPerHost,
 	BufferSize,
 	MaxRedirections int
-	Proxy               string
-	SkipTLSVerification bool
-	Timeout             time.Duration
+	Proxy                    string
+	SkipTLSVerification      bool
+	Timeout                  time.Duration
+	NoDefaultUserAgentHeader bool
 }
 
 type httpClientFactory interface {

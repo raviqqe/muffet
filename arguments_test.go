@@ -18,6 +18,7 @@ func TestGetArguments(t *testing.T) {
 		{"-e", "regex1", "-e", "regex2", "https://foo.com"},
 		{"--exclude", "regex1", "--exclude", "regex2", "https://foo.com"},
 		{"--header", "MyHeader: foo", "--header", "YourHeader: bar", "https://foo.com"},
+		{"--header", "User-Agent: custom-agent", "https://foo.com"},
 		{"-r", "4", "https://foo.com"},
 		{"--max-redirections", "4", "https://foo.com"},
 		{"--follow-robots-txt", "https://foo.com"},
