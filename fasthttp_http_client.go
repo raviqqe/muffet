@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"net/url"
+	"strings"
 	"time"
 
 	"github.com/valyala/fasthttp"
@@ -24,11 +25,19 @@ func (c *fasthttpHTTPClient) Get(u *url.URL, headers map[string]string) (httpRes
 	req.SetRequestURI(u.String())
 	req.SetConnectionClose()
 
-	// Some HTTP servers require "Accept" headers to be set explicitly.
-	req.Header.Add("Accept", "*/*")
+	hasAccept := false
 
 	for k, v := range headers {
 		req.Header.Add(k, v)
+
+		if strings.EqualFold(k, "Accept") {
+			hasAccept = true
+		}
+	}
+
+	// Some HTTP servers require "Accept" headers to be set explicitly.
+	if !hasAccept {
+		req.Header.Add("Accept", "*/*")
 	}
 
 	i := 0
