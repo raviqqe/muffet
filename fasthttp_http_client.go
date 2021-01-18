@@ -25,18 +25,12 @@ func (c *fasthttpHTTPClient) Get(u *url.URL, headers map[string]string) (httpRes
 	req.SetRequestURI(u.String())
 	req.SetConnectionClose()
 
-	hasAccept := false
-
 	for k, v := range headers {
 		req.Header.Add(k, v)
-
-		if strings.EqualFold(k, "Accept") {
-			hasAccept = true
-		}
 	}
 
 	// Some HTTP servers require "Accept" headers to be set explicitly.
-	if !hasAccept {
+	if !includeHeader(headers, "Accept") {
 		req.Header.Add("Accept", "*/*")
 	}
 
@@ -44,10 +38,9 @@ func (c *fasthttpHTTPClient) Get(u *url.URL, headers map[string]string) (httpRes
 
 	for {
 		err := c.client.DoTimeout(&req, &res, c.timeout)
-		if err != nil {
-			if i > 0 {
-				return nil, fmt.Errorf("%w (following redirect %v)", err, req.URI())
-			}
+		if err != nil && i > 0 {
+			return nil, fmt.Errorf("%w (following redirect %v)", err, req.URI())
+		} else if err != nil {
 			return nil, err
 		}
 
@@ -72,4 +65,14 @@ func (c *fasthttpHTTPClient) Get(u *url.URL, headers map[string]string) (httpRes
 			return nil, fmt.Errorf("%v", res.StatusCode())
 		}
 	}
+}
+
+func includeHeader(hs map[string]string, h string) bool {
+	for k := range hs {
+		if strings.EqualFold(k, h) {
+			return true
+		}
+	}
+
+	return false
 }

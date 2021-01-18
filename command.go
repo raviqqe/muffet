@@ -48,13 +48,12 @@ func (c *command) runWithError(ss []string) (bool, error) {
 	client := newThrottledHTTPClient(
 		c.httpClientFactory.Create(
 			httpClientOptions{
-				MaxConnectionsPerHost:    args.MaxConnectionsPerHost,
-				BufferSize:               args.BufferSize,
-				MaxRedirections:          args.MaxRedirections,
-				Proxy:                    args.Proxy,
-				SkipTLSVerification:      args.SkipTLSVerification,
-				Timeout:                  time.Duration(args.Timeout) * time.Second,
-				NoDefaultUserAgentHeader: args.HasUserAgent,
+				MaxConnectionsPerHost: args.MaxConnectionsPerHost,
+				BufferSize:            args.BufferSize,
+				MaxRedirections:       args.MaxRedirections,
+				Proxy:                 args.Proxy,
+				SkipTLSVerification:   args.SkipTLSVerification,
+				Timeout:               time.Duration(args.Timeout) * time.Second,
 			},
 		),
 		args.MaxConnections,
