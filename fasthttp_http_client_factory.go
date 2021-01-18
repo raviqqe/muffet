@@ -31,7 +31,8 @@ func (*fasthttpHTTPClientFactory) Create(o httpClientOptions) httpClient {
 			TLSConfig: &tls.Config{
 				InsecureSkipVerify: o.SkipTLSVerification,
 			},
-			Dial: d,
+			Dial:                     d,
+			NoDefaultUserAgentHeader: o.NoDefaultUserAgentHeader,
 		},
 		o.MaxRedirections,
 		o.Timeout,

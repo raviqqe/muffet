@@ -31,6 +31,7 @@ type arguments struct {
 	URL                   string
 	ExcludedPatterns      []*regexp.Regexp
 	Headers               map[string]string
+	HasUserAgent          bool
 }
 
 func getArguments(ss []string) (*arguments, error) {
@@ -60,6 +61,13 @@ func getArguments(ss []string) (*arguments, error) {
 	}
 
 	args.Headers = hs
+
+	for k := range args.Headers {
+		if strings.EqualFold(k, "User-Agent") {
+			args.HasUserAgent = true
+			break
+		}
+	}
 
 	return &args, nil
 }
