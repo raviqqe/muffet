@@ -44,10 +44,9 @@ func (c *fasthttpHTTPClient) Get(u *url.URL, headers map[string]string) (httpRes
 
 	for {
 		err := c.client.DoTimeout(&req, &res, c.timeout)
-		if err != nil {
-			if i > 0 {
-				return nil, fmt.Errorf("%w (following redirect %v)", err, req.URI())
-			}
+		if err != nil && i > 0 {
+			return nil, fmt.Errorf("%w (following redirect %v)", err, req.URI())
+		} else if err != nil {
 			return nil, err
 		}
 
