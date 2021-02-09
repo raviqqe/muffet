@@ -16,7 +16,7 @@ require (
 	github.com/oxffaa/gopher-parse-sitemap v0.0.0-20191021113419-005d2eb1def4
 	github.com/stretchr/testify v1.7.0
 	github.com/temoto/robotstxt v1.1.1
-	github.com/valyala/fasthttp v1.19.0
+	github.com/valyala/fasthttp v1.20.0
 	github.com/yhat/scrape v0.0.0-20161128144610-24b7890b0945
 	golang.org/x/net v0.0.0-20201016165138-7b1cca2348c0
 	gopkg.in/check.v1 v1.0.0-20200227125254-8fa46927fb4f // indirect
