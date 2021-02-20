@@ -19,6 +19,7 @@ Application Options:
       --json                                Output results in JSON
   -r, --max-redirections=<count>            Maximum number of redirections
                                             (default: 64)
+      --rate-limit=<rate>                   Max requests per second
   -t, --timeout=<seconds>                   Timeout for HTTP requests in
                                             seconds (default: 10)
   -v, --verbose                             Show successful results too

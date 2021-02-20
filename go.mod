@@ -5,7 +5,6 @@ go 1.12
 require (
 	github.com/andybalholm/brotli v1.0.1
 	github.com/bradleyjkemp/cupaloy v2.3.0+incompatible
-	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/jessevdk/go-flags v1.4.0
 	github.com/klauspost/compress v1.11.0 // indirect
 	github.com/kr/text v0.2.0 // indirect
@@ -18,6 +17,8 @@ require (
 	github.com/temoto/robotstxt v1.1.1
 	github.com/valyala/fasthttp v1.21.0
 	github.com/yhat/scrape v0.0.0-20161128144610-24b7890b0945
+	go.uber.org/atomic v1.7.0 // indirect
+	go.uber.org/ratelimit v0.1.0
 	golang.org/x/net v0.0.0-20201016165138-7b1cca2348c0
 	gopkg.in/check.v1 v1.0.0-20200227125254-8fa46927fb4f // indirect
 )
