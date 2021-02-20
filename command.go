@@ -56,6 +56,7 @@ func (c *command) runWithError(ss []string) (bool, error) {
 				Timeout:               time.Duration(args.Timeout) * time.Second,
 			},
 		),
+		args.RateLimit,
 		args.MaxConnections,
 	)
 
