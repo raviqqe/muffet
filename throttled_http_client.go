@@ -3,6 +3,7 @@ package main
 import "net/url"
 import "go.uber.org/ratelimit"
 
+// TODO Throttle requests for each host.
 type throttledHTTPClient struct {
 	client    httpClient
 	limiter   ratelimit.Limiter
