@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"errors"
 	"io"
-	"io/ioutil"
 	"net/url"
 	"regexp"
 	"strings"
@@ -15,13 +14,13 @@ import (
 )
 
 func newTestCommand(h func(*url.URL) (*fakeHTTPResponse, error)) *command {
-	return newTestCommandWithStdout(ioutil.Discard, h)
+	return newTestCommandWithStdout(io.Discard, h)
 }
 
 func newTestCommandWithStdout(stdout io.Writer, h func(*url.URL) (*fakeHTTPResponse, error)) *command {
 	return newCommand(
 		stdout,
-		ioutil.Discard,
+		io.Discard,
 		false,
 		newFakeHTTPClientFactory(h),
 	)
@@ -29,7 +28,7 @@ func newTestCommandWithStdout(stdout io.Writer, h func(*url.URL) (*fakeHTTPRespo
 
 func newTestCommandWithStderr(stderr io.Writer, h func(*url.URL) (*fakeHTTPResponse, error)) *command {
 	return newCommand(
-		ioutil.Discard,
+		io.Discard,
 		stderr,
 		false,
 		newFakeHTTPClientFactory(h),
@@ -173,7 +172,7 @@ func TestCommandColorErrorMessage(t *testing.T) {
 	b := &bytes.Buffer{}
 
 	c := newCommand(
-		ioutil.Discard,
+		io.Discard,
 		b,
 		true,
 		newFakeHTTPClientFactory(func(u *url.URL) (*fakeHTTPResponse, error) {
