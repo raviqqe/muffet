@@ -17,7 +17,7 @@ require (
 	github.com/valyala/fasthttp v1.22.0
 	github.com/yhat/scrape v0.0.0-20161128144610-24b7890b0945
 	go.uber.org/atomic v1.7.0 // indirect
-	go.uber.org/ratelimit v0.1.0
+	go.uber.org/ratelimit v0.2.0
 	golang.org/x/net v0.0.0-20210226101413-39120d07d75e
 	gopkg.in/check.v1 v1.0.0-20200227125254-8fa46927fb4f // indirect
 )
