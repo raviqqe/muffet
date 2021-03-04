@@ -1,0 +1,7 @@
+pull_request_rules:
+  - name: dependabot
+    conditions:
+      - author=dependabot[bot]
+    actions:
+      merge:
+        method: squash
