@@ -14,9 +14,9 @@ require (
 	github.com/oxffaa/gopher-parse-sitemap v0.0.0-20191021113419-005d2eb1def4
 	github.com/stretchr/testify v1.7.0
 	github.com/temoto/robotstxt v1.1.2
-	github.com/valyala/fasthttp v1.24.0
+	github.com/valyala/fasthttp v1.25.0
 	github.com/yhat/scrape v0.0.0-20161128144610-24b7890b0945
 	go.uber.org/ratelimit v0.2.0
-	golang.org/x/net v0.0.0-20210226101413-39120d07d75e
+	golang.org/x/net v0.0.0-20210510120150-4163338589ed
 	gopkg.in/check.v1 v1.0.0-20200227125254-8fa46927fb4f // indirect
 )
