@@ -21,7 +21,7 @@ func (*fasthttpHttpClientFactory) Create(o httpClientOptions) httpClient {
 	}
 
 	if o.Proxy != "" {
-		d = fasthttpproxy.FasthttpHttpDialerTimeout(o.Proxy, tcpTimeout)
+		d = fasthttpproxy.FasthttpHTTPDialerTimeout(o.Proxy, tcpTimeout)
 	}
 
 	return newFasthttpHttpClient(
