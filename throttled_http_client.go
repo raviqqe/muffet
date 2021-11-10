@@ -1,7 +1,10 @@
 package main
 
-import "net/url"
-import "go.uber.org/ratelimit"
+import (
+	"net/url"
+
+	"go.uber.org/ratelimit"
+)
 
 // TODO Throttle requests for each host.
 type throttledHTTPClient struct {
@@ -20,11 +23,11 @@ func newThrottledHTTPClient(c httpClient, rps int, maxConnections int) httpClien
 	return &throttledHTTPClient{c, l, newSemaphore(maxConnections)}
 }
 
-func (c *throttledHTTPClient) Get(u *url.URL, hs map[string]string) (httpResponse, error) {
+func (c *throttledHTTPClient) Get(u *url.URL) (httpResponse, error) {
 	c.semaphore.Request()
 	defer c.semaphore.Release()
 
 	c.limiter.Take()
 
-	return c.client.Get(u, hs)
+	return c.client.Get(u)
 }
