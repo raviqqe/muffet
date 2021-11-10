@@ -4,7 +4,6 @@ import (
 	"net/url"
 )
 
-// TODO Throttle requests for each host.
 type throttledHttpClient struct {
 	client                httpClient
 	connections           semaphore
