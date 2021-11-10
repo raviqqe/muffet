@@ -36,5 +36,6 @@ func (*fasthttpHTTPClientFactory) Create(o httpClientOptions) httpClient {
 		},
 		o.MaxRedirections,
 		o.Timeout,
+		o.Headers,
 	)
 }

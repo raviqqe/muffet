@@ -14,6 +14,7 @@ website recursively.
 ## Features
 
 - Massive speed
+- High compatibility with web browsers
 - Colored outputs
 - Different tags support (`a`, `img`, `link`, `script`, etc)
 

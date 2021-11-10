@@ -14,23 +14,24 @@ type fasthttpHTTPClient struct {
 	client          *fasthttp.Client
 	maxRedirections int
 	timeout         time.Duration
+	headers         map[string]string
 }
 
-func newFasthttpHTTPClient(c *fasthttp.Client, maxRedirections int, timeout time.Duration) httpClient {
-	return &fasthttpHTTPClient{c, maxRedirections, timeout}
+func newFasthttpHTTPClient(c *fasthttp.Client, maxRedirections int, timeout time.Duration, headers map[string]string) httpClient {
+	return &fasthttpHTTPClient{c, maxRedirections, timeout, headers}
 }
 
-func (c *fasthttpHTTPClient) Get(u *url.URL, headers map[string]string) (httpResponse, error) {
+func (c *fasthttpHTTPClient) Get(u *url.URL) (httpResponse, error) {
 	req, res := fasthttp.Request{}, fasthttp.Response{}
 	req.SetRequestURI(u.String())
 	req.SetConnectionClose()
 
-	for k, v := range headers {
+	for k, v := range c.headers {
 		req.Header.Add(k, v)
 	}
 
 	// Some HTTP servers require "Accept" headers to be set explicitly.
-	if !includeHeader(headers, "Accept") {
+	if !includeHeader(c.headers, "Accept") {
 		req.Header.Add("Accept", "*/*")
 	}
 

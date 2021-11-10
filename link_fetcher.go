@@ -72,7 +72,7 @@ func (f *linkFetcher) sendRequest(s string) (int, *page, error) {
 		return 0, nil, err
 	}
 
-	r, err := f.client.Get(u, f.options.Headers)
+	r, err := f.client.Get(u)
 
 	if err != nil {
 		return 0, nil, err

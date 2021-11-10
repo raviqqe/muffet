@@ -9,6 +9,7 @@ type httpClientOptions struct {
 	Proxy               string
 	SkipTLSVerification bool
 	Timeout             time.Duration
+	Headers             map[string]string
 }
 
 type httpClientFactory interface {
