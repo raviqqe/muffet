@@ -3,7 +3,7 @@ package main
 import "go.uber.org/ratelimit"
 
 type hostThrottler struct {
-	rateLimiter ratelimit.Limiter
+	limiter     ratelimit.Limiter
 	connections semaphore
 }
 
@@ -18,7 +18,7 @@ func newHostThrottler(requestPerSecond, maxConnectionsPerHost int) *hostThrottle
 }
 
 func (t *hostThrottler) Request() {
-	t.rateLimiter.Take()
+	t.limiter.Take()
 	t.connections.Request()
 }
 
