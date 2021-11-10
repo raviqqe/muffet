@@ -2,14 +2,14 @@ package main
 
 import "net/url"
 
-type fakeHTTPClientFactory struct {
-	handler func(*url.URL) (*fakeHTTPResponse, error)
+type fakeHttpClientFactory struct {
+	handler func(*url.URL) (*fakeHttpResponse, error)
 }
 
-func newFakeHTTPClientFactory(h func(*url.URL) (*fakeHTTPResponse, error)) httpClientFactory {
-	return &fakeHTTPClientFactory{h}
+func newFakeHttpClientFactory(h func(*url.URL) (*fakeHttpResponse, error)) httpClientFactory {
+	return &fakeHttpClientFactory{h}
 }
 
-func (f *fakeHTTPClientFactory) Create(httpClientOptions) httpClient {
-	return newFakeHTTPClient(f.handler)
+func (f *fakeHttpClientFactory) Create(httpClientOptions) httpClient {
+	return newFakeHttpClient(f.handler)
 }

@@ -10,18 +10,18 @@ import (
 	"github.com/valyala/fasthttp"
 )
 
-type fasthttpHTTPClient struct {
+type fasthttpHttpClient struct {
 	client          *fasthttp.Client
 	maxRedirections int
 	timeout         time.Duration
 	headers         map[string]string
 }
 
-func newFasthttpHTTPClient(c *fasthttp.Client, maxRedirections int, timeout time.Duration, headers map[string]string) httpClient {
-	return &fasthttpHTTPClient{c, maxRedirections, timeout, headers}
+func newFasthttpHttpClient(c *fasthttp.Client, maxRedirections int, timeout time.Duration, headers map[string]string) httpClient {
+	return &fasthttpHttpClient{c, maxRedirections, timeout, headers}
 }
 
-func (c *fasthttpHTTPClient) Get(u *url.URL) (httpResponse, error) {
+func (c *fasthttpHttpClient) Get(u *url.URL) (httpResponse, error) {
 	req, res := fasthttp.Request{}, fasthttp.Response{}
 	req.SetRequestURI(u.String())
 	req.SetConnectionClose()
@@ -47,7 +47,7 @@ func (c *fasthttpHTTPClient) Get(u *url.URL) (httpResponse, error) {
 
 		switch res.StatusCode() / 100 {
 		case 2:
-			return newFasthttpHTTPResponse(req.URI(), &res), nil
+			return newFasthttpHttpResponse(req.URI(), &res), nil
 		case 3:
 			i++
 

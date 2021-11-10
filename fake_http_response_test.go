@@ -2,26 +2,26 @@ package main
 
 import "strings"
 
-type fakeHTTPResponse struct {
+type fakeHttpResponse struct {
 	statusCode  int
 	location    string
 	contentType string
 	body        []byte
 }
 
-func newFakeHTTPResponse(statusCode int, location string, contentType string, body []byte) *fakeHTTPResponse {
-	return &fakeHTTPResponse{statusCode, location, contentType, body}
+func newFakeHttpResponse(statusCode int, location string, contentType string, body []byte) *fakeHttpResponse {
+	return &fakeHttpResponse{statusCode, location, contentType, body}
 }
 
-func (r *fakeHTTPResponse) URL() string {
+func (r *fakeHttpResponse) URL() string {
 	return r.location
 }
 
-func (r *fakeHTTPResponse) StatusCode() int {
+func (r *fakeHttpResponse) StatusCode() int {
 	return r.statusCode
 }
 
-func (r *fakeHTTPResponse) Header(name string) string {
+func (r *fakeHttpResponse) Header(name string) string {
 	if strings.ToLower(name) == "content-type" {
 		return r.contentType
 	}
@@ -29,6 +29,6 @@ func (r *fakeHTTPResponse) Header(name string) string {
 	return ""
 }
 
-func (r *fakeHTTPResponse) Body() ([]byte, error) {
+func (r *fakeHttpResponse) Body() ([]byte, error) {
 	return r.body, nil
 }

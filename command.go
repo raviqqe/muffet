@@ -45,7 +45,7 @@ func (c *command) runWithError(ss []string) (bool, error) {
 		return false, errors.New("verbose option not supported for JSON output")
 	}
 
-	client := newThrottledHTTPClient(
+	client := newThrottledHttpClient(
 		c.httpClientFactory.Create(
 			httpClientOptions{
 				MaxConnectionsPerHost: args.MaxConnectionsPerHost,

@@ -11,7 +11,7 @@ import (
 	"github.com/valyala/fasthttp"
 )
 
-func TestFastHTTPResponseDecodeGzipBody(t *testing.T) {
+func TestFastHttpResponseDecodeGzipBody(t *testing.T) {
 	b := bytes.Buffer{}
 	w := gzip.NewWriter(&b)
 	_, err := w.Write([]byte("foo"))
@@ -23,13 +23,13 @@ func TestFastHTTPResponseDecodeGzipBody(t *testing.T) {
 	r.Header.Add("Content-Encoding", "gzip")
 	r.SetBody(b.Bytes())
 
-	bs, err := newFasthttpHTTPResponse(nil, &r).Body()
+	bs, err := newFasthttpHttpResponse(nil, &r).Body()
 
 	assert.Nil(t, err)
 	assert.Equal(t, "foo", string(bs))
 }
 
-func TestFastHTTPResponseDecodeDeflateBody(t *testing.T) {
+func TestFastHttpResponseDecodeDeflateBody(t *testing.T) {
 	b := bytes.Buffer{}
 	w := zlib.NewWriter(&b)
 	_, err := w.Write([]byte("foo"))
@@ -41,13 +41,13 @@ func TestFastHTTPResponseDecodeDeflateBody(t *testing.T) {
 	r.Header.Add("Content-Encoding", "deflate")
 	r.SetBody(b.Bytes())
 
-	bs, err := newFasthttpHTTPResponse(nil, &r).Body()
+	bs, err := newFasthttpHttpResponse(nil, &r).Body()
 
 	assert.Nil(t, err)
 	assert.Equal(t, "foo", string(bs))
 }
 
-func TestFastHTTPResponseDecodeBrotliBody(t *testing.T) {
+func TestFastHttpResponseDecodeBrotliBody(t *testing.T) {
 	b := bytes.Buffer{}
 	w := brotli.NewWriter(&b)
 	_, err := w.Write([]byte("foo"))
@@ -59,7 +59,7 @@ func TestFastHTTPResponseDecodeBrotliBody(t *testing.T) {
 	r.Header.Add("Content-Encoding", "br")
 	r.SetBody(b.Bytes())
 
-	bs, err := newFasthttpHTTPResponse(nil, &r).Body()
+	bs, err := newFasthttpHttpResponse(nil, &r).Body()
 
 	assert.Nil(t, err)
 	assert.Equal(t, "foo", string(bs))

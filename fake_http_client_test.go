@@ -4,14 +4,14 @@ import (
 	"net/url"
 )
 
-type fakeHTTPClient struct {
-	handler func(*url.URL) (*fakeHTTPResponse, error)
+type fakeHttpClient struct {
+	handler func(*url.URL) (*fakeHttpResponse, error)
 }
 
-func newFakeHTTPClient(h func(*url.URL) (*fakeHTTPResponse, error)) *fakeHTTPClient {
-	return &fakeHTTPClient{h}
+func newFakeHttpClient(h func(*url.URL) (*fakeHttpResponse, error)) *fakeHttpClient {
+	return &fakeHttpClient{h}
 }
 
-func (c *fakeHTTPClient) Get(u *url.URL) (httpResponse, error) {
+func (c *fakeHttpClient) Get(u *url.URL) (httpResponse, error) {
 	return c.handler(u)
 }

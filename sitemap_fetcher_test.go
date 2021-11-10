@@ -15,13 +15,13 @@ func TestSitemapFetcherFetchSitemap(t *testing.T) {
 	assert.Nil(t, err)
 
 	sm, err := newSitemapFetcher(
-		newFakeHTTPClient(
-			func(u *url.URL) (*fakeHTTPResponse, error) {
+		newFakeHttpClient(
+			func(u *url.URL) (*fakeHttpResponse, error) {
 				if u.String() != s+"/sitemap.xml" {
 					return nil, errors.New("")
 				}
 
-				return newFakeHTTPResponse(
+				return newFakeHttpResponse(
 					200,
 					s,
 					"text/xml",
@@ -47,8 +47,8 @@ func TestSitemapFetcherFailToFetchSitemap(t *testing.T) {
 	assert.Nil(t, err)
 
 	_, err = newSitemapFetcher(
-		newFakeHTTPClient(
-			func(u *url.URL) (*fakeHTTPResponse, error) {
+		newFakeHttpClient(
+			func(u *url.URL) (*fakeHttpResponse, error) {
 				return nil, errors.New("foo")
 			},
 		),
@@ -62,9 +62,9 @@ func TestSitemapFetcherFailToParseSitemap(t *testing.T) {
 	assert.Nil(t, err)
 
 	_, err = newSitemapFetcher(
-		newFakeHTTPClient(
-			func(u *url.URL) (*fakeHTTPResponse, error) {
-				return newFakeHTTPResponse(200, "", "text/xml", []byte(`<`)), nil
+		newFakeHttpClient(
+			func(u *url.URL) (*fakeHttpResponse, error) {
+				return newFakeHttpResponse(200, "", "text/xml", []byte(`<`)), nil
 			},
 		),
 	).Fetch(u)

@@ -15,13 +15,13 @@ func TestRobotsTxtFetcherFetchRobotsTxt(t *testing.T) {
 	assert.Nil(t, err)
 
 	r, err := newRobotsTxtFetcher(
-		newFakeHTTPClient(
-			func(u *url.URL) (*fakeHTTPResponse, error) {
+		newFakeHttpClient(
+			func(u *url.URL) (*fakeHttpResponse, error) {
 				if u.String() != s+"/robots.txt" {
 					return nil, errors.New("")
 				}
 
-				return newFakeHTTPResponse(
+				return newFakeHttpResponse(
 					200,
 					s,
 					"text/plain",
@@ -41,8 +41,8 @@ func TestRobotsTxtFetcherFailToFetchRobotsTxt(t *testing.T) {
 	assert.Nil(t, err)
 
 	_, err = newRobotsTxtFetcher(
-		newFakeHTTPClient(
-			func(u *url.URL) (*fakeHTTPResponse, error) {
+		newFakeHttpClient(
+			func(u *url.URL) (*fakeHttpResponse, error) {
 				return nil, errors.New("foo")
 			})).Fetch(u)
 
