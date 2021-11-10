@@ -13,38 +13,38 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func newTestCommand(h func(*url.URL) (*fakeHTTPResponse, error)) *command {
+func newTestCommand(h func(*url.URL) (*fakeHttpResponse, error)) *command {
 	return newTestCommandWithStdout(io.Discard, h)
 }
 
-func newTestCommandWithStdout(stdout io.Writer, h func(*url.URL) (*fakeHTTPResponse, error)) *command {
+func newTestCommandWithStdout(stdout io.Writer, h func(*url.URL) (*fakeHttpResponse, error)) *command {
 	return newCommand(
 		stdout,
 		io.Discard,
 		false,
-		newFakeHTTPClientFactory(h),
+		newFakeHttpClientFactory(h),
 	)
 }
 
-func newTestCommandWithStderr(stderr io.Writer, h func(*url.URL) (*fakeHTTPResponse, error)) *command {
+func newTestCommandWithStderr(stderr io.Writer, h func(*url.URL) (*fakeHttpResponse, error)) *command {
 	return newCommand(
 		io.Discard,
 		stderr,
 		false,
-		newFakeHTTPClientFactory(h),
+		newFakeHttpClientFactory(h),
 	)
 }
 
 func TestCommandRun(t *testing.T) {
 	ok := newTestCommand(
-		func(u *url.URL) (*fakeHTTPResponse, error) {
+		func(u *url.URL) (*fakeHttpResponse, error) {
 			s := "http://foo.com"
 
 			if u.String() != s {
 				return nil, errors.New("")
 			}
 
-			return newFakeHTTPResponse(200, s, "text/html", nil), nil
+			return newFakeHttpResponse(200, s, "text/html", nil), nil
 		},
 	).Run([]string{"http://foo.com"})
 
@@ -55,10 +55,10 @@ func TestCommandRunWithLinks(t *testing.T) {
 	visited := false
 
 	ok := newTestCommand(
-		func(u *url.URL) (*fakeHTTPResponse, error) {
+		func(u *url.URL) (*fakeHttpResponse, error) {
 			switch u.String() {
 			case "http://foo.com":
-				return newFakeHTTPResponse(
+				return newFakeHttpResponse(
 					200,
 					"http://foo.com",
 					"text/html",
@@ -66,7 +66,7 @@ func TestCommandRunWithLinks(t *testing.T) {
 				), nil
 			case "http://foo.com/foo":
 				visited = true
-				return newFakeHTTPResponse(200, "http://foo.com", "text/html", nil), nil
+				return newFakeHttpResponse(200, "http://foo.com", "text/html", nil), nil
 			}
 
 			return nil, errors.New("")
@@ -82,8 +82,8 @@ func TestCommandRunWithVerboseOption(t *testing.T) {
 
 	ok := newTestCommandWithStdout(
 		b,
-		func(u *url.URL) (*fakeHTTPResponse, error) {
-			return newFakeHTTPResponse(200, "http://foo.com", "text/html", nil), nil
+		func(u *url.URL) (*fakeHttpResponse, error) {
+			return newFakeHttpResponse(200, "http://foo.com", "text/html", nil), nil
 		},
 	).Run([]string{"-v", "http://foo.com"})
 
@@ -93,7 +93,7 @@ func TestCommandRunWithVerboseOption(t *testing.T) {
 
 func TestCommandFailToRun(t *testing.T) {
 	ok := newTestCommand(
-		func(u *url.URL) (*fakeHTTPResponse, error) {
+		func(u *url.URL) (*fakeHttpResponse, error) {
 			return nil, errors.New("")
 		},
 	).Run([]string{"http://foo.com"})
@@ -106,9 +106,9 @@ func TestCommandFailToRunWithInvalidLink(t *testing.T) {
 
 	ok := newTestCommandWithStdout(
 		b,
-		func(u *url.URL) (*fakeHTTPResponse, error) {
+		func(u *url.URL) (*fakeHttpResponse, error) {
 			if u.String() == "http://foo.com" {
-				return newFakeHTTPResponse(
+				return newFakeHttpResponse(
 					200,
 					"http://foo.com",
 					"text/html",
@@ -129,8 +129,8 @@ func TestCommandFailToParseArguments(t *testing.T) {
 
 	c := newTestCommandWithStderr(
 		b,
-		func(u *url.URL) (*fakeHTTPResponse, error) {
-			return newFakeHTTPResponse(200, "", "text/html", nil), nil
+		func(u *url.URL) (*fakeHttpResponse, error) {
+			return newFakeHttpResponse(200, "", "text/html", nil), nil
 		},
 	)
 
@@ -145,7 +145,7 @@ func TestCommandFailToFetchRootPage(t *testing.T) {
 
 	ok := newTestCommandWithStderr(
 		b,
-		func(u *url.URL) (*fakeHTTPResponse, error) {
+		func(u *url.URL) (*fakeHttpResponse, error) {
 			return nil, errors.New("foo")
 		},
 	).Run([]string{"http://foo.com"})
@@ -159,8 +159,8 @@ func TestCommandFailToGetHTMLRootPage(t *testing.T) {
 
 	ok := newTestCommandWithStderr(
 		b,
-		func(u *url.URL) (*fakeHTTPResponse, error) {
-			return newFakeHTTPResponse(200, "", "image/png", nil), nil
+		func(u *url.URL) (*fakeHttpResponse, error) {
+			return newFakeHttpResponse(200, "", "image/png", nil), nil
 		},
 	).Run([]string{"http://foo.com"})
 
@@ -175,7 +175,7 @@ func TestCommandColorErrorMessage(t *testing.T) {
 		io.Discard,
 		b,
 		true,
-		newFakeHTTPClientFactory(func(u *url.URL) (*fakeHTTPResponse, error) {
+		newFakeHttpClientFactory(func(u *url.URL) (*fakeHttpResponse, error) {
 			return nil, errors.New("foo")
 		}),
 	)
@@ -191,8 +191,8 @@ func TestCommandShowHelp(t *testing.T) {
 
 	c := newTestCommandWithStdout(
 		b,
-		func(u *url.URL) (*fakeHTTPResponse, error) {
-			return newFakeHTTPResponse(200, "", "text/html", nil), nil
+		func(u *url.URL) (*fakeHttpResponse, error) {
+			return newFakeHttpResponse(200, "", "text/html", nil), nil
 		},
 	)
 
@@ -207,8 +207,8 @@ func TestCommandShowVersion(t *testing.T) {
 
 	c := newTestCommandWithStdout(
 		b,
-		func(u *url.URL) (*fakeHTTPResponse, error) {
-			return newFakeHTTPResponse(200, "", "text/html", nil), nil
+		func(u *url.URL) (*fakeHttpResponse, error) {
+			return newFakeHttpResponse(200, "", "text/html", nil), nil
 		},
 	)
 
@@ -225,9 +225,9 @@ func TestCommandFailToRunWithJSONOutput(t *testing.T) {
 
 	ok := newTestCommandWithStdout(
 		b,
-		func(u *url.URL) (*fakeHTTPResponse, error) {
+		func(u *url.URL) (*fakeHttpResponse, error) {
 			if u.String() == "http://foo.com" {
-				return newFakeHTTPResponse(
+				return newFakeHttpResponse(
 					200,
 					"http://foo.com",
 					"text/html",
@@ -248,8 +248,8 @@ func TestCommandDoNotIncludeSuccessfulPageInJSONOutput(t *testing.T) {
 
 	ok := newTestCommandWithStdout(
 		b,
-		func(u *url.URL) (*fakeHTTPResponse, error) {
-			return newFakeHTTPResponse(200, "", "text/html", nil), nil
+		func(u *url.URL) (*fakeHttpResponse, error) {
+			return newFakeHttpResponse(200, "", "text/html", nil), nil
 		},
 	).Run([]string{"--json", "http://foo.com"})
 

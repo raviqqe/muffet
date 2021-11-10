@@ -7,23 +7,23 @@ import (
 )
 
 // TODO Throttle requests for each host.
-type throttledHTTPClient struct {
+type throttledHttpClient struct {
 	client    httpClient
 	limiter   ratelimit.Limiter
 	semaphore semaphore
 }
 
-func newThrottledHTTPClient(c httpClient, rps int, maxConnections int) httpClient {
+func newThrottledHttpClient(c httpClient, rps int, maxConnections int) httpClient {
 	l := ratelimit.NewUnlimited()
 
 	if rps > 0 {
 		l = ratelimit.New(rps)
 	}
 
-	return &throttledHTTPClient{c, l, newSemaphore(maxConnections)}
+	return &throttledHttpClient{c, l, newSemaphore(maxConnections)}
 }
 
-func (c *throttledHTTPClient) Get(u *url.URL) (httpResponse, error) {
+func (c *throttledHttpClient) Get(u *url.URL) (httpResponse, error) {
 	c.semaphore.Request()
 	defer c.semaphore.Release()
 
