@@ -12,6 +12,6 @@ func newFakeHTTPClient(h func(*url.URL) (*fakeHTTPResponse, error)) *fakeHTTPCli
 	return &fakeHTTPClient{h}
 }
 
-func (c *fakeHTTPClient) Get(u *url.URL, headers map[string]string) (httpResponse, error) {
+func (c *fakeHTTPClient) Get(u *url.URL) (httpResponse, error) {
 	return c.handler(u)
 }
