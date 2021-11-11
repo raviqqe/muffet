@@ -10,7 +10,7 @@ func TestNewHostThrottlerPool(t *testing.T) {
 	newHostThrottlerPool(1, 1)
 }
 
-func TestHostThrottlerPoolGet(t *testing.T) {
+func TestHostThrottlerPoolGetHost(t *testing.T) {
 	c := make(chan struct{}, 100)
 	s := newHostThrottlerPool(1000000, 1)
 
@@ -27,4 +27,29 @@ func TestHostThrottlerPoolGet(t *testing.T) {
 
 	s.Get("foo").Release()
 	<-c
+}
+
+func TestHostThrottlerPoolGetHosts(t *testing.T) {
+	hosts := []string{"foo", "bar"}
+	c := make(chan struct{}, 100)
+	s := newHostThrottlerPool(1000000, 1)
+
+	for _, host := range hosts {
+		for i := 0; i < 2; i++ {
+			go func(host string) {
+				s.Get(host).Request()
+				c <- struct{}{}
+			}(host)
+		}
+	}
+
+	<-c
+	<-c
+
+	assert.Equal(t, 0, len(c))
+
+	for _, host := range hosts {
+		s.Get(host).Release()
+		<-c
+	}
 }
