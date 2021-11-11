@@ -2,32 +2,29 @@ package main
 
 import (
 	"net/url"
-
-	"go.uber.org/ratelimit"
 )
 
-// TODO Throttle requests for each host.
 type throttledHttpClient struct {
-	client    httpClient
-	limiter   ratelimit.Limiter
-	semaphore semaphore
+	client            httpClient
+	connections       semaphore
+	hostThrottlerPool *hostThrottlerPool
 }
 
-func newThrottledHttpClient(c httpClient, rps int, maxConnections int) httpClient {
-	l := ratelimit.NewUnlimited()
-
-	if rps > 0 {
-		l = ratelimit.New(rps)
+func newThrottledHttpClient(c httpClient, requestPerSecond int, maxConnections, maxConnectionsPerHost int) httpClient {
+	return &throttledHttpClient{
+		c,
+		newSemaphore(maxConnections),
+		newHostThrottlerPool(requestPerSecond, maxConnectionsPerHost),
 	}
-
-	return &throttledHttpClient{c, l, newSemaphore(maxConnections)}
 }
 
 func (c *throttledHttpClient) Get(u *url.URL) (httpResponse, error) {
-	c.semaphore.Request()
-	defer c.semaphore.Release()
+	c.connections.Request()
+	defer c.connections.Release()
 
-	c.limiter.Take()
+	t := c.hostThrottlerPool.Get(u.Hostname())
+	t.Request()
+	defer t.Release()
 
 	return c.client.Get(u)
 }

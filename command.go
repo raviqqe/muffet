@@ -59,6 +59,7 @@ func (c *command) runWithError(ss []string) (bool, error) {
 		),
 		args.RateLimit,
 		args.MaxConnections,
+		args.MaxConnectionsPerHost,
 	)
 
 	pp := newPageParser(newLinkFinder(args.ExcludedPatterns))
