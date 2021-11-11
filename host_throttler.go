@@ -18,8 +18,8 @@ func newHostThrottler(requestPerSecond, maxConnectionsPerHost int) *hostThrottle
 }
 
 func (t *hostThrottler) Request() {
-	t.limiter.Take()
 	t.connections.Request()
+	t.limiter.Take()
 }
 
 func (t *hostThrottler) Release() {
