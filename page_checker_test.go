@@ -58,7 +58,7 @@ func TestPageCheckerCheckTwoPages(t *testing.T) {
 					return nil, errors.New("")
 				}
 
-				return newFakeHttpResponse(200, s, "text/html", nil), nil
+				return newFakeHtmlResponse(s, ""), nil
 			},
 		),
 	)
@@ -97,7 +97,7 @@ func TestPageCheckerDoNotCheckSamePageTwice(t *testing.T) {
 	c := newTestPageChecker(
 		newFakeHttpClient(
 			func(u *url.URL) (*fakeHttpResponse, error) {
-				return newFakeHttpResponse(200, "http://foo.com", "text/html", nil), nil
+				return newFakeHtmlResponse("http://foo.com", ""), nil
 			},
 		),
 	)

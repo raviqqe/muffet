@@ -29,7 +29,7 @@ func TestRedirectHttpClientGet(t *testing.T) {
 				return newFakeHttpResponse(
 					200,
 					"http://foo.com",
-					"text/html",
+					nil,
 					nil,
 				), nil
 			},
