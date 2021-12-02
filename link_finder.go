@@ -27,6 +27,8 @@ var atomToAttributes = map[atom.Atom][]string{
 	atom.Track:  {"src"},
 }
 
+var imageDescriptorPattern = regexp.MustCompile(" [^ ]*$")
+
 type linkFinder struct {
 	excludedPatterns []*regexp.Regexp
 }
@@ -43,18 +45,31 @@ func (f linkFinder) Find(n *html.Node, base *url.URL) map[string]error {
 		return ok
 	}) {
 		for _, a := range atomToAttributes[n.DataAtom] {
-			s := strings.TrimSpace(scrape.Attr(n, a))
+			s := scrape.Attr(n, a)
+			ss := []string{}
 
-			if s == "" || f.isLinkExcluded(s) {
-				continue
+			if a == "srcset" {
+				for _, s := range strings.Split(s, ",") {
+					ss = append(ss, imageDescriptorPattern.ReplaceAllString(strings.TrimSpace(s), ""))
+				}
+			} else {
+				ss = append(ss, s)
 			}
 
-			u, err := url.Parse(s)
-			if err != nil {
-				ls[s] = err
-				continue
-			} else if _, ok := validSchemes[u.Scheme]; ok {
-				ls[base.ResolveReference(u).String()] = nil
+			for _, s := range ss {
+				s := strings.TrimSpace(s)
+
+				if s == "" || f.isLinkExcluded(s) {
+					continue
+				}
+
+				u, err := url.Parse(s)
+				if err != nil {
+					ls[s] = err
+					continue
+				} else if _, ok := validSchemes[u.Scheme]; ok {
+					ls[base.ResolveReference(u).String()] = nil
+				}
 			}
 		}
 	}
