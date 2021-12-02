@@ -21,7 +21,6 @@ func newFasthttpHttpClient(c *fasthttp.Client, timeout time.Duration, headers ma
 func (c *fasthttpHttpClient) Get(u *url.URL) (httpResponse, error) {
 	req, res := fasthttp.Request{}, fasthttp.Response{}
 	req.SetRequestURI(u.String())
-	req.SetConnectionClose()
 
 	for k, v := range c.headers {
 		req.Header.Add(k, v)
