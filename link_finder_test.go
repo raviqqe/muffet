@@ -141,6 +141,62 @@ func TestLinkFinderIsLinkExcluded(t *testing.T) {
 	}
 }
 
+func TestLinkFinderFindLinkInSrcSet(t *testing.T) {
+	b, err := url.Parse("http://foo.com")
+	assert.Nil(t, err)
+
+	n, err := html.Parse(strings.NewReader(
+		htmlWithBody(`<source srcset="foo.png" />`)),
+	)
+	assert.Nil(t, err)
+
+	ls := newLinkFinder(nil).Find(n, b)
+
+	err, ok := ls["http://foo.com/foo.png"]
+	assert.True(t, ok)
+	assert.Nil(t, err)
+}
+
+func TestLinkFinderFindMultipleLinksInSrcSet(t *testing.T) {
+	b, err := url.Parse("http://foo.com")
+	assert.Nil(t, err)
+
+	n, err := html.Parse(strings.NewReader(
+		htmlWithBody(`<source srcset="foo.png, bar.png" />`)),
+	)
+	assert.Nil(t, err)
+
+	ls := newLinkFinder(nil).Find(n, b)
+
+	err, ok := ls["http://foo.com/foo.png"]
+	assert.True(t, ok)
+	assert.Nil(t, err)
+
+	err, ok = ls["http://foo.com/bar.png"]
+	assert.True(t, ok)
+	assert.Nil(t, err)
+}
+
+func TestLinkFinderFindMultipleLinksInSrcSetWithDescriptors(t *testing.T) {
+	b, err := url.Parse("http://foo.com")
+	assert.Nil(t, err)
+
+	n, err := html.Parse(strings.NewReader(
+		htmlWithBody(`<source srcset="foo.png 100w, bar.png 200w" />`)),
+	)
+	assert.Nil(t, err)
+
+	ls := newLinkFinder(nil).Find(n, b)
+
+	err, ok := ls["http://foo.com/foo.png"]
+	assert.True(t, ok)
+	assert.Nil(t, err)
+
+	err, ok = ls["http://foo.com/bar.png"]
+	assert.True(t, ok)
+	assert.Nil(t, err)
+}
+
 func htmlWithBody(b string) string {
 	return fmt.Sprintf(`<html><body>%v</body></html>`, b)
 }
