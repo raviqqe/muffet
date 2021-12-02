@@ -45,16 +45,7 @@ func (f linkFinder) Find(n *html.Node, base *url.URL) map[string]error {
 		return ok
 	}) {
 		for _, a := range atomToAttributes[n.DataAtom] {
-			s := scrape.Attr(n, a)
-			ss := []string{}
-
-			if a == "srcset" {
-				for _, s := range strings.Split(s, ",") {
-					ss = append(ss, imageDescriptorPattern.ReplaceAllString(strings.TrimSpace(s), ""))
-				}
-			} else {
-				ss = append(ss, s)
-			}
+			ss := f.parseLinks(n, a)
 
 			for _, s := range ss {
 				s := strings.TrimSpace(s)
@@ -75,6 +66,21 @@ func (f linkFinder) Find(n *html.Node, base *url.URL) map[string]error {
 	}
 
 	return ls
+}
+
+func (linkFinder) parseLinks(n *html.Node, a string) []string {
+	s := scrape.Attr(n, a)
+	ss := []string{}
+
+	if a == "srcset" {
+		for _, s := range strings.Split(s, ",") {
+			ss = append(ss, imageDescriptorPattern.ReplaceAllString(strings.TrimSpace(s), ""))
+		}
+	} else {
+		ss = append(ss, s)
+	}
+
+	return ss
 }
 
 func (f linkFinder) isLinkExcluded(u string) bool {
