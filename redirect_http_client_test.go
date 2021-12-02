@@ -63,7 +63,7 @@ func TestRedirectHttpClientGetWithRedirect(t *testing.T) {
 					), nil
 				}
 
-				return newFakeHtmlResponse("http://foo.com", ""), nil
+				return newFakeHtmlResponse("", ""), nil
 			},
 		),
 		42,
@@ -97,7 +97,7 @@ func TestRedirectHttpClientGetWithRedirects(t *testing.T) {
 					), nil
 				}
 
-				return newFakeHtmlResponse("http://foo.com", ""), nil
+				return newFakeHtmlResponse("", ""), nil
 			},
 		),
 		maxRedirections,
