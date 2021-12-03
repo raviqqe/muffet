@@ -6,6 +6,6 @@ import (
 
 type httpClient interface {
 	// Get sends an HTTP request with a GET method.
-	// Non-200 status codes always result in non-nil errors.
+	// It depends on implementation of each client what is considered as errors.
 	Get(url *url.URL) (httpResponse, error)
 }
