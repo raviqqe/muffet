@@ -39,7 +39,7 @@ func (c *redirectHttpClient) Get(u *url.URL) (httpResponse, error) {
 			s := r.Header("Location")
 
 			if len(s) == 0 {
-				return nil, errors.New("location header not found")
+				return nil, errors.New("location header not set")
 			}
 
 			u, err = u.Parse(s)
