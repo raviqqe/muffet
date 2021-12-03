@@ -20,10 +20,8 @@ func (c *redirectHttpClient) Get(u *url.URL) (httpResponse, error) {
 
 	for {
 		r, err := c.client.Get(u)
-		if err != nil && i > 0 {
-			return nil, fmt.Errorf("%w (following redirect %v)", err, u.String())
-		} else if err != nil {
-			return nil, err
+		if err != nil {
+			return nil, c.formatError(err, i, u)
 		}
 
 		switch r.StatusCode() / 100 {
@@ -48,7 +46,15 @@ func (c *redirectHttpClient) Get(u *url.URL) (httpResponse, error) {
 				return nil, err
 			}
 		default:
-			return nil, fmt.Errorf("%v", r.StatusCode())
+			return nil, c.formatError(fmt.Errorf("%v", r.StatusCode()), i, u)
 		}
 	}
+}
+
+func (*redirectHttpClient) formatError(err error, redirections int, u *url.URL) error {
+	if redirections == 0 {
+		return err
+	}
+
+	return fmt.Errorf("%w (following redirect %v)", err, u.String())
 }
