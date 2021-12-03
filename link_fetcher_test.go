@@ -30,12 +30,7 @@ func TestLinkFetcherFetch(t *testing.T) {
 					return nil, errors.New("")
 				}
 
-				return newFakeHttpResponse(
-					200,
-					"http://foo.com",
-					"text/html",
-					nil,
-				), nil
+				return newFakeHtmlResponse("http://foo.com", ""), nil
 			}),
 	)
 
@@ -59,12 +54,7 @@ func TestLinkFetcherFetchFromCache(t *testing.T) {
 
 				ok = false
 
-				return newFakeHttpResponse(
-					200,
-					s,
-					"text/html",
-					nil,
-				), nil
+				return newFakeHtmlResponse(s, ""), nil
 			}),
 	)
 
@@ -87,7 +77,7 @@ func TestLinkFetcherFetchCacheConcurrency(t *testing.T) {
 			func(u *url.URL) (*fakeHttpResponse, error) {
 				c++
 
-				return newFakeHttpResponse(200, "http://foo.com", "text/html", nil), nil
+				return newFakeHtmlResponse("http://foo.com", ""), nil
 			}),
 	)
 
@@ -119,7 +109,7 @@ func TestLinkFetcherFetchWithFragments(t *testing.T) {
 					return nil, errors.New("")
 				}
 
-				return newFakeHttpResponse(200, s, "text/html", []byte(`<p id="foo" />`)), nil
+				return newFakeHtmlResponse(s, `<p id="foo" />`), nil
 			},
 		),
 	)
@@ -144,7 +134,7 @@ func TestLinkFetcherFetchIgnoringFragments(t *testing.T) {
 					return nil, errors.New("")
 				}
 
-				return newFakeHttpResponse(200, s, "text/html", nil), nil
+				return newFakeHtmlResponse(s, ""), nil
 			},
 		),
 		linkFetcherOptions{IgnoreFragments: true},
@@ -168,7 +158,7 @@ func TestLinkFetcherFailToFetch(t *testing.T) {
 func TestLinkFetcherFailToParseURL(t *testing.T) {
 	f := newTestLinkFetcher(
 		newFakeHttpClient(func(*url.URL) (*fakeHttpResponse, error) {
-			return newFakeHttpResponse(200, "", "text/html", nil), nil
+			return newFakeHtmlResponse("", ""), nil
 		}))
 
 	_, _, err := f.Fetch(":")

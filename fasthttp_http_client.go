@@ -1,8 +1,6 @@
 package main
 
 import (
-	"errors"
-	"fmt"
 	"net/url"
 	"strings"
 	"time"
@@ -11,14 +9,13 @@ import (
 )
 
 type fasthttpHttpClient struct {
-	client          *fasthttp.Client
-	maxRedirections int
-	timeout         time.Duration
-	headers         map[string]string
+	client  *fasthttp.Client
+	timeout time.Duration
+	headers map[string]string
 }
 
-func newFasthttpHttpClient(c *fasthttp.Client, maxRedirections int, timeout time.Duration, headers map[string]string) httpClient {
-	return &fasthttpHttpClient{c, maxRedirections, timeout, headers}
+func newFasthttpHttpClient(c *fasthttp.Client, timeout time.Duration, headers map[string]string) httpClient {
+	return &fasthttpHttpClient{c, timeout, headers}
 }
 
 func (c *fasthttpHttpClient) Get(u *url.URL) (httpResponse, error) {
@@ -30,42 +27,17 @@ func (c *fasthttpHttpClient) Get(u *url.URL) (httpResponse, error) {
 		req.Header.Add(k, v)
 	}
 
-	// Some HTTP servers require "Accept" headers to be set explicitly.
+	// Some HTTP servers require "Accept" headers set explicitly.
 	if !includeHeader(c.headers, "Accept") {
 		req.Header.Add("Accept", "*/*")
 	}
 
-	i := 0
-
-	for {
-		err := c.client.DoTimeout(&req, &res, c.timeout)
-		if err != nil && i > 0 {
-			return nil, fmt.Errorf("%w (following redirect %v)", err, req.URI())
-		} else if err != nil {
-			return nil, err
-		}
-
-		switch res.StatusCode() / 100 {
-		case 2:
-			return newFasthttpHttpResponse(req.URI(), &res), nil
-		case 3:
-			i++
-
-			if i > c.maxRedirections {
-				return nil, errors.New("too many redirections")
-			}
-
-			u := res.Header.Peek("Location")
-
-			if len(u) == 0 {
-				return nil, errors.New("location header not found")
-			}
-
-			req.URI().UpdateBytes(u)
-		default:
-			return nil, fmt.Errorf("%v", res.StatusCode())
-		}
+	err := c.client.DoTimeout(&req, &res, c.timeout)
+	if err != nil {
+		return nil, err
 	}
+
+	return newFasthttpHttpResponse(req.URI(), &res), nil
 }
 
 func includeHeader(hs map[string]string, h string) bool {

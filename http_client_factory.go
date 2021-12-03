@@ -4,8 +4,7 @@ import "time"
 
 type httpClientOptions struct {
 	MaxConnectionsPerHost,
-	BufferSize,
-	MaxRedirections int
+	BufferSize int
 	Proxy               string
 	SkipTLSVerification bool
 	Timeout             time.Duration

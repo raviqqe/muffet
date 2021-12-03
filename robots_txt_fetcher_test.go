@@ -24,11 +24,11 @@ func TestRobotsTxtFetcherFetchRobotsTxt(t *testing.T) {
 				return newFakeHttpResponse(
 					200,
 					s,
-					"text/plain",
 					[]byte(`
 						User-Agent: *
 						Disallow: /bar
 					`),
+					map[string]string{"content-type": "text/plain"},
 				), nil
 			})).Fetch(u)
 

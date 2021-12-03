@@ -34,7 +34,6 @@ func (*fasthttpHttpClientFactory) Create(o httpClientOptions) httpClient {
 			Dial:                     d,
 			NoDefaultUserAgentHeader: true,
 		},
-		o.MaxRedirections,
 		o.Timeout,
 		o.Headers,
 	)

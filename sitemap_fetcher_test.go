@@ -24,7 +24,6 @@ func TestSitemapFetcherFetchSitemap(t *testing.T) {
 				return newFakeHttpResponse(
 					200,
 					s,
-					"text/xml",
 					[]byte(`
 						<?xml version="1.0" encoding="UTF-8"?>
 						<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
@@ -33,6 +32,7 @@ func TestSitemapFetcherFetchSitemap(t *testing.T) {
 							</url>
 						</urlset>
 					`),
+					map[string]string{"content-type": "text/xml"},
 				), nil
 			})).Fetch(u)
 
@@ -64,7 +64,10 @@ func TestSitemapFetcherFailToParseSitemap(t *testing.T) {
 	_, err = newSitemapFetcher(
 		newFakeHttpClient(
 			func(u *url.URL) (*fakeHttpResponse, error) {
-				return newFakeHttpResponse(200, "", "text/xml", []byte(`<`)), nil
+				return newFakeHttpResponse(
+					200, "", []byte(`<`),
+					map[string]string{"content-type": "text/xml"},
+				), nil
 			},
 		),
 	).Fetch(u)

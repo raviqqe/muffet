@@ -45,21 +45,23 @@ func (c *command) runWithError(ss []string) (bool, error) {
 		return false, errors.New("verbose option not supported for JSON output")
 	}
 
-	client := newThrottledHttpClient(
-		c.httpClientFactory.Create(
-			httpClientOptions{
-				MaxConnectionsPerHost: args.MaxConnectionsPerHost,
-				BufferSize:            args.BufferSize,
-				MaxRedirections:       args.MaxRedirections,
-				Proxy:                 args.Proxy,
-				SkipTLSVerification:   args.SkipTLSVerification,
-				Timeout:               time.Duration(args.Timeout) * time.Second,
-				Headers:               args.Headers,
-			},
+	client := newRedirectHttpClient(
+		newThrottledHttpClient(
+			c.httpClientFactory.Create(
+				httpClientOptions{
+					MaxConnectionsPerHost: args.MaxConnectionsPerHost,
+					BufferSize:            args.BufferSize,
+					Proxy:                 args.Proxy,
+					SkipTLSVerification:   args.SkipTLSVerification,
+					Timeout:               time.Duration(args.Timeout) * time.Second,
+					Headers:               args.Headers,
+				},
+			),
+			args.RateLimit,
+			args.MaxConnections,
+			args.MaxConnectionsPerHost,
 		),
-		args.RateLimit,
-		args.MaxConnections,
-		args.MaxConnectionsPerHost,
+		args.MaxRedirections,
 	)
 
 	pp := newPageParser(newLinkFinder(args.ExcludedPatterns))

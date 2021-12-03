@@ -44,7 +44,7 @@ func TestCommandRun(t *testing.T) {
 				return nil, errors.New("")
 			}
 
-			return newFakeHttpResponse(200, s, "text/html", nil), nil
+			return newFakeHtmlResponse(s, ""), nil
 		},
 	).Run([]string{"http://foo.com"})
 
@@ -58,15 +58,13 @@ func TestCommandRunWithLinks(t *testing.T) {
 		func(u *url.URL) (*fakeHttpResponse, error) {
 			switch u.String() {
 			case "http://foo.com":
-				return newFakeHttpResponse(
-					200,
+				return newFakeHtmlResponse(
 					"http://foo.com",
-					"text/html",
-					[]byte(`<html><body><a href="/foo" /></body></html>`),
+					`<html><body><a href="/foo" /></body></html>`,
 				), nil
 			case "http://foo.com/foo":
 				visited = true
-				return newFakeHttpResponse(200, "http://foo.com", "text/html", nil), nil
+				return newFakeHtmlResponse("http://foo.com", ""), nil
 			}
 
 			return nil, errors.New("")
@@ -83,7 +81,7 @@ func TestCommandRunWithVerboseOption(t *testing.T) {
 	ok := newTestCommandWithStdout(
 		b,
 		func(u *url.URL) (*fakeHttpResponse, error) {
-			return newFakeHttpResponse(200, "http://foo.com", "text/html", nil), nil
+			return newFakeHtmlResponse("http://foo.com", ""), nil
 		},
 	).Run([]string{"-v", "http://foo.com"})
 
@@ -108,11 +106,9 @@ func TestCommandFailToRunWithInvalidLink(t *testing.T) {
 		b,
 		func(u *url.URL) (*fakeHttpResponse, error) {
 			if u.String() == "http://foo.com" {
-				return newFakeHttpResponse(
-					200,
+				return newFakeHtmlResponse(
 					"http://foo.com",
-					"text/html",
-					[]byte(`<html><body><a href="/foo" /></body></html>`),
+					`<html><body><a href="/foo" /></body></html>`,
 				), nil
 			}
 
@@ -130,7 +126,7 @@ func TestCommandFailToParseArguments(t *testing.T) {
 	c := newTestCommandWithStderr(
 		b,
 		func(u *url.URL) (*fakeHttpResponse, error) {
-			return newFakeHttpResponse(200, "", "text/html", nil), nil
+			return newFakeHtmlResponse("", ""), nil
 		},
 	)
 
@@ -160,7 +156,12 @@ func TestCommandFailToGetHTMLRootPage(t *testing.T) {
 	ok := newTestCommandWithStderr(
 		b,
 		func(u *url.URL) (*fakeHttpResponse, error) {
-			return newFakeHttpResponse(200, "", "image/png", nil), nil
+			return newFakeHttpResponse(
+				200,
+				"",
+				nil,
+				map[string]string{"content-type": "image/png"},
+			), nil
 		},
 	).Run([]string{"http://foo.com"})
 
@@ -192,7 +193,7 @@ func TestCommandShowHelp(t *testing.T) {
 	c := newTestCommandWithStdout(
 		b,
 		func(u *url.URL) (*fakeHttpResponse, error) {
-			return newFakeHttpResponse(200, "", "text/html", nil), nil
+			return newFakeHtmlResponse("", ""), nil
 		},
 	)
 
@@ -208,7 +209,7 @@ func TestCommandShowVersion(t *testing.T) {
 	c := newTestCommandWithStdout(
 		b,
 		func(u *url.URL) (*fakeHttpResponse, error) {
-			return newFakeHttpResponse(200, "", "text/html", nil), nil
+			return newFakeHtmlResponse("", ""), nil
 		},
 	)
 
@@ -227,11 +228,9 @@ func TestCommandFailToRunWithJSONOutput(t *testing.T) {
 		b,
 		func(u *url.URL) (*fakeHttpResponse, error) {
 			if u.String() == "http://foo.com" {
-				return newFakeHttpResponse(
-					200,
+				return newFakeHtmlResponse(
 					"http://foo.com",
-					"text/html",
-					[]byte(`<html><body><a href="/foo" /></body></html>`),
+					`<html><body><a href="/foo" /></body></html>`,
 				), nil
 			}
 
@@ -249,7 +248,7 @@ func TestCommandDoNotIncludeSuccessfulPageInJSONOutput(t *testing.T) {
 	ok := newTestCommandWithStdout(
 		b,
 		func(u *url.URL) (*fakeHttpResponse, error) {
-			return newFakeHttpResponse(200, "", "text/html", nil), nil
+			return newFakeHtmlResponse("", ""), nil
 		},
 	).Run([]string{"--json", "http://foo.com"})
 
