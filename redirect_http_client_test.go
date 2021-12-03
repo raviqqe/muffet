@@ -26,12 +26,7 @@ func TestRedirectHttpClientGet(t *testing.T) {
 					return nil, errors.New("")
 				}
 
-				return newFakeHttpResponse(
-					200,
-					"http://foo.com",
-					nil,
-					nil,
-				), nil
+				return newFakeHtmlResponse(testUrl, ""), nil
 			},
 		),
 		42,
@@ -57,9 +52,9 @@ func TestRedirectHttpClientGetWithRedirect(t *testing.T) {
 
 					return newFakeHttpResponse(
 						300,
-						"http://foo.com",
+						testUrl,
 						nil,
-						map[string]string{"location": "http://foo.com"},
+						map[string]string{"location": testUrl},
 					), nil
 				}
 
@@ -91,9 +86,9 @@ func TestRedirectHttpClientGetWithRedirects(t *testing.T) {
 
 					return newFakeHttpResponse(
 						300,
-						"http://foo.com",
+						testUrl,
 						nil,
-						map[string]string{"location": "http://foo.com"},
+						map[string]string{"location": testUrl},
 					), nil
 				}
 
@@ -128,7 +123,7 @@ func TestRedirectHttpClientGetWithRelativeRedirect(t *testing.T) {
 
 						return newFakeHttpResponse(
 							300,
-							"http://foo.com",
+							testUrl,
 							nil,
 							map[string]string{"location": "/foo"},
 						), nil
@@ -161,9 +156,9 @@ func TestRedirectHttpClientFailWithTooManyRedirects(t *testing.T) {
 
 				return newFakeHttpResponse(
 					300,
-					"http://foo.com",
+					testUrl,
 					nil,
-					map[string]string{"location": "http://foo.com"},
+					map[string]string{"location": testUrl},
 				), nil
 			},
 		),
@@ -183,7 +178,7 @@ func TestRedirectHttpClientFailWithUnsetLocationHeader(t *testing.T) {
 	r, err := newRedirectHttpClient(
 		newFakeHttpClient(
 			func(u *url.URL) (*fakeHttpResponse, error) {
-				return newFakeHttpResponse(300, "http://foo.com", nil, nil), nil
+				return newFakeHttpResponse(300, testUrl, nil, nil), nil
 			},
 		),
 		42,
@@ -203,7 +198,7 @@ func TestRedirectHttpClientFailWithInvalidLocationURL(t *testing.T) {
 			func(u *url.URL) (*fakeHttpResponse, error) {
 				return newFakeHttpResponse(
 					300,
-					"http://foo.com",
+					testUrl,
 					nil,
 					map[string]string{"location": ":"},
 				), nil
@@ -224,7 +219,7 @@ func TestRedirectHttpClientFailWithInvalidStatusCode(t *testing.T) {
 	r, err := newRedirectHttpClient(
 		newFakeHttpClient(
 			func(u *url.URL) (*fakeHttpResponse, error) {
-				return newFakeHttpResponse(404, "http://foo.com", nil, nil), nil
+				return newFakeHttpResponse(404, testUrl, nil, nil), nil
 			},
 		),
 		42,
@@ -232,4 +227,36 @@ func TestRedirectHttpClientFailWithInvalidStatusCode(t *testing.T) {
 
 	assert.Nil(t, r)
 	assert.Equal(t, err.Error(), "404")
+}
+
+func TestRedirectHttpClientFailAfterRedirect(t *testing.T) {
+	const redirectUrl = "http://foo.com/foo"
+
+	u, err := url.Parse(testUrl)
+
+	assert.Nil(t, err)
+
+	redirected := false
+	r, err := newRedirectHttpClient(
+		newFakeHttpClient(
+			func(u *url.URL) (*fakeHttpResponse, error) {
+				if !redirected {
+					redirected = true
+
+					return newFakeHttpResponse(
+						300,
+						testUrl,
+						nil,
+						map[string]string{"location": redirectUrl},
+					), nil
+				}
+
+				return newFakeHttpResponse(404, "", nil, nil), nil
+			},
+		),
+		42,
+	).Get(u)
+
+	assert.Nil(t, r)
+	assert.Contains(t, err.Error(), "following redirect "+redirectUrl)
 }
