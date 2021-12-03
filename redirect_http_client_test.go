@@ -230,8 +230,6 @@ func TestRedirectHttpClientFailWithInvalidStatusCode(t *testing.T) {
 }
 
 func TestRedirectHttpClientFailAfterRedirect(t *testing.T) {
-	const redirectUrl = "http://foo.com/foo"
-
 	u, err := url.Parse(testUrl)
 
 	assert.Nil(t, err)
@@ -247,7 +245,7 @@ func TestRedirectHttpClientFailAfterRedirect(t *testing.T) {
 						300,
 						testUrl,
 						nil,
-						map[string]string{"location": redirectUrl},
+						map[string]string{"location": "/foo"},
 					), nil
 				}
 
@@ -258,5 +256,5 @@ func TestRedirectHttpClientFailAfterRedirect(t *testing.T) {
 	).Get(u)
 
 	assert.Nil(t, r)
-	assert.Contains(t, err.Error(), "following redirect "+redirectUrl)
+	assert.Contains(t, err.Error(), "following redirect http://foo.com/foo")
 }
