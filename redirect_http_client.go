@@ -42,7 +42,7 @@ func (c *redirectHttpClient) Get(u *url.URL) (httpResponse, error) {
 				return nil, errors.New("location header not found")
 			}
 
-			u, err = url.Parse(s)
+			u, err = u.Parse(s)
 
 			if err != nil {
 				return nil, err

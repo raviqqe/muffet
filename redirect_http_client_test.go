@@ -59,7 +59,7 @@ func TestRedirectHttpClientGetWithRedirect(t *testing.T) {
 						300,
 						"http://foo.com",
 						nil,
-						map[string]string{"Location": "http://foo.com"},
+						map[string]string{"location": "http://foo.com"},
 					), nil
 				}
 
@@ -93,7 +93,7 @@ func TestRedirectHttpClientGetWithRedirects(t *testing.T) {
 						300,
 						"http://foo.com",
 						nil,
-						map[string]string{"Location": "http://foo.com"},
+						map[string]string{"location": "http://foo.com"},
 					), nil
 				}
 
@@ -106,4 +106,42 @@ func TestRedirectHttpClientGetWithRedirects(t *testing.T) {
 	assert.Nil(t, err)
 	assert.Equal(t, 200, r.StatusCode())
 	assert.Equal(t, maxRedirections, i)
+}
+
+func TestRedirectHttpClientGetWithRelativeRedirect(t *testing.T) {
+	const maxRedirections = 42
+
+	u, err := url.Parse(testUrl)
+
+	assert.Nil(t, err)
+
+	redirected := false
+	r, err := newRedirectHttpClient(
+		newFakeHttpClient(
+			func(u *url.URL) (*fakeHttpResponse, error) {
+				switch u.String() {
+				case "http://foo.com/foo":
+					return newFakeHtmlResponse("", ""), nil
+				case testUrl:
+					if !redirected {
+						redirected = true
+
+						return newFakeHttpResponse(
+							300,
+							"http://foo.com",
+							nil,
+							map[string]string{"location": "/foo"},
+						), nil
+					}
+				}
+
+				return nil, errors.New("")
+			},
+		),
+		maxRedirections,
+	).Get(u)
+
+	assert.Nil(t, err)
+	assert.Equal(t, 200, r.StatusCode())
+	assert.Equal(t, redirected, true)
 }
