@@ -15,7 +15,7 @@ website recursively.
 
 - Massive speed
 - High compatibility with web browsers
-- Pretty/JSON outputs
+- Pretty-printed/JSON outputs
 - Different tag support (`a`, `img`, `link`, `script`, etc)
 
 ## Installation
