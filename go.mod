@@ -12,7 +12,7 @@ require (
 	github.com/mattn/go-isatty v0.0.14
 	github.com/niemeyer/pretty v0.0.0-20200227124842-a10e7caefd8e // indirect
 	github.com/oxffaa/gopher-parse-sitemap v0.0.0-20191021113419-005d2eb1def4
-	github.com/stretchr/testify v1.7.0
+	github.com/stretchr/testify v1.7.1
 	github.com/temoto/robotstxt v1.1.2
 	github.com/valyala/fasthttp v1.34.0
 	github.com/yhat/scrape v0.0.0-20161128144610-24b7890b0945
