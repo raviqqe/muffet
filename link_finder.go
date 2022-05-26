@@ -91,8 +91,8 @@ func (f linkFinder) isLinkIncluded(u string) bool {
 	return f.matches(u, f.includedPatterns)
 }
 
-func (f linkFinder) matches(u string, patterns []*regexp.Regexp) bool {
-	for _, r := range patterns {
+func (f linkFinder) matches(u string, rs []*regexp.Regexp) bool {
+	for _, r := range rs {
 		if r.MatchString(u) {
 			return true
 		}
