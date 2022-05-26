@@ -51,26 +51,20 @@ func getArguments(ss []string) (*arguments, error) {
 
 	args.URL = ss[0]
 
-	res, err := compileRegexps(args.RawExcludedPatterns)
+	args.ExcludedPatterns, err = compileRegexps(args.RawExcludedPatterns)
 	if err != nil {
 		return nil, err
 	}
 
-	args.ExcludedPatterns = res
-
-	ris, err := compileRegexps(args.RawIncludedPatterns)
+	args.IncludePatterns, err = compileRegexps(args.RawIncludedPatterns)
 	if err != nil {
 		return nil, errors.New(fmt.Sprintf("Parse include patterns: %s", err.Error()))
 	}
 
-	args.IncludePatterns = ris
-
-	hs, err := parseHeaders(args.RawHeaders)
+	args.Headers, err = parseHeaders(args.RawHeaders)
 	if err != nil {
 		return nil, err
 	}
-
-	args.Headers = hs
 
 	return &args, nil
 }
