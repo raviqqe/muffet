@@ -34,8 +34,8 @@ type linkFinder struct {
 	includedPatterns []*regexp.Regexp
 }
 
-func newLinkFinder(rs []*regexp.Regexp, includePatterns []*regexp.Regexp) linkFinder {
-	return linkFinder{excludedPatterns: rs, includedPatterns: includePatterns}
+func newLinkFinder(es []*regexp.Regexp, is []*regexp.Regexp) linkFinder {
+	return linkFinder{excludedPatterns: es, includedPatterns: is}
 }
 
 func (f linkFinder) Find(n *html.Node, base *url.URL) map[string]error {
