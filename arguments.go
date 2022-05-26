@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"errors"
+	"fmt"
 	"regexp"
 	"strings"
 
@@ -14,6 +15,7 @@ type arguments struct {
 	MaxConnections        int      `short:"c" long:"max-connections" value-name:"<count>" default:"512" description:"Maximum number of HTTP connections"`
 	MaxConnectionsPerHost int      `long:"max-connections-per-host" value-name:"<count>" default:"512" description:"Maximum number of HTTP connections per host"`
 	RawExcludedPatterns   []string `short:"e" long:"exclude" value-name:"<pattern>..." description:"Exclude URLs matched with given regular expressions"`
+	RawIncludePatterns    []string `short:"i" long:"include" value-name:"<pattern>..." description:"Include URLs matched with given regular expressions"`
 	FollowRobotsTxt       bool     `long:"follow-robots-txt" description:"Follow robots.txt when scraping pages"`
 	FollowSitemapXML      bool     `long:"follow-sitemap-xml" description:"Scrape only pages listed in sitemap.xml"`
 	RawHeaders            []string `long:"header" value-name:"<header>..." description:"Custom headers"`
@@ -31,6 +33,7 @@ type arguments struct {
 	Version               bool     `long:"version" description:"Show version"`
 	URL                   string
 	ExcludedPatterns      []*regexp.Regexp
+	IncludePatterns       []*regexp.Regexp
 	Headers               map[string]string
 }
 
@@ -48,12 +51,19 @@ func getArguments(ss []string) (*arguments, error) {
 
 	args.URL = ss[0]
 
-	rs, err := compileRegexps(args.RawExcludedPatterns)
+	res, err := compileRegexps(args.RawExcludedPatterns)
 	if err != nil {
 		return nil, err
 	}
 
-	args.ExcludedPatterns = rs
+	args.ExcludedPatterns = res
+
+	ris, err := compileRegexps(args.RawIncludePatterns)
+	if err != nil {
+		return nil, errors.New(fmt.Sprintf("Parse include patterns: %s", err.Error()))
+	}
+
+	args.IncludePatterns = ris
 
 	hs, err := parseHeaders(args.RawHeaders)
 	if err != nil {

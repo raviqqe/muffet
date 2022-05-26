@@ -64,7 +64,7 @@ func (c *command) runWithError(ss []string) (bool, error) {
 		args.MaxRedirections,
 	)
 
-	pp := newPageParser(newLinkFinder(args.ExcludedPatterns))
+	pp := newPageParser(newLinkFinder(args.ExcludedPatterns, args.IncludePatterns))
 
 	f := newLinkFetcher(
 		client,

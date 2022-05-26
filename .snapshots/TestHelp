@@ -10,6 +10,8 @@ Application Options:
                                             per host (default: 512)
   -e, --exclude=<pattern>...                Exclude URLs matched with given
                                             regular expressions
+  -i, --include=<pattern>...                Include URLs matched with given
+                                            regular expressions
       --follow-robots-txt                   Follow robots.txt when scraping
                                             pages
       --follow-sitemap-xml                  Scrape only pages listed in

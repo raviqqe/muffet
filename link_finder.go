@@ -31,10 +31,11 @@ var imageDescriptorPattern = regexp.MustCompile(" [^ ]*$")
 
 type linkFinder struct {
 	excludedPatterns []*regexp.Regexp
+	includedPatterns []*regexp.Regexp
 }
 
-func newLinkFinder(rs []*regexp.Regexp) linkFinder {
-	return linkFinder{rs}
+func newLinkFinder(rs []*regexp.Regexp, includePatterns []*regexp.Regexp) linkFinder {
+	return linkFinder{excludedPatterns: rs, includedPatterns: includePatterns}
 }
 
 func (f linkFinder) Find(n *html.Node, base *url.URL) map[string]error {
@@ -51,6 +52,11 @@ func (f linkFinder) Find(n *html.Node, base *url.URL) map[string]error {
 				s := strings.TrimSpace(s)
 
 				if s == "" || f.isLinkExcluded(s) {
+					continue
+				}
+
+				// only use include pattern when not empty
+				if len(f.includedPatterns) > 0 && !f.isLinkIncluded(s) {
 					continue
 				}
 
@@ -84,7 +90,15 @@ func (linkFinder) parseLinks(n *html.Node, a string) []string {
 }
 
 func (f linkFinder) isLinkExcluded(u string) bool {
-	for _, r := range f.excludedPatterns {
+	return f.isMatch(u, f.excludedPatterns)
+}
+
+func (f linkFinder) isLinkIncluded(u string) bool {
+	return f.isMatch(u, f.includedPatterns)
+}
+
+func (f linkFinder) isMatch(u string, patterns []*regexp.Regexp) bool {
+	for _, r := range patterns {
 		if r.MatchString(u) {
 			return true
 		}
