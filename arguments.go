@@ -58,7 +58,7 @@ func getArguments(ss []string) (*arguments, error) {
 
 	args.IncludePatterns, err = compileRegexps(args.RawIncludedPatterns)
 	if err != nil {
-		return nil, errors.New(fmt.Sprintf("Parse include patterns: %s", err.Error()))
+		return nil, err
 	}
 
 	args.Headers, err = parseHeaders(args.RawHeaders)
