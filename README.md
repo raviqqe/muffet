@@ -32,11 +32,24 @@ brew install muffet
 
 ## Usage
 
+Examples 
 ```
 muffet https://shady.bakery.hotland
 ```
+```
+Returns**
+https://shady.bakery.hotland
+https://shady.bakery.hotland/example-page-1
+https://shady.bakery.hotland/example-page-2
+https://shady.bakery.hotland/example-page-3
+https://shady.bakery.hotland/example-page-error
+```
+
+It recursively searches any sub url of the main url, while checking the they are fast links.
 
 For more information, see `muffet --help`.
+
+
 
 ### Docker
 
