@@ -63,11 +63,7 @@ func (f linkFinder) Find(n *html.Node, base *url.URL) map[string]error {
 
 				s = base.ResolveReference(u).String()
 
-				if f.isLinkExcluded(s) || !f.isLinkIncluded(s) {
-					continue
-				}
-
-				if _, ok := validSchemes[u.Scheme]; ok {
+				if _, ok := validSchemes[u.Scheme]; ok && !f.isLinkExcluded(s) && f.isLinkIncluded(s) {
 					ls[s] = nil
 				}
 			}
