@@ -171,6 +171,19 @@ func TestLinkFinderIsLinkIncluded(t *testing.T) {
 	}
 }
 
+func TestLinkFinderIncludeEntireUrl(t *testing.T) {
+	b, err := url.Parse("http://foo.com")
+	assert.Nil(t, err)
+
+	n, err := html.Parse(strings.NewReader(htmlWithBody(`<a href="/bar" />`)))
+	assert.Nil(t, err)
+
+	rs, err := compileRegexps([]string{"foo"})
+	assert.Nil(t, err)
+
+	assert.Equal(t, map[string]error{"http://foo.com/bar": nil}, newLinkFinder(nil, rs).Find(n, b))
+}
+
 func TestLinkFinderFindLinkInSrcSet(t *testing.T) {
 	b, err := url.Parse("http://foo.com")
 	assert.Nil(t, err)
