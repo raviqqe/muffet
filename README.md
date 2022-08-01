@@ -20,19 +20,19 @@ website recursively.
 
 ## Installation
 
-```
-GO111MODULE=on go get -u github.com/raviqqe/muffet/v2
+```sh
+go get -u github.com/raviqqe/muffet/v2
 ```
 
 ### Homebrew
 
-```
+```sh
 brew install muffet
 ```
 
 ## Usage
 
-```
+```sh
 muffet https://shady.bakery.hotland
 ```
 
@@ -40,7 +40,7 @@ For more information, see `muffet --help`.
 
 ### Docker
 
-```
+```sh
 docker run raviqqe/muffet https://shady.bakery.hotland
 ```
 
