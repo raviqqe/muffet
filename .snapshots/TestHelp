@@ -8,7 +8,7 @@ Application Options:
                                             (default: 512)
       --max-connections-per-host=<count>    Maximum number of HTTP connections
                                             per host (default: 512)
-      --max-response-body-size=<size>       Maximum web page body size to read
+      --max-response-body-size=<size>       Maximum response body size to read
                                             (default: 10000000)
   -e, --exclude=<pattern>...                Exclude URLs matched with given
                                             regular expressions
