@@ -19,6 +19,7 @@ func TestLinkFinderFindLinks(t *testing.T) {
 		linkCount int
 	}{
 		{``, 0},
+		{`<a href="" />`, 0},
 		{`<a href="/" />`, 1},
 		{`<a href="/foo" />`, 1},
 		// TODO: Test <frame> tag.
@@ -168,6 +169,32 @@ func TestLinkFinderIsLinkIncluded(t *testing.T) {
 
 		assert.Equal(t, x.answer, newLinkFinder(nil, rs).isLinkIncluded("http://foo.com"))
 	}
+}
+
+func TestLinkFinderExcludeEntireUrl(t *testing.T) {
+	b, err := url.Parse("http://foo.com")
+	assert.Nil(t, err)
+
+	n, err := html.Parse(strings.NewReader(htmlWithBody(`<a href="/bar" />`)))
+	assert.Nil(t, err)
+
+	rs, err := compileRegexps([]string{"foo"})
+	assert.Nil(t, err)
+
+	assert.Equal(t, map[string]error{}, newLinkFinder(rs, nil).Find(n, b))
+}
+
+func TestLinkFinderIncludeEntireUrl(t *testing.T) {
+	b, err := url.Parse("http://foo.com")
+	assert.Nil(t, err)
+
+	n, err := html.Parse(strings.NewReader(htmlWithBody(`<a href="/bar" />`)))
+	assert.Nil(t, err)
+
+	rs, err := compileRegexps([]string{"foo"})
+	assert.Nil(t, err)
+
+	assert.Equal(t, map[string]error{"http://foo.com/bar": nil}, newLinkFinder(nil, rs).Find(n, b))
 }
 
 func TestLinkFinderFindLinkInSrcSet(t *testing.T) {

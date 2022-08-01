@@ -51,19 +51,20 @@ func (f linkFinder) Find(n *html.Node, base *url.URL) map[string]error {
 			for _, s := range ss {
 				s := strings.TrimSpace(s)
 
+				if s == "" {
+					continue
+				}
+
 				u, err := url.Parse(s)
 				if err != nil {
 					ls[s] = err
 					continue
 				}
-				fullurl := base.ResolveReference(u).String()
 
-				if s == "" || f.isLinkExcluded(fullurl) || len(f.includedPatterns) > 0 && !f.isLinkIncluded(fullurl) {
-					continue
-				}
+				s = base.ResolveReference(u).String()
 
-				if _, ok := validSchemes[u.Scheme]; ok {
-					ls[fullurl] = nil
+				if _, ok := validSchemes[u.Scheme]; ok && !f.isLinkExcluded(s) && f.isLinkIncluded(s) {
+					ls[s] = nil
 				}
 			}
 		}
@@ -92,7 +93,7 @@ func (f linkFinder) isLinkExcluded(u string) bool {
 }
 
 func (f linkFinder) isLinkIncluded(u string) bool {
-	return f.matches(u, f.includedPatterns)
+	return len(f.includedPatterns) == 0 || f.matches(u, f.includedPatterns)
 }
 
 func (f linkFinder) matches(u string, rs []*regexp.Regexp) bool {
