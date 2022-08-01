@@ -4,6 +4,7 @@ import "time"
 
 type httpClientOptions struct {
 	MaxConnectionsPerHost,
+	MaxResponseBodySize,
 	BufferSize int
 	Proxy               string
 	SkipTLSVerification bool

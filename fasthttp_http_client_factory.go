@@ -33,6 +33,7 @@ func (*fasthttpHttpClientFactory) Create(o httpClientOptions) httpClient {
 			},
 			Dial:                     d,
 			NoDefaultUserAgentHeader: true,
+			MaxResponseBodySize:      o.MaxResponseBodySize,
 		},
 		o.Timeout,
 		o.Headers,
