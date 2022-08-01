@@ -51,19 +51,24 @@ func (f linkFinder) Find(n *html.Node, base *url.URL) map[string]error {
 			for _, s := range ss {
 				s := strings.TrimSpace(s)
 
+				if s == "" {
+					continue
+				}
+
 				u, err := url.Parse(s)
 				if err != nil {
 					ls[s] = err
 					continue
 				}
-				fullurl := base.ResolveReference(u).String()
 
-				if s == "" || f.isLinkExcluded(fullurl) || len(f.includedPatterns) > 0 && !f.isLinkIncluded(fullurl) {
+				s = base.ResolveReference(u).String()
+
+				if f.isLinkExcluded(s) || len(f.includedPatterns) > 0 && !f.isLinkIncluded(s) {
 					continue
 				}
 
 				if _, ok := validSchemes[u.Scheme]; ok {
-					ls[fullurl] = nil
+					ls[s] = nil
 				}
 			}
 		}

@@ -19,6 +19,7 @@ func TestLinkFinderFindLinks(t *testing.T) {
 		linkCount int
 	}{
 		{``, 0},
+		{`<a href="" />`, 0},
 		{`<a href="/" />`, 1},
 		{`<a href="/foo" />`, 1},
 		// TODO: Test <frame> tag.
