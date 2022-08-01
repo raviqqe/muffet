@@ -13,6 +13,7 @@ type arguments struct {
 	BufferSize            int      `short:"b" long:"buffer-size" value-name:"<size>" default:"4096" description:"HTTP response buffer size in bytes"`
 	MaxConnections        int      `short:"c" long:"max-connections" value-name:"<count>" default:"512" description:"Maximum number of HTTP connections"`
 	MaxConnectionsPerHost int      `long:"max-connections-per-host" value-name:"<count>" default:"512" description:"Maximum number of HTTP connections per host"`
+	MaxResponseBodySize   int      `long:"max-response-body-size" value-name:"<size>" default:"10000000" description:"Maximum web page body size to read"`
 	RawExcludedPatterns   []string `short:"e" long:"exclude" value-name:"<pattern>..." description:"Exclude URLs matched with given regular expressions"`
 	RawIncludedPatterns   []string `short:"i" long:"include" value-name:"<pattern>..." description:"Include URLs matched with given regular expressions"`
 	FollowRobotsTxt       bool     `long:"follow-robots-txt" description:"Follow robots.txt when scraping pages"`

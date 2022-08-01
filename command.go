@@ -50,6 +50,7 @@ func (c *command) runWithError(ss []string) (bool, error) {
 			c.httpClientFactory.Create(
 				httpClientOptions{
 					MaxConnectionsPerHost: args.MaxConnectionsPerHost,
+					MaxResponseBodySize:   args.MaxResponseBodySize,
 					BufferSize:            args.BufferSize,
 					Proxy:                 args.Proxy,
 					SkipTLSVerification:   args.SkipTLSVerification,
