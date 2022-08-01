@@ -181,7 +181,7 @@ func TestLinkFinderExcludeEntireUrl(t *testing.T) {
 	rs, err := compileRegexps([]string{"foo"})
 	assert.Nil(t, err)
 
-	assert.Equal(t, map[string]error{"http://foo.com/bar": nil}, newLinkFinder(nil, rs).Find(n, b))
+	assert.Equal(t, map[string]error{}, newLinkFinder(rs, nil).Find(n, b))
 }
 
 func TestLinkFinderIncludeEntireUrl(t *testing.T) {
