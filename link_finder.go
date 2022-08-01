@@ -63,7 +63,7 @@ func (f linkFinder) Find(n *html.Node, base *url.URL) map[string]error {
 
 				s = base.ResolveReference(u).String()
 
-				if f.isLinkExcluded(s) || len(f.includedPatterns) > 0 && !f.isLinkIncluded(s) {
+				if f.isLinkExcluded(s) || !f.isLinkIncluded(s) {
 					continue
 				}
 
@@ -97,7 +97,7 @@ func (f linkFinder) isLinkExcluded(u string) bool {
 }
 
 func (f linkFinder) isLinkIncluded(u string) bool {
-	return f.matches(u, f.includedPatterns)
+	return len(f.includedPatterns) == 0 || f.matches(u, f.includedPatterns)
 }
 
 func (f linkFinder) matches(u string, rs []*regexp.Regexp) bool {
