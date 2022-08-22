@@ -32,6 +32,7 @@ func (*fasthttpHttpClientFactory) Create(o httpClientOptions) httpClient {
 				InsecureSkipVerify: o.SkipTLSVerification,
 			},
 			Dial:                     d,
+			DisablePathNormalizing:   true,
 			NoDefaultUserAgentHeader: true,
 			MaxResponseBodySize:      o.MaxResponseBodySize,
 		},
