@@ -1,4 +1,4 @@
-name: codeql
+name: security
 on:
   push:
     branches:
@@ -9,7 +9,7 @@ on:
   schedule:
     - cron: "0 0 * * *"
 jobs:
-  analyze:
+  codeql:
     runs-on: ubuntu-latest
     permissions:
       actions: read
