@@ -1,0 +1,26 @@
+name: codeql
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  schedule:
+    - cron: "0 0 * * *"
+jobs:
+  analyze:
+    name: Analyze
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+    steps:
+      - uses: actions/checkout@v3
+      - uses: github/codeql-action/init@v2
+        with:
+          languages: go
+          queries: +security-and-quality
+      - uses: github/codeql-action/autobuild@v2
+      - uses: github/codeql-action/analyze@v2
