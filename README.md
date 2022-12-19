@@ -1,6 +1,6 @@
 # Muffet
 
-[![GitHub Action](https://img.shields.io/github/workflow/status/raviqqe/muffet/test?style=flat-square)](https://github.com/raviqqe/muffet/actions)
+[![GitHub Action](https://img.shields.io/github/actions/workflow/status/raviqqe/muffet/test.yaml?branch=main&style=flat-square)](https://github.com/raviqqe/muffet/actions)
 [![Codecov](https://img.shields.io/codecov/c/github/raviqqe/muffet.svg?style=flat-square)](https://codecov.io/gh/raviqqe/muffet)
 [![Go Report Card](https://goreportcard.com/badge/github.com/raviqqe/muffet?style=flat-square)](https://goreportcard.com/report/github.com/raviqqe/muffet)
 [![Docker](https://img.shields.io/docker/pulls/raviqqe/muffet?style=flat-square)](https://hub.docker.com/r/raviqqe/muffet)
