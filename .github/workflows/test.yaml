@@ -15,3 +15,15 @@ jobs:
       - uses: golangci/golangci-lint-action@v3
       - run: go test -race -covermode atomic -coverprofile coverage.txt
       - uses: codecov/codecov-action@v3
+  spell_check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: streetsidesoftware/cspell-action@v2
+        with:
+          files: "**/*.{md,go}"
+  readme:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - run: npx markdown-link-check README.md
