@@ -253,6 +253,40 @@ func TestLinkFinderFindMultipleLinksInSrcSetWithDescriptors(t *testing.T) {
 	assert.Nil(t, err)
 }
 
+func TestLinkFinderFindMetaTags(t *testing.T) {
+	b, err := url.Parse("http://foo.com")
+	assert.Nil(t, err)
+
+	n, err := html.Parse(strings.NewReader(
+		htmlWithHead(`<meta property="og:image" content="foo.png" />`)),
+	)
+	assert.Nil(t, err)
+
+	ls := newLinkFinder(nil, nil).Find(n, b)
+
+	err, ok := ls["http://foo.com/foo.png"]
+	assert.True(t, ok)
+	assert.Nil(t, err)
+}
+
+func TestLinkFinderIgnoreMetaTags(t *testing.T) {
+	b, err := url.Parse("http://foo.com")
+	assert.Nil(t, err)
+
+	n, err := html.Parse(strings.NewReader(
+		htmlWithHead(`<meta property="og:title" content="title" />`)),
+	)
+	assert.Nil(t, err)
+
+	ls := newLinkFinder(nil, nil).Find(n, b)
+
+	assert.Len(t, ls, 0)
+}
+
 func htmlWithBody(b string) string {
 	return fmt.Sprintf(`<html><body>%v</body></html>`, b)
+}
+
+func htmlWithHead(b string) string {
+	return fmt.Sprintf(`<html><head>%v</head><body><p>hi</p></body></html>`, b)
 }
