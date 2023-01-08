@@ -25,6 +25,7 @@ var atomToAttributes = map[atom.Atom][]string{
 	atom.Script: {"src"},
 	atom.Source: {"src", "srcset"},
 	atom.Track:  {"src"},
+	atom.Meta:   {"content"},
 }
 
 var imageDescriptorPattern = regexp.MustCompile(" [^ ]*$")
@@ -80,6 +81,12 @@ func (linkFinder) parseLinks(n *html.Node, a string) []string {
 	if a == "srcset" {
 		for _, s := range strings.Split(s, ",") {
 			ss = append(ss, imageDescriptorPattern.ReplaceAllString(strings.TrimSpace(s), ""))
+		}
+	} else if a == "content" {
+		prop := scrape.Attr(n, "property")
+		switch prop {
+		case "og:image", "og:audio", "og:video", "og:image:url", "og:image:secure_url", "twitter:image":
+			ss = append(ss, s)
 		}
 	} else {
 		ss = append(ss, s)
