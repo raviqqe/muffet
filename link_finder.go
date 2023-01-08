@@ -78,17 +78,17 @@ func (linkFinder) parseLinks(n *html.Node, a string) []string {
 	s := scrape.Attr(n, a)
 	ss := []string{}
 
-	if a == "srcset" {
+	switch a {
+	case "srcset":
 		for _, s := range strings.Split(s, ",") {
 			ss = append(ss, imageDescriptorPattern.ReplaceAllString(strings.TrimSpace(s), ""))
 		}
-	} else if a == "content" {
-		prop := scrape.Attr(n, "property")
-		switch prop {
+	case "content":
+		switch scrape.Attr(n, "property") {
 		case "og:image", "og:audio", "og:video", "og:image:url", "og:image:secure_url", "twitter:image":
 			ss = append(ss, s)
 		}
-	} else {
+	default:
 		ss = append(ss, s)
 	}
 
