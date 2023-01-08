@@ -1,3 +1,31 @@
 {
-  "words": ["iframe", "stretchr", "yhat"]
+  "words": [
+    "andybalholm",
+    "bradleyjkemp",
+    "brotli",
+    "brotli",
+    "cupaloy",
+    "errcheck",
+    "fasthttp",
+    "fasthttp",
+    "fasthttpproxy",
+    "iframe",
+    "isatty",
+    "jessevdk",
+    "logrusorgru",
+    "mattn",
+    "muffet",
+    "nolint",
+    "oxffaa",
+    "ratelimit",
+    "redirections",
+    "redirections",
+    "robotstxt",
+    "stretchr",
+    "temoto",
+    "unbrotli",
+    "urlset",
+    "valyala",
+    "yhat"
+  ]
 }
