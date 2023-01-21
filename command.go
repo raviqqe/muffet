@@ -135,35 +135,19 @@ func (c *command) runWithError(ss []string) (bool, error) {
 }
 
 func (c *command) printResultsInJSON(rc <-chan *pageResult, includeSuccess bool) (bool, error) {
-	errorResults := []*jsonErrorPageResult{}
+	results := []interface{}{}
 	ok := true
 
-	successResults := []*jsonSuccessPageResult{}
-
 	for r := range rc {
-		if r.OK() {
-			successResults = append(successResults, newJSONSuccessPageResult(r))
-		} else {
-			errorResults = append(errorResults, newJSONErrorPageResult(r))
+		if r.OK() && includeSuccess {
+			results = append(results, newJSONSuccessPageResult(r))
+		} else if !r.OK() {
+			results = append(results, newJSONErrorPageResult(r))
 			ok = false
 		}
 	}
 
-	if !includeSuccess {
-		bs, err := json.Marshal(errorResults)
-
-		if err != nil {
-			return false, err
-		}
-
-		c.print(string(bs))
-
-		return ok, nil
-	}
-
-	allResults := &jsonAllPageResults{Error: errorResults, Success: successResults}
-
-	bs, err := json.Marshal(allResults)
+	bs, err := json.Marshal(results)
 
 	if err != nil {
 		return false, err
