@@ -256,6 +256,20 @@ func TestCommandDoNotIncludeSuccessfulPageInJSONOutput(t *testing.T) {
 	assert.Equal(t, strings.TrimSpace(b.String()), "[]")
 }
 
+func TestCommandIncludeSuccessfulPageInJSONOutputWhenRequested(t *testing.T) {
+	b := &bytes.Buffer{}
+
+	ok := newTestCommandWithStdout(
+		b,
+		func(u *url.URL) (*fakeHttpResponse, error) {
+			return newFakeHtmlResponse("", ""), nil
+		},
+	).Run([]string{"--json", "--include-success-in-json", "http://foo.com"})
+
+	assert.True(t, ok)
+	assert.Equal(t, strings.TrimSpace(b.String()), "[{\"url\":\"\",\"links\":[]}]")
+}
+
 func TestCommandFailWithVerboseAndJSONOptions(t *testing.T) {
 	b := &bytes.Buffer{}
 

@@ -111,7 +111,7 @@ func (c *command) runWithError(ss []string) (bool, error) {
 	go checker.Check(p)
 
 	if args.JSONOutput {
-		return c.printResultsInJSON(checker.Results())
+		return c.printResultsInJSON(checker.Results(), args.IncludeSuccessInJSONOutput)
 	}
 
 	formatter := newPageResultFormatter(
@@ -134,18 +134,36 @@ func (c *command) runWithError(ss []string) (bool, error) {
 	return ok, nil
 }
 
-func (c *command) printResultsInJSON(rc <-chan *pageResult) (bool, error) {
-	rs := []*jsonPageResult{}
+func (c *command) printResultsInJSON(rc <-chan *pageResult, includeSuccess bool) (bool, error) {
+	errorResults := []*jsonErrorPageResult{}
 	ok := true
 
+	successResults := []*jsonSuccessPageResult{}
+
 	for r := range rc {
-		if !r.OK() {
-			rs = append(rs, newJSONPageResult(r))
+		if r.OK() {
+			successResults = append(successResults, newJSONSuccessPageResult(r))
+		} else {
+			errorResults = append(errorResults, newJSONErrorPageResult(r))
 			ok = false
 		}
 	}
 
-	bs, err := json.Marshal(rs)
+	if !includeSuccess {
+		bs, err := json.Marshal(errorResults)
+
+		if err != nil {
+			return false, err
+		}
+
+		c.print(string(bs))
+
+		return ok, nil
+	}
+
+	allResults := &jsonAllPageResults{Error: errorResults, Success: successResults}
+
+	bs, err := json.Marshal(allResults)
 
 	if err != nil {
 		return false, err

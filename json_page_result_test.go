@@ -9,16 +9,27 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestMarshalJSONPageResult(t *testing.T) {
-	bs, err := json.Marshal(newJSONPageResult(
+func TestMarshalErrorJSONPageResult(t *testing.T) {
+	bs, err := json.Marshal(newJSONErrorPageResult(
+		&pageResult{
+			"http://foo.com",
+			[]*successLinkResult{},
+			[]*errorLinkResult{
+				{"http://foo.com/bar", errors.New("baz")},
+			},
+		}))
+	assert.Nil(t, err)
+	cupaloy.SnapshotT(t, bs)
+}
+
+func TestMarshalSuccessJSONPageResult(t *testing.T) {
+	bs, err := json.Marshal(newJSONSuccessPageResult(
 		&pageResult{
 			"http://foo.com",
 			[]*successLinkResult{
 				{"http://foo.com/foo", 200},
 			},
-			[]*errorLinkResult{
-				{"http://foo.com/bar", errors.New("baz")},
-			},
+			[]*errorLinkResult{},
 		}))
 	assert.Nil(t, err)
 	cupaloy.SnapshotT(t, bs)

@@ -21,6 +21,7 @@ Application Options:
       --header=<header>...                  Custom headers
   -f, --ignore-fragments                    Ignore URL fragments
       --json                                Output results in JSON
+      --include-success-in-json             Include successful results in JSON
   -r, --max-redirections=<count>            Maximum number of redirections
                                             (default: 64)
       --rate-limit=<rate>                   Max requests per second

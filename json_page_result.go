@@ -1,21 +1,46 @@
 package main
 
-type jsonPageResult struct {
-	URL   string            `json:"url"`
-	Links []*jsonLinkResult `json:"links"`
+type jsonAllPageResults struct {
+	Error   []*jsonErrorPageResult   `json:"error"`
+	Success []*jsonSuccessPageResult `json:"success"`
 }
 
-type jsonLinkResult struct {
+type jsonErrorPageResult struct {
+	URL   string                 `json:"url"`
+	Links []*jsonErrorLinkResult `json:"links"`
+}
+
+type jsonErrorLinkResult struct {
 	URL   string `json:"url"`
 	Error string `json:"error"`
 }
 
-func newJSONPageResult(r *pageResult) *jsonPageResult {
-	ls := make([]*jsonLinkResult, 0, len(r.ErrorLinkResults))
+type jsonSuccessPageResult struct {
+	URL   string                   `json:"url"`
+	Links []*jsonSuccessLinkResult `json:"links"`
+}
+
+type jsonSuccessLinkResult struct {
+	URL    string `json:"url"`
+	Status int    `json:"status"`
+}
+
+func newJSONErrorPageResult(r *pageResult) *jsonErrorPageResult {
+	ls := make([]*jsonErrorLinkResult, 0, len(r.ErrorLinkResults))
 
 	for _, r := range r.ErrorLinkResults {
-		ls = append(ls, &jsonLinkResult{r.URL, r.Error.Error()})
+		ls = append(ls, &jsonErrorLinkResult{r.URL, r.Error.Error()})
 	}
 
-	return &jsonPageResult{r.URL, ls}
+	return &jsonErrorPageResult{r.URL, ls}
+}
+
+func newJSONSuccessPageResult(r *pageResult) *jsonSuccessPageResult {
+	ls := make([]*jsonSuccessLinkResult, 0, len(r.SuccessLinkResults))
+
+	for _, r := range r.SuccessLinkResults {
+		ls = append(ls, &jsonSuccessLinkResult{r.URL, r.StatusCode})
+	}
+
+	return &jsonSuccessPageResult{r.URL, ls}
 }
