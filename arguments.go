@@ -22,6 +22,7 @@ type arguments struct {
 	IgnoreFragments            bool     `short:"f" long:"ignore-fragments" description:"Ignore URL fragments"`
 	JSONOutput                 bool     `long:"json" description:"Output results in JSON"`
 	IncludeSuccessInJSONOutput bool     `long:"include-success-in-json" description:"Include successful results in JSON"`
+	JUnitOutput                bool     `long:"junit" description:"Output results as JUnit XML file"`
 	MaxRedirections            int      `short:"r" long:"max-redirections" value-name:"<count>" default:"64" description:"Maximum number of redirections"`
 	RateLimit                  int      `long:"rate-limit" value-name:"<rate>" description:"Max requests per second"`
 	Timeout                    int      `short:"t" long:"timeout" value-name:"<seconds>" default:"10" description:"Timeout for HTTP requests in seconds"`

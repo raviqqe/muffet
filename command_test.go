@@ -280,3 +280,46 @@ func TestCommandFailWithVerboseAndJSONOptions(t *testing.T) {
 	assert.False(t, ok)
 	cupaloy.SnapshotT(t, b.String())
 }
+
+func TestCommandFailToRunWithJUnitOutput(t *testing.T) {
+	b := &bytes.Buffer{}
+
+	ok := newTestCommandWithStdout(
+		b,
+		func(u *url.URL) (*fakeHttpResponse, error) {
+			if u.String() == "http://foo.com" {
+				return newFakeHtmlResponse(
+					"http://foo.com",
+					`<html><body><a href="/foo" /></body></html>`,
+				), nil
+			}
+
+			return nil, errors.New("foo")
+		},
+	).Run([]string{"--junit", "http://foo.com"})
+
+	assert.False(t, ok)
+	assert.Greater(t, b.Len(), 0)
+}
+
+func TestCommandFailWithVerboseAndJUnitOptions(t *testing.T) {
+	b := &bytes.Buffer{}
+
+	ok := newTestCommandWithStderr(b, nil).Run(
+		[]string{"--junit", "--verbose", "http://foo.com"},
+	)
+
+	assert.False(t, ok)
+	cupaloy.SnapshotT(t, b.String())
+}
+
+func TestCommandFailWithJUnitAndJSONOptions(t *testing.T) {
+	b := &bytes.Buffer{}
+
+	ok := newTestCommandWithStderr(b, nil).Run(
+		[]string{"--json", "--junit", "http://foo.com"},
+	)
+
+	assert.False(t, ok)
+	cupaloy.SnapshotT(t, b.String())
+}

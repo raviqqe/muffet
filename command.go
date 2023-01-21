@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"encoding/xml"
 	"errors"
 	"fmt"
 	"io"
@@ -43,6 +44,10 @@ func (c *command) runWithError(ss []string) (bool, error) {
 		return err == nil, err
 	} else if args.JSONOutput && args.Verbose {
 		return false, errors.New("verbose option not supported for JSON output")
+	} else if args.JUnitOutput && args.Verbose {
+		return false, errors.New("verbose option not supported for JUnit output")
+	} else if args.JSONOutput && args.JUnitOutput {
+		return false, errors.New("JSON and JUnit output are mutually exclusive")
 	}
 
 	client := newRedirectHttpClient(
@@ -114,6 +119,10 @@ func (c *command) runWithError(ss []string) (bool, error) {
 		return c.printResultsInJSON(checker.Results(), args.IncludeSuccessInJSONOutput)
 	}
 
+	if args.JUnitOutput {
+		return c.printResultsAsJunitXML(checker.Results())
+	}
+
 	formatter := newPageResultFormatter(
 		args.Verbose,
 		isColorEnabled(args.Color, c.terminal),
@@ -154,6 +163,35 @@ func (c *command) printResultsInJSON(rc <-chan *pageResult, includeSuccess bool)
 	}
 
 	c.print(string(bs))
+
+	return ok, nil
+}
+
+func (c *command) printResultsAsJunitXML(rc <-chan *pageResult) (bool, error) {
+	rs := []*xmlPageResult{}
+	ok := true
+
+	for r := range rc {
+		rs = append(rs, newXMLPageResult(r))
+
+		if !r.OK() {
+			ok = false
+		}
+	}
+
+	results := &struct {
+		XMLName     xml.Name         `xml:"testsuites"`
+		PageResults []*xmlPageResult `xml:"testsuite"`
+	}{PageResults: rs}
+
+	data, err := xml.MarshalIndent(results, "", "  ")
+
+	if err != nil {
+		return ok, err
+	}
+
+	c.print(xml.Header)
+	c.print(string(data))
 
 	return ok, nil
 }
