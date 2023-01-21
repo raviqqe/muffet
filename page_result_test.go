@@ -2,11 +2,13 @@ package main
 
 import (
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 )
 
 func TestPageResultOK(t *testing.T) {
-	assert.True(t, (&pageResult{"", nil, nil}).OK())
-	assert.False(t, (&pageResult{"", nil, []*errorLinkResult{{}}}).OK())
+	d, _ := time.ParseDuration("1s")
+	assert.True(t, (&pageResult{"", nil, nil, d}).OK())
+	assert.False(t, (&pageResult{"", nil, []*errorLinkResult{{}}, d}).OK())
 }
