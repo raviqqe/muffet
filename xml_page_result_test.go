@@ -1,0 +1,36 @@
+package main
+
+import (
+	"encoding/xml"
+	"errors"
+	"testing"
+
+	"github.com/bradleyjkemp/cupaloy"
+	"github.com/stretchr/testify/assert"
+)
+
+func TestMarshalErrorXMLPageResult(t *testing.T) {
+	bs, err := xml.Marshal(newXMLPageResult(
+		&pageResult{
+			"http://foo.com",
+			[]*successLinkResult{},
+			[]*errorLinkResult{
+				{"http://foo.com/bar", errors.New("baz")},
+			},
+		}))
+	assert.Nil(t, err)
+	cupaloy.SnapshotT(t, bs)
+}
+
+func TestMarshalSuccessXMLPageResult(t *testing.T) {
+	bs, err := xml.Marshal(newXMLPageResult(
+		&pageResult{
+			"http://foo.com",
+			[]*successLinkResult{
+				{"http://foo.com/foo", 200},
+			},
+			[]*errorLinkResult{},
+		}))
+	assert.Nil(t, err)
+	cupaloy.SnapshotT(t, bs)
+}
