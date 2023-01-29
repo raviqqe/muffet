@@ -144,7 +144,7 @@ func (c *command) printResultsInJSON(rc <-chan *pageResult, verbose bool) (bool,
 	ok := true
 
 	for r := range rc {
-		if !r.OK() || r.OK() && verbose {
+		if !r.OK() || verbose {
 			rs = append(rs, newJSONPageResult(r, verbose))
 		}
 
