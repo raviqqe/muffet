@@ -7,6 +7,6 @@ import (
 )
 
 func TestPageResultOK(t *testing.T) {
-	assert.True(t, (&pageResult{"", nil, nil, 0}).OK())
-	assert.False(t, (&pageResult{"", nil, []*errorLinkResult{{}}, 0}).OK())
+	assert.True(t, (&pageResult{"", nil, nil}).OK())
+	assert.False(t, (&pageResult{"", nil, []*errorLinkResult{{}}}).OK())
 }
