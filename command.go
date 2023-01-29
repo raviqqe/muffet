@@ -133,9 +133,7 @@ func (c *command) runWithError(ss []string) (bool, error) {
 			c.print(formatter.Format(r))
 		}
 
-		if !r.OK() {
-			ok = false
-		}
+		ok = ok && r.OK()
 	}
 
 	return ok, nil
@@ -150,8 +148,9 @@ func (c *command) printResultsInJSON(rc <-chan *pageResult, includeSuccess bool)
 			rs = append(rs, newJSONSuccessPageResult(r))
 		} else if !r.OK() {
 			rs = append(rs, newJSONErrorPageResult(r))
-			ok = false
 		}
+
+		ok = ok && r.OK()
 	}
 
 	bs, err := json.Marshal(rs)
@@ -171,27 +170,28 @@ func (c *command) printResultsAsJUnitXML(rc <-chan *pageResult) (bool, error) {
 
 	for r := range rc {
 		rs = append(rs, newXMLPageResult(r))
-
-		if !r.OK() {
-			ok = false
-		}
+		ok = ok && r.OK()
 	}
 
-	results := &struct {
-		// spell-checker: disable-next-line
-		XMLName xml.Name `xml:"testsuites"`
-		// spell-checker: disable-next-line
-		PageResults []*xmlPageResult `xml:"testsuite"`
-	}{PageResults: rs}
-
-	data, err := xml.MarshalIndent(results, "", "  ")
+	bs, err := xml.MarshalIndent(
+		struct {
+			// spell-checker: disable-next-line
+			XMLName xml.Name `xml:"testsuites"`
+			// spell-checker: disable-next-line
+			PageResults []*xmlPageResult `xml:"testsuite"`
+		}{
+			PageResults: rs,
+		},
+		"",
+		"  ",
+	)
 
 	if err != nil {
-		return ok, err
+		return false, err
 	}
 
 	c.print(xml.Header)
-	c.print(string(data))
+	c.print(string(bs))
 
 	return ok, nil
 }
