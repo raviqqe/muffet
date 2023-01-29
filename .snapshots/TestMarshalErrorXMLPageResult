@@ -1,1 +1,5 @@
-<xmlPageResult name="http://foo.com" tests="1" failures="1" skipped="0"><testcase name="http://foo.com/bar" classname="http://foo.com"><failure message="baz"></failure></testcase></xmlPageResult>
+<xmlPageResult name="http://foo.com" tests="1" failures="1" skipped="0">
+  <testcase name="http://foo.com/bar" classname="http://foo.com">
+    <failure message="baz"></failure>
+  </testcase>
+</xmlPageResult>

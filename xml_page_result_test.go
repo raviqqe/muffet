@@ -10,7 +10,7 @@ import (
 )
 
 func TestMarshalErrorXMLPageResult(t *testing.T) {
-	bs, err := xml.Marshal(newXMLPageResult(
+	bs, err := marshalXML(newXMLPageResult(
 		&pageResult{
 			"http://foo.com",
 			[]*successLinkResult{},
@@ -23,7 +23,7 @@ func TestMarshalErrorXMLPageResult(t *testing.T) {
 }
 
 func TestMarshalSuccessXMLPageResult(t *testing.T) {
-	bs, err := xml.Marshal(newXMLPageResult(
+	bs, err := marshalXML(newXMLPageResult(
 		&pageResult{
 			"http://foo.com",
 			[]*successLinkResult{
@@ -33,4 +33,8 @@ func TestMarshalSuccessXMLPageResult(t *testing.T) {
 		}))
 	assert.Nil(t, err)
 	cupaloy.SnapshotT(t, bs)
+}
+
+func marshalXML(x any) ([]byte, error) {
+	return xml.MarshalIndent(x, "", "  ")
 }
