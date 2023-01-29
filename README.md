@@ -15,7 +15,6 @@ website recursively.
 
 - Massive speed
 - High compatibility with web browsers
-- Pretty-printed/JSON outputs
 - Different tag support (`a`, `img`, `link`, `script`, etc)
 - Multiple output formats (text, JSON, and JUnit XML)
 
