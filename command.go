@@ -142,19 +142,19 @@ func (c *command) runWithError(ss []string) (bool, error) {
 }
 
 func (c *command) printResultsInJSON(rc <-chan *pageResult, includeSuccess bool) (bool, error) {
-	results := []interface{}{}
+	rs := []interface{}{}
 	ok := true
 
 	for r := range rc {
 		if r.OK() && includeSuccess {
-			results = append(results, newJSONSuccessPageResult(r))
+			rs = append(rs, newJSONSuccessPageResult(r))
 		} else if !r.OK() {
-			results = append(results, newJSONErrorPageResult(r))
+			rs = append(rs, newJSONErrorPageResult(r))
 			ok = false
 		}
 	}
 
-	bs, err := json.Marshal(results)
+	bs, err := json.Marshal(rs)
 
 	if err != nil {
 		return false, err
