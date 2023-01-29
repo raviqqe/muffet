@@ -140,7 +140,7 @@ func (c *command) runWithError(ss []string) (bool, error) {
 }
 
 func (c *command) printResultsInJSON(rc <-chan *pageResult, verbose bool) (bool, error) {
-	rs := []interface{}{}
+	rs := []any{}
 	ok := true
 
 	for r := range rc {
@@ -194,13 +194,13 @@ func (c *command) printResultsInJUnitXML(rc <-chan *pageResult) (bool, error) {
 	return ok, nil
 }
 
-func (c *command) print(xs ...interface{}) {
+func (c *command) print(xs ...any) {
 	if _, err := fmt.Fprintln(c.stdout, strings.TrimSpace(fmt.Sprint(xs...))); err != nil {
 		panic(err)
 	}
 }
 
-func (c *command) printError(xs ...interface{}) {
+func (c *command) printError(xs ...any) {
 	s := fmt.Sprint(xs...)
 
 	// Do not check --color option here because this can be used on argument parsing errors.
