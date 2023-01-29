@@ -21,7 +21,7 @@ type arguments struct {
 	RawHeaders                 []string `long:"header" value-name:"<header>..." description:"Custom headers"`
 	IgnoreFragments            bool     `short:"f" long:"ignore-fragments" description:"Ignore URL fragments"`
 	JSONOutput                 bool     `long:"json" description:"Output results in JSON"`
-	IncludeSuccessInJSONOutput bool     `long:"include-success-in-json" description:"Include successful results in JSON"`
+	IncludeSuccessInJSONOutput bool     `long:"experimental-verbose-json" description:"Include successful results in JSON"`
 	JUnitOutput                bool     `long:"junit" description:"Output results as JUnit XML file"`
 	MaxRedirections            int      `short:"r" long:"max-redirections" value-name:"<count>" default:"64" description:"Maximum number of redirections"`
 	RateLimit                  int      `long:"rate-limit" value-name:"<rate>" description:"Max requests per second"`
