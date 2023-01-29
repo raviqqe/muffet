@@ -1,10 +1,5 @@
 package main
 
-type jsonAllPageResults struct {
-	Error   []*jsonErrorPageResult   `json:"error"`
-	Success []*jsonSuccessPageResult `json:"success"`
-}
-
 type jsonErrorPageResult struct {
 	URL   string                 `json:"url"`
 	Links []*jsonErrorLinkResult `json:"links"`
