@@ -27,7 +27,7 @@ func TestMarshalSuccessXMLPageResult(t *testing.T) {
 		&pageResult{
 			"http://foo.com",
 			[]*successLinkResult{
-				{"http://foo.com/foo", 200},
+				{"http://foo.com/bar", 200},
 			},
 			[]*errorLinkResult{},
 		}))
