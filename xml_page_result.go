@@ -23,7 +23,18 @@ type xmlLinkFailure struct {
 }
 
 func newXMLPageResult(pr *pageResult) *xmlPageResult {
-	ls := make([]*xmlLinkResult, 0, len(pr.ErrorLinkResults)+len(pr.SuccessLinkResults))
+	ls := make([]*xmlLinkResult, 0, len(pr.SuccessLinkResults)+len(pr.ErrorLinkResults))
+
+	for _, r := range pr.SuccessLinkResults {
+		ls = append(
+			ls,
+			&xmlLinkResult{
+				Url:    r.URL,
+				Source: pr.URL,
+				Time:   r.Elapsed.Seconds(),
+			},
+		)
+	}
 
 	for _, r := range pr.ErrorLinkResults {
 		ls = append(
@@ -33,17 +44,6 @@ func newXMLPageResult(pr *pageResult) *xmlPageResult {
 				Source:  pr.URL,
 				Time:    r.Elapsed.Seconds(),
 				Failure: &xmlLinkFailure{Message: r.Error.Error()},
-			},
-		)
-	}
-
-	for _, r := range pr.SuccessLinkResults {
-		ls = append(
-			ls,
-			&xmlLinkResult{
-				Url:    r.URL,
-				Source: pr.URL,
-				Time:   r.Elapsed.Seconds(),
 			},
 		)
 	}

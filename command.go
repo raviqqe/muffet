@@ -144,10 +144,8 @@ func (c *command) printResultsInJSON(rc <-chan *pageResult, includeSuccess bool)
 	ok := true
 
 	for r := range rc {
-		if r.OK() && includeSuccess {
-			rs = append(rs, newJSONSuccessPageResult(r))
-		} else if !r.OK() {
-			rs = append(rs, newJSONErrorPageResult(r))
+		if !r.OK() || r.OK() && includeSuccess {
+			rs = append(rs, newJSONPageResult(r, includeSuccess))
 		}
 
 		ok = ok && r.OK()
