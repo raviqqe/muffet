@@ -15,16 +15,16 @@ type jsonErrorLinkResult struct {
 	Error string `json:"error"`
 }
 
-func newJSONPageResult(r *pageResult, includeSuccess bool) *jsonPageResult {
+func newJSONPageResult(r *pageResult, verbose bool) *jsonPageResult {
 	c := len(r.ErrorLinkResults)
 
-	if includeSuccess {
+	if verbose {
 		c += len(r.SuccessLinkResults)
 	}
 
 	ls := make([]any, 0, c)
 
-	if includeSuccess {
+	if verbose {
 		for _, r := range r.SuccessLinkResults {
 			ls = append(ls, &jsonSuccessLinkResult{r.URL, r.StatusCode})
 		}

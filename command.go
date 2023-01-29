@@ -116,7 +116,7 @@ func (c *command) runWithError(ss []string) (bool, error) {
 	go checker.Check(p)
 
 	if args.JSONOutput {
-		return c.printResultsInJSON(checker.Results(), args.IncludeSuccessInJSONOutput)
+		return c.printResultsInJSON(checker.Results(), args.VerboseJSON)
 	} else if args.JUnitOutput {
 		return c.printResultsAsJUnitXML(checker.Results())
 	}
@@ -139,13 +139,13 @@ func (c *command) runWithError(ss []string) (bool, error) {
 	return ok, nil
 }
 
-func (c *command) printResultsInJSON(rc <-chan *pageResult, includeSuccess bool) (bool, error) {
+func (c *command) printResultsInJSON(rc <-chan *pageResult, verbose bool) (bool, error) {
 	rs := []interface{}{}
 	ok := true
 
 	for r := range rc {
-		if !r.OK() || r.OK() && includeSuccess {
-			rs = append(rs, newJSONPageResult(r, includeSuccess))
+		if !r.OK() || r.OK() && verbose {
+			rs = append(rs, newJSONPageResult(r, verbose))
 		}
 
 		ok = ok && r.OK()
