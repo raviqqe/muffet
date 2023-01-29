@@ -21,7 +21,7 @@ Application Options:
       --header=<header>...                  Custom headers
   -f, --ignore-fragments                    Ignore URL fragments
       --json                                Output results in JSON
-      --include-success-in-json             Include successful results in JSON
+      --experimental-verbose-json             Include successful results in JSON
       --junit                               Output results as JUnit XML file
   -r, --max-redirections=<count>            Maximum number of redirections
                                             (default: 64)
