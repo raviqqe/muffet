@@ -1,9 +1,6 @@
 package main
 
-import (
-	"sync"
-	"time"
-)
+import "sync"
 
 type pageChecker struct {
 	fetcher       *linkFetcher
@@ -43,10 +40,9 @@ func (c *pageChecker) checkPage(p *page) {
 	ec := make(chan *errorLinkResult, len(us))
 	w := sync.WaitGroup{}
 
-	pageStart := time.Now()
 	for u, err := range us {
 		if err != nil {
-			ec <- &errorLinkResult{u, err, time.Since(time.Now())}
+			ec <- &errorLinkResult{u, err}
 			continue
 		}
 
@@ -55,14 +51,12 @@ func (c *pageChecker) checkPage(p *page) {
 		go func(u string) {
 			defer w.Done()
 
-			linkStart := time.Now()
 			status, p, err := c.fetcher.Fetch(u)
-			linkElapsed := time.Since(linkStart)
 
 			if err == nil {
-				sc <- &successLinkResult{u, status, linkElapsed}
+				sc <- &successLinkResult{u, status}
 			} else {
-				ec <- &errorLinkResult{u, err, linkElapsed}
+				ec <- &errorLinkResult{u, err}
 			}
 
 			if !c.onePageOnly && p != nil && c.linkValidator.Validate(p.URL()) {
@@ -72,7 +66,6 @@ func (c *pageChecker) checkPage(p *page) {
 	}
 
 	w.Wait()
-	pageElapsed := time.Since(pageStart)
 
 	close(sc)
 	close(ec)
@@ -89,7 +82,7 @@ func (c *pageChecker) checkPage(p *page) {
 		es = append(es, e)
 	}
 
-	c.results <- &pageResult{p.URL().String(), ss, es, pageElapsed}
+	c.results <- &pageResult{p.URL().String(), ss, es}
 }
 
 func (c *pageChecker) addPage(p *page) {

@@ -15,9 +15,8 @@ func TestMarshalErrorJSONPageResult(t *testing.T) {
 			"http://foo.com",
 			[]*successLinkResult{},
 			[]*errorLinkResult{
-				{"http://foo.com/bar", errors.New("baz"), 0},
+				{"http://foo.com/bar", errors.New("baz")},
 			},
-			0,
 		}, false))
 	assert.Nil(t, err)
 	cupaloy.SnapshotT(t, bs)
@@ -28,10 +27,9 @@ func TestMarshalSuccessJSONPageResult(t *testing.T) {
 		&pageResult{
 			"http://foo.com",
 			[]*successLinkResult{
-				{"http://foo.com/foo", 200, 0},
+				{"http://foo.com/foo", 200},
 			},
 			[]*errorLinkResult{},
-			0,
 		}, true))
 	assert.Nil(t, err)
 	cupaloy.SnapshotT(t, bs)
