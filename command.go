@@ -118,7 +118,7 @@ func (c *command) runWithError(ss []string) (bool, error) {
 	if args.JSONOutput {
 		return c.printResultsInJSON(checker.Results(), args.VerboseJSON)
 	} else if args.JUnitOutput {
-		return c.printResultsAsJUnitXML(checker.Results())
+		return c.printResultsInJUnitXML(checker.Results())
 	}
 
 	formatter := newPageResultFormatter(
@@ -162,7 +162,7 @@ func (c *command) printResultsInJSON(rc <-chan *pageResult, verbose bool) (bool,
 	return ok, nil
 }
 
-func (c *command) printResultsAsJUnitXML(rc <-chan *pageResult) (bool, error) {
+func (c *command) printResultsInJUnitXML(rc <-chan *pageResult) (bool, error) {
 	rs := []*xmlPageResult{}
 	ok := true
 
