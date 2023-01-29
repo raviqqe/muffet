@@ -10,7 +10,7 @@ import (
 func TestPageResultFormatterFormatEmptyResult(t *testing.T) {
 	cupaloy.SnapshotT(t,
 		newPageResultFormatter(false, true).Format(
-			&pageResult{"http://foo.com", nil, nil, 0},
+			&pageResult{"http://foo.com", nil, nil},
 		),
 	)
 }
@@ -21,10 +21,9 @@ func TestPageResultFormatterFormatSuccessLinkResults(t *testing.T) {
 			&pageResult{
 				"http://foo.com",
 				[]*successLinkResult{
-					{"http://foo.com", 200, 0},
+					{"http://foo.com", 200},
 				},
 				nil,
-				0,
 			},
 		),
 	)
@@ -36,12 +35,11 @@ func TestPageResultFormatterFormatErrorLinkResults(t *testing.T) {
 			&pageResult{
 				"http://foo.com",
 				[]*successLinkResult{
-					{"http://foo.com", 200, 0},
+					{"http://foo.com", 200},
 				},
 				[]*errorLinkResult{
-					{"http://foo.com", errors.New("500"), 0},
+					{"http://foo.com", errors.New("500")},
 				},
-				0,
 			},
 		),
 	)
@@ -53,10 +51,9 @@ func TestPageResultFormatterFormatSuccessLinkResultsVerbosely(t *testing.T) {
 			&pageResult{
 				"http://foo.com",
 				[]*successLinkResult{
-					{"http://foo.com", 200, 0},
+					{"http://foo.com", 200},
 				},
 				nil,
-				0,
 			},
 		),
 	)
@@ -68,12 +65,11 @@ func TestPageResultFormatterFormatErrorLinkResultsVerbosely(t *testing.T) {
 			&pageResult{
 				"http://foo.com",
 				[]*successLinkResult{
-					{"http://foo.com", 200, 0},
+					{"http://foo.com", 200},
 				},
 				[]*errorLinkResult{
-					{"http://foo.com", errors.New("500"), 0},
+					{"http://foo.com", errors.New("500")},
 				},
-				0,
 			},
 		),
 	)
@@ -85,11 +81,10 @@ func TestPageResultFormatterSortSuccessLinkResults(t *testing.T) {
 			&pageResult{
 				"http://foo.com",
 				[]*successLinkResult{
-					{"http://foo.com", 200, 0},
-					{"http://bar.com", 200, 0},
+					{"http://foo.com", 200},
+					{"http://bar.com", 200},
 				},
 				nil,
-				0,
 			},
 		),
 	)
@@ -102,10 +97,9 @@ func TestPageResultFormatterSortErrorLinkResults(t *testing.T) {
 				"http://foo.com",
 				nil,
 				[]*errorLinkResult{
-					{"http://foo.com", errors.New("500"), 0},
-					{"http://bar.com", errors.New("500"), 0},
+					{"http://foo.com", errors.New("500")},
+					{"http://bar.com", errors.New("500")},
 				},
-				0,
 			},
 		),
 	)
