@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"encoding/xml"
 	"errors"
 	"fmt"
 	"io"
@@ -43,6 +44,10 @@ func (c *command) runWithError(ss []string) (bool, error) {
 		return err == nil, err
 	} else if args.JSONOutput && args.Verbose {
 		return false, errors.New("verbose option not supported for JSON output")
+	} else if args.JUnitOutput && args.Verbose {
+		return false, errors.New("verbose option not supported for JUnit output")
+	} else if args.JSONOutput && args.JUnitOutput {
+		return false, errors.New("JSON and JUnit output are mutually exclusive")
 	}
 
 	client := newRedirectHttpClient(
@@ -111,7 +116,11 @@ func (c *command) runWithError(ss []string) (bool, error) {
 	go checker.Check(p)
 
 	if args.JSONOutput {
-		return c.printResultsInJSON(checker.Results())
+		return c.printResultsInJSON(checker.Results(), args.IncludeSuccessInJSONOutput)
+	}
+
+	if args.JUnitOutput {
+		return c.printResultsAsJunitXML(checker.Results())
 	}
 
 	formatter := newPageResultFormatter(
@@ -134,24 +143,55 @@ func (c *command) runWithError(ss []string) (bool, error) {
 	return ok, nil
 }
 
-func (c *command) printResultsInJSON(rc <-chan *pageResult) (bool, error) {
-	rs := []*jsonPageResult{}
+func (c *command) printResultsInJSON(rc <-chan *pageResult, includeSuccess bool) (bool, error) {
+	results := []interface{}{}
 	ok := true
 
 	for r := range rc {
-		if !r.OK() {
-			rs = append(rs, newJSONPageResult(r))
+		if r.OK() && includeSuccess {
+			results = append(results, newJSONSuccessPageResult(r))
+		} else if !r.OK() {
+			results = append(results, newJSONErrorPageResult(r))
 			ok = false
 		}
 	}
 
-	bs, err := json.Marshal(rs)
+	bs, err := json.Marshal(results)
 
 	if err != nil {
 		return false, err
 	}
 
 	c.print(string(bs))
+
+	return ok, nil
+}
+
+func (c *command) printResultsAsJunitXML(rc <-chan *pageResult) (bool, error) {
+	rs := []*xmlPageResult{}
+	ok := true
+
+	for r := range rc {
+		rs = append(rs, newXMLPageResult(r))
+
+		if !r.OK() {
+			ok = false
+		}
+	}
+
+	results := &struct {
+		XMLName     xml.Name         `xml:"testsuites"`
+		PageResults []*xmlPageResult `xml:"testsuite"`
+	}{PageResults: rs}
+
+	data, err := xml.MarshalIndent(results, "", "  ")
+
+	if err != nil {
+		return ok, err
+	}
+
+	c.print(xml.Header)
+	c.print(string(data))
 
 	return ok, nil
 }
