@@ -3,7 +3,6 @@ package main
 import (
 	"errors"
 	"testing"
-	"time"
 
 	"github.com/bradleyjkemp/cupaloy"
 )
@@ -17,16 +16,15 @@ func TestPageResultFormatterFormatEmptyResult(t *testing.T) {
 }
 
 func TestPageResultFormatterFormatSuccessLinkResults(t *testing.T) {
-	d, _ := time.ParseDuration("1s")
 	cupaloy.SnapshotT(t,
 		newPageResultFormatter(false, true).Format(
 			&pageResult{
 				"http://foo.com",
 				[]*successLinkResult{
-					{"http://foo.com", 200, d},
+					{"http://foo.com", 200, 0},
 				},
 				nil,
-				d,
+				0,
 			},
 		),
 	)
