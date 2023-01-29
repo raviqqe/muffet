@@ -15,13 +15,13 @@ website recursively.
 
 - Massive speed
 - High compatibility with web browsers
-- Pretty-printed/JSON outputs
 - Different tag support (`a`, `img`, `link`, `script`, etc)
+- Multiple output formats (text, JSON, and JUnit XML)
 
 ## Installation
 
 ```sh
-go get -u github.com/raviqqe/muffet/v2
+go install github.com/raviqqe/muffet/v2@latest
 ```
 
 ### Homebrew
