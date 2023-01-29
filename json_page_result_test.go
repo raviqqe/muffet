@@ -30,6 +30,19 @@ func TestMarshalSuccessJSONPageResult(t *testing.T) {
 				{"http://foo.com/foo", 200},
 			},
 			[]*errorLinkResult{},
+		}, false))
+	assert.Nil(t, err)
+	cupaloy.SnapshotT(t, bs)
+}
+
+func TestMarshalVerboseSuccessJSONPageResult(t *testing.T) {
+	bs, err := json.Marshal(newJSONPageResult(
+		&pageResult{
+			"http://foo.com",
+			[]*successLinkResult{
+				{"http://foo.com/foo", 200},
+			},
+			[]*errorLinkResult{},
 		}, true))
 	assert.Nil(t, err)
 	cupaloy.SnapshotT(t, bs)
