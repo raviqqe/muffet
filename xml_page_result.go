@@ -11,10 +11,10 @@ type xmlPageResult struct {
 }
 
 type xmlLinkResult struct {
-	Url    string  `xml:"name,attr"`
-	Time   float64 `xml:"time,attr"`
-	Source string  `xml:"classname,attr"`
+	Url  string  `xml:"name,attr"`
+	Time float64 `xml:"time,attr"`
 	// spell-checker: disable-next-line
+	Source  string          `xml:"classname,attr"`
 	Failure *xmlLinkFailure `xml:"failure"`
 }
 

@@ -180,7 +180,9 @@ func (c *command) printResultsAsJunitXML(rc <-chan *pageResult) (bool, error) {
 	}
 
 	results := &struct {
-		XMLName     xml.Name         `xml:"testsuites"`
+		// spell-checker: disable-next-line
+		XMLName xml.Name `xml:"testsuites"`
+		// spell-checker: disable-next-line
 		PageResults []*xmlPageResult `xml:"testsuite"`
 	}{PageResults: rs}
 
