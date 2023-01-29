@@ -22,7 +22,6 @@ type xmlLinkFailure struct {
 	Message string `xml:"message,attr"`
 }
 
-// TODO: Consider adding information skipped links, if that can be tracked.
 func newXMLPageResult(pr *pageResult) *xmlPageResult {
 	ls := make([]*xmlLinkResult, 0, len(pr.ErrorLinkResults)+len(pr.SuccessLinkResults))
 
@@ -50,8 +49,9 @@ func newXMLPageResult(pr *pageResult) *xmlPageResult {
 	}
 
 	return &xmlPageResult{
-		Url:      pr.URL,
-		Time:     pr.Elapsed.Seconds(),
+		Url:  pr.URL,
+		Time: pr.Elapsed.Seconds(),
+		// TODO: Consider adding information skipped links, if that can be tracked.
 		Skipped:  0,
 		Total:    len(ls),
 		Failures: len(pr.ErrorLinkResults),
