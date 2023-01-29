@@ -9,10 +9,9 @@ import (
 )
 
 func TestPageResultFormatterFormatEmptyResult(t *testing.T) {
-	d, _ := time.ParseDuration("1s")
 	cupaloy.SnapshotT(t,
 		newPageResultFormatter(false, true).Format(
-			&pageResult{"http://foo.com", nil, nil, d},
+			&pageResult{"http://foo.com", nil, nil, 0},
 		),
 	)
 }
@@ -34,86 +33,81 @@ func TestPageResultFormatterFormatSuccessLinkResults(t *testing.T) {
 }
 
 func TestPageResultFormatterFormatErrorLinkResults(t *testing.T) {
-	d, _ := time.ParseDuration("1s")
 	cupaloy.SnapshotT(t,
 		newPageResultFormatter(false, true).Format(
 			&pageResult{
 				"http://foo.com",
 				[]*successLinkResult{
-					{"http://foo.com", 200, d},
+					{"http://foo.com", 200, 0},
 				},
 				[]*errorLinkResult{
-					{"http://foo.com", errors.New("500"), d},
+					{"http://foo.com", errors.New("500"), 0},
 				},
-				d,
+				0,
 			},
 		),
 	)
 }
 
 func TestPageResultFormatterFormatSuccessLinkResultsVerbosely(t *testing.T) {
-	d, _ := time.ParseDuration("1s")
 	cupaloy.SnapshotT(t,
 		newPageResultFormatter(true, true).Format(
 			&pageResult{
 				"http://foo.com",
 				[]*successLinkResult{
-					{"http://foo.com", 200, d},
+					{"http://foo.com", 200, 0},
 				},
 				nil,
-				d,
+				0,
 			},
 		),
 	)
 }
 
 func TestPageResultFormatterFormatErrorLinkResultsVerbosely(t *testing.T) {
-	d, _ := time.ParseDuration("1s")
 	cupaloy.SnapshotT(t,
 		newPageResultFormatter(true, true).Format(
 			&pageResult{
 				"http://foo.com",
 				[]*successLinkResult{
-					{"http://foo.com", 200, d},
+					{"http://foo.com", 200, 0},
 				},
 				[]*errorLinkResult{
-					{"http://foo.com", errors.New("500"), d},
+					{"http://foo.com", errors.New("500"), 0},
 				},
-				d,
+				0,
 			},
 		),
 	)
 }
 
 func TestPageResultFormatterSortSuccessLinkResults(t *testing.T) {
-	d, _ := time.ParseDuration("1s")
 	cupaloy.SnapshotT(t,
 		newPageResultFormatter(true, true).Format(
 			&pageResult{
 				"http://foo.com",
 				[]*successLinkResult{
-					{"http://foo.com", 200, d},
-					{"http://bar.com", 200, d},
+					{"http://foo.com", 200, 0},
+					{"http://bar.com", 200, 0},
 				},
 				nil,
-				d,
+				0,
 			},
 		),
 	)
 }
 
 func TestPageResultFormatterSortErrorLinkResults(t *testing.T) {
-	d, _ := time.ParseDuration("1s")
 	cupaloy.SnapshotT(t,
 		newPageResultFormatter(false, true).Format(
 			&pageResult{
 				"http://foo.com",
 				nil,
 				[]*errorLinkResult{
-					{"http://foo.com", errors.New("500"), d},
-					{"http://bar.com", errors.New("500"), d},
+					{"http://foo.com", errors.New("500"), 0},
+					{"http://bar.com", errors.New("500"), 0},
 				},
-				d,
+				0,
 			},
 		),
 	)
