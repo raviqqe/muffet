@@ -23,8 +23,7 @@ type xmlLinkFailure struct {
 func newXMLPageResult(pr *pageResult) *xmlPageResult {
 	ls := make([]*xmlLinkResult, 0, len(pr.ErrorLinkResults)+len(pr.SuccessLinkResults))
 
-	// TODO: Consider adding information skipped links, if that can be
-	// tracked.
+	// TODO: Consider adding information skipped links, if that can be tracked.
 	for _, r := range pr.ErrorLinkResults {
 		failure := &xmlLinkFailure{Message: r.Error.Error()}
 		l := &xmlLinkResult{Url: r.URL, Source: pr.URL, Time: r.Elapsed.Seconds(), Failure: failure}
