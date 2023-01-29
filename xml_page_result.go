@@ -1,18 +1,20 @@
 package main
 
 type xmlPageResult struct {
-	Url      string           `xml:"name,attr"`
-	Total    int              `xml:"tests,attr"`
-	Failures int              `xml:"failures,attr"`
-	Skipped  int              `xml:"skipped,attr"`
-	Time     float64          `xml:"time,attr"`
-	Links    []*xmlLinkResult `xml:"testcase"`
+	Url      string  `xml:"name,attr"`
+	Total    int     `xml:"tests,attr"`
+	Failures int     `xml:"failures,attr"`
+	Skipped  int     `xml:"skipped,attr"`
+	Time     float64 `xml:"time,attr"`
+	// spell-checker: disable-next-line
+	Links []*xmlLinkResult `xml:"testcase"`
 }
 
 type xmlLinkResult struct {
-	Url     string          `xml:"name,attr"`
-	Time    float64         `xml:"time,attr"`
-	Source  string          `xml:"classname,attr"`
+	Url    string  `xml:"name,attr"`
+	Time   float64 `xml:"time,attr"`
+	Source string  `xml:"classname,attr"`
+	// spell-checker: disable-next-line
 	Failure *xmlLinkFailure `xml:"failure"`
 }
 
