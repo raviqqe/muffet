@@ -23,20 +23,38 @@ type xmlLinkFailure struct {
 }
 
 func newXMLPageResult(pr *pageResult) *xmlPageResult {
-	ls := make([]*xmlLinkResult, 0, len(pr.ErrorLinkResults)+len(pr.SuccessLinkResults))
-
-	// TODO: Consider adding information skipped links, if that can be
-	// tracked.
-	for _, r := range pr.ErrorLinkResults {
-		failure := &xmlLinkFailure{Message: r.Error.Error()}
-		l := &xmlLinkResult{Url: r.URL, Source: pr.URL, Time: r.Elapsed.Seconds(), Failure: failure}
-		ls = append(ls, l)
-	}
+	ls := make([]*xmlLinkResult, 0, len(pr.SuccessLinkResults)+len(pr.ErrorLinkResults))
 
 	for _, r := range pr.SuccessLinkResults {
-		l := &xmlLinkResult{Url: r.URL, Source: pr.URL, Time: r.Elapsed.Seconds()}
-		ls = append(ls, l)
+		ls = append(
+			ls,
+			&xmlLinkResult{
+				Url:    r.URL,
+				Source: pr.URL,
+				Time:   r.Elapsed.Seconds(),
+			},
+		)
 	}
 
-	return &xmlPageResult{Url: pr.URL, Time: pr.Elapsed.Seconds(), Skipped: 0, Total: len(ls), Failures: len(pr.ErrorLinkResults), Links: ls}
+	for _, r := range pr.ErrorLinkResults {
+		ls = append(
+			ls,
+			&xmlLinkResult{
+				Url:     r.URL,
+				Source:  pr.URL,
+				Time:    r.Elapsed.Seconds(),
+				Failure: &xmlLinkFailure{Message: r.Error.Error()},
+			},
+		)
+	}
+
+	return &xmlPageResult{
+		Url:  pr.URL,
+		Time: pr.Elapsed.Seconds(),
+		// TODO: Consider adding information skipped links, if that can be tracked.
+		Skipped:  0,
+		Total:    len(ls),
+		Failures: len(pr.ErrorLinkResults),
+		Links:    ls,
+	}
 }

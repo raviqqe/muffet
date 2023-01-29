@@ -264,7 +264,7 @@ func TestCommandIncludeSuccessfulPageInJSONOutputWhenRequested(t *testing.T) {
 		func(u *url.URL) (*fakeHttpResponse, error) {
 			return newFakeHtmlResponse("", ""), nil
 		},
-	).Run([]string{"--json", "--include-success-in-json", "http://foo.com"})
+	).Run([]string{"--json", "--experimental-verbose-json", "http://foo.com"})
 
 	assert.True(t, ok)
 	assert.Equal(t, strings.TrimSpace(b.String()), "[{\"url\":\"\",\"links\":[]}]")

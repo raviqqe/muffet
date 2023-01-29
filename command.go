@@ -116,11 +116,9 @@ func (c *command) runWithError(ss []string) (bool, error) {
 	go checker.Check(p)
 
 	if args.JSONOutput {
-		return c.printResultsInJSON(checker.Results(), args.IncludeSuccessInJSONOutput)
-	}
-
-	if args.JUnitOutput {
-		return c.printResultsAsJunitXML(checker.Results())
+		return c.printResultsInJSON(checker.Results(), args.VerboseJSON)
+	} else if args.JUnitOutput {
+		return c.printResultsInJUnitXML(checker.Results())
 	}
 
 	formatter := newPageResultFormatter(
@@ -135,28 +133,25 @@ func (c *command) runWithError(ss []string) (bool, error) {
 			c.print(formatter.Format(r))
 		}
 
-		if !r.OK() {
-			ok = false
-		}
+		ok = ok && r.OK()
 	}
 
 	return ok, nil
 }
 
-func (c *command) printResultsInJSON(rc <-chan *pageResult, includeSuccess bool) (bool, error) {
-	results := []interface{}{}
+func (c *command) printResultsInJSON(rc <-chan *pageResult, verbose bool) (bool, error) {
+	rs := []interface{}{}
 	ok := true
 
 	for r := range rc {
-		if r.OK() && includeSuccess {
-			results = append(results, newJSONSuccessPageResult(r))
-		} else if !r.OK() {
-			results = append(results, newJSONErrorPageResult(r))
-			ok = false
+		if !r.OK() || verbose {
+			rs = append(rs, newJSONPageResult(r, verbose))
 		}
+
+		ok = ok && r.OK()
 	}
 
-	bs, err := json.Marshal(results)
+	bs, err := json.Marshal(rs)
 
 	if err != nil {
 		return false, err
@@ -167,33 +162,34 @@ func (c *command) printResultsInJSON(rc <-chan *pageResult, includeSuccess bool)
 	return ok, nil
 }
 
-func (c *command) printResultsAsJunitXML(rc <-chan *pageResult) (bool, error) {
+func (c *command) printResultsInJUnitXML(rc <-chan *pageResult) (bool, error) {
 	rs := []*xmlPageResult{}
 	ok := true
 
 	for r := range rc {
 		rs = append(rs, newXMLPageResult(r))
-
-		if !r.OK() {
-			ok = false
-		}
+		ok = ok && r.OK()
 	}
 
-	results := &struct {
-		// spell-checker: disable-next-line
-		XMLName xml.Name `xml:"testsuites"`
-		// spell-checker: disable-next-line
-		PageResults []*xmlPageResult `xml:"testsuite"`
-	}{PageResults: rs}
-
-	data, err := xml.MarshalIndent(results, "", "  ")
+	bs, err := xml.MarshalIndent(
+		struct {
+			// spell-checker: disable-next-line
+			XMLName xml.Name `xml:"testsuites"`
+			// spell-checker: disable-next-line
+			PageResults []*xmlPageResult `xml:"testsuite"`
+		}{
+			PageResults: rs,
+		},
+		"",
+		"  ",
+	)
 
 	if err != nil {
-		return ok, err
+		return false, err
 	}
 
 	c.print(xml.Header)
-	c.print(string(data))
+	c.print(string(bs))
 
 	return ok, nil
 }
