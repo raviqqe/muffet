@@ -117,9 +117,7 @@ func (c *command) runWithError(ss []string) (bool, error) {
 
 	if args.JSONOutput {
 		return c.printResultsInJSON(checker.Results(), args.IncludeSuccessInJSONOutput)
-	}
-
-	if args.JUnitOutput {
+	} else if args.JUnitOutput {
 		return c.printResultsAsJUnitXML(checker.Results())
 	}
 
