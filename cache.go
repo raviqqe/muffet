@@ -11,7 +11,7 @@ func newCache() cache {
 	return cache{&sync.Map{}, &sync.Map{}}
 }
 
-func (c cache) LoadOrStore(key string) (interface{}, func(interface{})) {
+func (c cache) LoadOrStore(key string) (any, func(any)) {
 	if x, ok := c.values.Load(key); ok {
 		return x, nil
 	}
@@ -26,7 +26,7 @@ func (c cache) LoadOrStore(key string) (interface{}, func(interface{})) {
 		return x, nil
 	}
 
-	return nil, func(x interface{}) {
+	return nil, func(x any) {
 		c.values.Store(key, x)
 		g.Done()
 	}
