@@ -6,10 +6,6 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestNewSemaphore(t *testing.T) {
-	newSemaphore(1)
-}
-
 func TestSemaphoreRequest(t *testing.T) {
 	s := newSemaphore(1)
 
