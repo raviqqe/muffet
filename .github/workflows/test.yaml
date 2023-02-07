@@ -8,7 +8,7 @@ jobs:
   test:
     runs-on: ubuntu-latest
     container:
-      image: golang
+      image: golang:1.19
     steps:
       - uses: actions/checkout@v3
       - run: go build
