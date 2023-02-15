@@ -15,7 +15,7 @@ require (
 	github.com/valyala/fasthttp v1.44.0
 	github.com/yhat/scrape v0.0.0-20161128144610-24b7890b0945
 	go.uber.org/ratelimit v0.2.0
-	golang.org/x/net v0.6.0
+	golang.org/x/net v0.7.0
 )
 
 require (
