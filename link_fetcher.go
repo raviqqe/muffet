@@ -33,7 +33,8 @@ func (f *linkFetcher) Fetch(u string) (int, *page, error) {
 	s, p, err := f.sendRequestWithCache(u)
 	if err != nil {
 		return 0, nil, err
-	} else if p == nil || f.options.IgnoreFragments || fr == "" {
+	} else if p == nil || f.options.IgnoreFragments || fr == "" || strings.HasPrefix(fr, ":~:") {
+		// TODO Support text fragments.
 		return s, p, nil
 	} else if _, ok := p.Fragments()[fr]; !ok {
 		return 0, nil, fmt.Errorf("id #%v not found", fr)

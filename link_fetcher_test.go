@@ -144,6 +144,24 @@ func TestLinkFetcherFetchIgnoringFragments(t *testing.T) {
 	assert.Nil(t, err)
 }
 
+func TestLinkFetcherFetchSkippingTextFragment(t *testing.T) {
+	s := "http://foo.com"
+	f := newTestLinkFetcher(
+		newFakeHttpClient(
+			func(u *url.URL) (*fakeHttpResponse, error) {
+				if u.String() != s {
+					return nil, errors.New("")
+				}
+
+				return newFakeHtmlResponse(s, ""), nil
+			},
+		),
+	)
+
+	_, _, err := f.Fetch(s + "#:~:text=foo")
+	assert.Nil(t, err)
+}
+
 func TestLinkFetcherFailToFetch(t *testing.T) {
 	f := newTestLinkFetcher(
 		newFakeHttpClient(func(*url.URL) (*fakeHttpResponse, error) {
