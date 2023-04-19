@@ -19,7 +19,9 @@ type arguments struct {
 	FollowRobotsTxt       bool     `long:"follow-robots-txt" description:"Follow robots.txt when scraping pages"`
 	FollowSitemapXML      bool     `long:"follow-sitemap-xml" description:"Scrape only pages listed in sitemap.xml"`
 	RawHeaders            []string `long:"header" value-name:"<header>..." description:"Custom headers"`
-	IgnoreFragments       bool     `short:"f" long:"ignore-fragments" description:"Ignore URL fragments"`
+	// TODO Remove a short option.
+	IgnoreFragments bool   `short:"f" long:"ignore-fragments" description:"Ignore URL fragments"`
+	Format          string `long:"format" choice:"text" choice:"json" choice:"junit"`
 	// TODO Merge text, JSON, and JUnit XML format options into --format.
 	JSONOutput bool `long:"json" description:"Output results in JSON"`
 	// TODO Integrate this option into --verbose.
