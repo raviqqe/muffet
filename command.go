@@ -113,7 +113,7 @@ func (c *command) runWithError(ss []string) (bool, error) {
 
 	switch args.Format {
 	case "json":
-		return c.printResultsInJSON(checker.Results(), args.VerboseJSON)
+		return c.printResultsInJSON(checker.Results(), args.Verbose)
 	case "junit":
 		return c.printResultsInJUnitXML(checker.Results())
 	}

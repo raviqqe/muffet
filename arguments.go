@@ -124,6 +124,7 @@ func parseHeaders(headers []string) (map[string]string, error) {
 func reconcileDeprecatedArguments(args *arguments) {
 	if args.JSONOutput {
 		args.Format = "json"
+		args.Verbose = args.Verbose || args.VerboseJSON
 	} else if args.JUnitOutput {
 		args.Format = "junit"
 	}
