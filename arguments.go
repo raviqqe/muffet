@@ -21,7 +21,7 @@ type arguments struct {
 	RawHeaders            []string `long:"header" value-name:"<header>..." description:"Custom headers"`
 	// TODO Remove a short option.
 	IgnoreFragments bool   `short:"f" long:"ignore-fragments" description:"Ignore URL fragments"`
-	Format          string `long:"format" choice:"text" choice:"json" choice:"junit"`
+	Format          string `long:"format" default:"text" choice:"text" choice:"json" choice:"junit"`
 	// TODO Merge text, JSON, and JUnit XML format options into --format.
 	JSONOutput bool `long:"json" description:"Output results in JSON"`
 	// TODO Integrate this option into --verbose.
@@ -54,6 +54,8 @@ func getArguments(ss []string) (*arguments, error) {
 	} else if len(ss) != 1 {
 		return nil, errors.New("invalid number of arguments")
 	}
+
+	reconcileDeprecatedArguments(&args)
 
 	args.URL = ss[0]
 
@@ -117,4 +119,12 @@ func parseHeaders(headers []string) (map[string]string, error) {
 	}
 
 	return m, nil
+}
+
+func reconcileDeprecatedArguments(args *arguments) {
+	if args.JSONOutput {
+		args.Format = "json"
+	} else if args.JUnitOutput {
+		args.Format = "junit"
+	}
 }
