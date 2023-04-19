@@ -42,12 +42,8 @@ func (c *command) runWithError(ss []string) (bool, error) {
 	} else if args.Version {
 		c.print(version)
 		return err == nil, err
-	} else if args.JSONOutput && args.Verbose {
-		return false, errors.New("verbose option not supported for JSON output")
-	} else if args.JUnitOutput && args.Verbose {
+	} else if args.Format == "junit" && args.Verbose {
 		return false, errors.New("verbose option not supported for JUnit output")
-	} else if args.JSONOutput && args.JUnitOutput {
-		return false, errors.New("JSON and JUnit output are mutually exclusive")
 	}
 
 	client := newRedirectHttpClient(
@@ -115,9 +111,10 @@ func (c *command) runWithError(ss []string) (bool, error) {
 
 	go checker.Check(p)
 
-	if args.JSONOutput {
+	switch args.Format {
+	case "json":
 		return c.printResultsInJSON(checker.Results(), args.VerboseJSON)
-	} else if args.JUnitOutput {
+	case "junit":
 		return c.printResultsInJUnitXML(checker.Results())
 	}
 
