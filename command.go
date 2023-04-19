@@ -41,7 +41,7 @@ func (c *command) runWithError(ss []string) (bool, error) {
 		return true, nil
 	} else if args.Version {
 		c.print(version)
-		return true, err
+		return true, nil
 	} else if args.Format == "junit" && args.Verbose {
 		return false, errors.New("verbose option not supported for JUnit output")
 	}
