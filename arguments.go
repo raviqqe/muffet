@@ -74,6 +74,10 @@ func getArguments(ss []string) (*arguments, error) {
 		return nil, err
 	}
 
+	if args.Format == "junit" && args.Verbose {
+		return nil, errors.New("verbose option not supported for JUnit output")
+	}
+
 	return &args, nil
 }
 

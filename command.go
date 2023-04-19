@@ -42,8 +42,6 @@ func (c *command) runWithError(ss []string) (bool, error) {
 	} else if args.Version {
 		c.print(version)
 		return true, nil
-	} else if args.Format == "junit" && args.Verbose {
-		return false, errors.New("verbose option not supported for JUnit output")
 	}
 
 	client := newRedirectHttpClient(
