@@ -20,7 +20,7 @@ Application Options:
                                             sitemap.xml
       --header=<header>...                  Custom headers
   -f, --ignore-fragments                    Ignore URL fragments
-      --format=[text|json|junit]
+      --format=[text|json|junit]            Output format (default: text)
       --json                                Output results in JSON
       --experimental-verbose-json           Include successful results in JSON
       --junit                               Output results as JUnit XML file
