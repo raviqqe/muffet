@@ -24,4 +24,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - run: npx markdown-link-check README.md
+      - uses: lycheeverse/lychee-action@v1
+        with:
+          fail: true

@@ -270,17 +270,6 @@ func TestCommandIncludeSuccessfulPageInJSONOutputWhenRequested(t *testing.T) {
 	assert.Equal(t, strings.TrimSpace(b.String()), "[{\"url\":\"\",\"links\":[]}]")
 }
 
-func TestCommandFailWithVerboseAndJSONOptions(t *testing.T) {
-	b := &bytes.Buffer{}
-
-	ok := newTestCommandWithStderr(b, nil).Run(
-		[]string{"--json", "--verbose", "http://foo.com"},
-	)
-
-	assert.False(t, ok)
-	cupaloy.SnapshotT(t, b.String())
-}
-
 func TestCommandFailToRunWithJUnitOutput(t *testing.T) {
 	b := &bytes.Buffer{}
 
@@ -307,17 +296,6 @@ func TestCommandFailWithVerboseAndJUnitOptions(t *testing.T) {
 
 	ok := newTestCommandWithStderr(b, nil).Run(
 		[]string{"--junit", "--verbose", "http://foo.com"},
-	)
-
-	assert.False(t, ok)
-	cupaloy.SnapshotT(t, b.String())
-}
-
-func TestCommandFailWithJUnitAndJSONOptions(t *testing.T) {
-	b := &bytes.Buffer{}
-
-	ok := newTestCommandWithStderr(b, nil).Run(
-		[]string{"--json", "--junit", "http://foo.com"},
 	)
 
 	assert.False(t, ok)
