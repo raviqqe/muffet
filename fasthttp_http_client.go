@@ -36,7 +36,7 @@ func (c *fasthttpHttpClient) Get(u *url.URL, header http.Header) (httpResponse, 
 		}
 	}
 
-	// S me HTTP servers require "Accept" headers set explicitly.
+	// Some HTTP servers require "Accept" headers set explicitly.
 	if !includeHeader(c.header, "Accept") {
 		req.Header.Add("Accept", "*/*")
 	}
