@@ -121,9 +121,7 @@ func parseHeaders(headers []string) (http.Header, error) {
 			return nil, errors.New("invalid header format")
 		}
 
-		k := s[:i]
-
-		m[k] = append(m[k], strings.TrimSpace(s[i+1:]))
+		m.Add(s[:i], strings.TrimSpace(s[i+1:]))
 	}
 
 	return m, nil
