@@ -20,7 +20,7 @@ func (f *sitemapFetcher) Fetch(uu *url.URL) (map[string]struct{}, error) {
 	u := *uu
 	u.Path = "sitemap.xml"
 
-	r, err := f.client.Get(&u)
+	r, err := f.client.Get(&u, nil)
 	if err != nil {
 		return nil, f.formatGetError(err)
 	}

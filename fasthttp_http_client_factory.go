@@ -37,6 +37,6 @@ func (*fasthttpHttpClientFactory) Create(o httpClientOptions) httpClient {
 			MaxResponseBodySize:      o.MaxResponseBodySize,
 		},
 		o.Timeout,
-		o.Headers,
+		o.Header,
 	)
 }

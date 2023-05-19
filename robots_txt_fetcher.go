@@ -19,7 +19,7 @@ func (f *robotsTxtFetcher) Fetch(uu *url.URL) (*robotstxt.RobotsData, error) {
 	u := *uu
 	u.Path = "robots.txt"
 
-	r, err := f.client.Get(&u)
+	r, err := f.client.Get(&u, nil)
 	if err != nil {
 		return nil, f.formatError(err)
 	}

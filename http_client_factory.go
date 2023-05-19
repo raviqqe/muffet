@@ -1,6 +1,9 @@
 package main
 
-import "time"
+import (
+	"net/http"
+	"time"
+)
 
 type httpClientOptions struct {
 	MaxConnectionsPerHost,
@@ -9,7 +12,7 @@ type httpClientOptions struct {
 	Proxy               string
 	SkipTLSVerification bool
 	Timeout             time.Duration
-	Headers             map[string]string
+	Header              http.Header
 }
 
 type httpClientFactory interface {

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"net/http"
 	"net/url"
 )
 
@@ -18,7 +19,7 @@ func newThrottledHttpClient(c httpClient, requestPerSecond int, maxConnections, 
 	}
 }
 
-func (c *throttledHttpClient) Get(u *url.URL) (httpResponse, error) {
+func (c *throttledHttpClient) Get(u *url.URL, header http.Header) (httpResponse, error) {
 	c.connections.Request()
 	defer c.connections.Release()
 
@@ -26,5 +27,5 @@ func (c *throttledHttpClient) Get(u *url.URL) (httpResponse, error) {
 	t.Request()
 	defer t.Release()
 
-	return c.client.Get(u)
+	return c.client.Get(u, header)
 }

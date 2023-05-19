@@ -1,6 +1,7 @@
 package main
 
 import (
+	"net/http"
 	"testing"
 
 	"github.com/bradleyjkemp/cupaloy"
@@ -68,28 +69,37 @@ func TestHelp(t *testing.T) {
 	cupaloy.SnapshotT(t, help())
 }
 
-func TestParseHeaders(t *testing.T) {
+func TestParseHeader(t *testing.T) {
 	for _, c := range []struct {
 		arguments []string
-		answer    map[string]string
+		header    http.Header
 	}{
 		{
 			nil,
-			map[string]string{},
+			http.Header{},
 		},
 		{
 			[]string{"MyHeader: foo"},
-			map[string]string{"MyHeader": "foo"},
+			(func() http.Header {
+				h := http.Header{}
+				h.Add("MyHeader", "foo")
+				return h
+			})(),
 		},
 		{
 			[]string{"MyHeader: foo", "YourHeader: bar"},
-			map[string]string{"MyHeader": "foo", "YourHeader": "bar"},
+			(func() http.Header {
+				h := http.Header{}
+				h.Add("MyHeader", "foo")
+				h.Add("YourHeader", "bar")
+				return h
+			})(),
 		},
 	} {
 		hs, err := parseHeaders(c.arguments)
 
 		assert.Nil(t, err)
-		assert.Equal(t, c.answer, hs)
+		assert.Equal(t, c.header, hs)
 	}
 }
 
