@@ -3,6 +3,8 @@ package main
 import (
 	"errors"
 	"fmt"
+	"net/http"
+	"net/http/cookiejar"
 	"net/url"
 )
 
@@ -16,6 +18,16 @@ func newRedirectHttpClient(c httpClient, maxRedirections int) httpClient {
 }
 
 func (c *redirectHttpClient) Get(u *url.URL, headers map[string]string) (httpResponse, error) {
+	if headers == nil {
+		headers = map[string]string{}
+	}
+
+	cj, err := cookiejar.New(nil)
+
+	if err != nil {
+		return nil, err
+	}
+
 	i := 0
 
 	for {
@@ -44,6 +56,13 @@ func (c *redirectHttpClient) Get(u *url.URL, headers map[string]string) (httpRes
 
 			if err != nil {
 				return nil, err
+			}
+
+			c := r.Header("set-cookie")
+
+			if c != "" {
+				req := http.Request{Header: http.Header{"Cookie": []string{c}}}
+				cj.SetCookies(u, req.Cookies())
 			}
 		default:
 			return nil, c.formatError(fmt.Errorf("%v", r.StatusCode()), i, u)
