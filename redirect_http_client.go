@@ -31,6 +31,10 @@ func (c *redirectHttpClient) Get(u *url.URL, header http.Header) (httpResponse, 
 	i := 0
 
 	for {
+		for _, c := range cj.Cookies(u) {
+			header.Add("cookie", c.String())
+		}
+
 		r, err := c.client.Get(u, header)
 		if err != nil {
 			return nil, c.formatError(err, i, u)

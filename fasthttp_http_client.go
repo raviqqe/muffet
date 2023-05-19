@@ -19,7 +19,7 @@ func newFasthttpHttpClient(c *fasthttp.Client, timeout time.Duration, header htt
 	return &fasthttpHttpClient{c, timeout, header}
 }
 
-func (c *fasthttpHttpClient) Get(u *url.URL, headers http.Header) (httpResponse, error) {
+func (c *fasthttpHttpClient) Get(u *url.URL, header http.Header) (httpResponse, error) {
 	req, res := fasthttp.Request{}, fasthttp.Response{}
 	req.SetRequestURI(u.String())
 	req.SetConnectionClose()
@@ -30,7 +30,7 @@ func (c *fasthttpHttpClient) Get(u *url.URL, headers http.Header) (httpResponse,
 		}
 	}
 
-	for k, vs := range headers {
+	for k, vs := range header {
 		for _, v := range vs {
 			req.Header.Add(k, v)
 		}
