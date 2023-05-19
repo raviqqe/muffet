@@ -62,13 +62,9 @@ func (c *redirectHttpClient) Get(u *url.URL, header http.Header) (httpResponse, 
 				return nil, err
 			}
 
-			c := r.Header("set-cookie")
-
-			if c != "" {
-				h := http.Header{}
-				h.Add("cookie", c)
-				cj.SetCookies(u, (&http.Request{Header: h}).Cookies())
-			}
+			h := http.Header{}
+			h.Add("cookie", r.Header("set-cookie"))
+			cj.SetCookies(u, (&http.Request{Header: h}).Cookies())
 		default:
 			return nil, c.formatError(fmt.Errorf("%v", r.StatusCode()), i, u)
 		}
