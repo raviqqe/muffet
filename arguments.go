@@ -122,9 +122,8 @@ func parseHeaders(headers []string) (http.Header, error) {
 		}
 
 		k := s[:i]
-		v := strings.TrimSpace(s[i+1:])
 
-		m[k] = append(m[k], v)
+		m[k] = append(m[k], strings.TrimSpace(s[i+1:]))
 	}
 
 	return m, nil
