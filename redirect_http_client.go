@@ -62,9 +62,7 @@ func (c *redirectHttpClient) Get(u *url.URL, header http.Header) (httpResponse, 
 				return nil, err
 			}
 
-			h := http.Header{}
-			h.Add("cookie", r.Header("set-cookie"))
-			cj.SetCookies(u, (&http.Request{Header: h}).Cookies())
+			cj.SetCookies(u, parseCookies(r.Header("set-cookie")))
 		default:
 			return nil, c.formatError(fmt.Errorf("%v", r.StatusCode()), i, u)
 		}
@@ -77,4 +75,10 @@ func (*redirectHttpClient) formatError(err error, redirections int, u *url.URL) 
 	}
 
 	return fmt.Errorf("%w (following redirect %v)", err, u.String())
+}
+
+func parseCookies(s string) []*http.Cookie {
+	h := http.Header{}
+	h.Add("cookie", s)
+	return (&http.Request{Header: h}).Cookies()
 }
