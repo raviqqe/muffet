@@ -73,7 +73,7 @@ func (f *linkFetcher) sendRequest(s string) (int, *page, error) {
 		return 0, nil, err
 	}
 
-	r, err := f.client.Get(u)
+	r, err := f.client.Get(u, nil)
 
 	if err != nil {
 		return 0, nil, err

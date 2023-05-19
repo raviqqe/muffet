@@ -18,7 +18,7 @@ func newFasthttpHttpClient(c *fasthttp.Client, timeout time.Duration, headers ma
 	return &fasthttpHttpClient{c, timeout, headers}
 }
 
-func (c *fasthttpHttpClient) Get(u *url.URL) (httpResponse, error) {
+func (c *fasthttpHttpClient) Get(u *url.URL, headers map[string]string) (httpResponse, error) {
 	req, res := fasthttp.Request{}, fasthttp.Response{}
 	req.SetRequestURI(u.String())
 	req.SetConnectionClose()

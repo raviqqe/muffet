@@ -15,11 +15,11 @@ func newRedirectHttpClient(c httpClient, maxRedirections int) httpClient {
 	return &redirectHttpClient{c, maxRedirections}
 }
 
-func (c *redirectHttpClient) Get(u *url.URL) (httpResponse, error) {
+func (c *redirectHttpClient) Get(u *url.URL, headers map[string]string) (httpResponse, error) {
 	i := 0
 
 	for {
-		r, err := c.client.Get(u)
+		r, err := c.client.Get(u, headers)
 		if err != nil {
 			return nil, c.formatError(err, i, u)
 		}
