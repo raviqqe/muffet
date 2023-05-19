@@ -30,7 +30,7 @@ func TestRedirectHttpClientGet(t *testing.T) {
 			},
 		),
 		42,
-	).Get(u)
+	).Get(u, nil)
 
 	assert.Nil(t, err)
 	assert.Equal(t, 200, r.StatusCode())
@@ -62,7 +62,7 @@ func TestRedirectHttpClientGetWithRedirect(t *testing.T) {
 			},
 		),
 		42,
-	).Get(u)
+	).Get(u, nil)
 
 	assert.Nil(t, err)
 	assert.Equal(t, 200, r.StatusCode())
@@ -96,7 +96,7 @@ func TestRedirectHttpClientGetWithRedirects(t *testing.T) {
 			},
 		),
 		maxRedirections,
-	).Get(u)
+	).Get(u, nil)
 
 	assert.Nil(t, err)
 	assert.Equal(t, 200, r.StatusCode())
@@ -134,7 +134,7 @@ func TestRedirectHttpClientGetWithRelativeRedirect(t *testing.T) {
 			},
 		),
 		maxRedirections,
-	).Get(u)
+	).Get(u, nil)
 
 	assert.Nil(t, err)
 	assert.Equal(t, 200, r.StatusCode())
@@ -163,7 +163,7 @@ func TestRedirectHttpClientFailWithTooManyRedirects(t *testing.T) {
 			},
 		),
 		maxRedirections,
-	).Get(u)
+	).Get(u, nil)
 
 	assert.Nil(t, r)
 	assert.Equal(t, err.Error(), "too many redirections")
@@ -182,7 +182,7 @@ func TestRedirectHttpClientFailWithUnsetLocationHeader(t *testing.T) {
 			},
 		),
 		42,
-	).Get(u)
+	).Get(u, nil)
 
 	assert.Nil(t, r)
 	assert.Equal(t, err.Error(), "location header not set")
@@ -205,7 +205,7 @@ func TestRedirectHttpClientFailWithInvalidLocationURL(t *testing.T) {
 			},
 		),
 		42,
-	).Get(u)
+	).Get(u, nil)
 
 	assert.Nil(t, r)
 	assert.Contains(t, err.Error(), "parse")
@@ -223,7 +223,7 @@ func TestRedirectHttpClientFailWithInvalidStatusCode(t *testing.T) {
 			},
 		),
 		42,
-	).Get(u)
+	).Get(u, nil)
 
 	assert.Nil(t, r)
 	assert.Equal(t, err.Error(), "404")
@@ -253,7 +253,7 @@ func TestRedirectHttpClientFailAfterRedirect(t *testing.T) {
 			},
 		),
 		42,
-	).Get(u)
+	).Get(u, nil)
 
 	assert.Nil(t, r)
 	assert.Contains(t, err.Error(), "following redirect http://foo.com/foo")

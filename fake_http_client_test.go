@@ -1,6 +1,7 @@
 package main
 
 import (
+	"net/http"
 	"net/url"
 )
 
@@ -12,6 +13,6 @@ func newFakeHttpClient(h func(*url.URL) (*fakeHttpResponse, error)) *fakeHttpCli
 	return &fakeHttpClient{h}
 }
 
-func (c *fakeHttpClient) Get(u *url.URL) (httpResponse, error) {
+func (c *fakeHttpClient) Get(u *url.URL, _ http.Header) (httpResponse, error) {
 	return c.handler(u)
 }
