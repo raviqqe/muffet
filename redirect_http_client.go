@@ -65,7 +65,7 @@ func (c *redirectHttpClient) Get(u *url.URL, header http.Header) (httpResponse, 
 			c := r.Header("set-cookie")
 
 			if c != "" {
-				req := http.Request{Header: http.Header{"Cookie": []string{c}}}
+				req := http.Request{Header: http.Header{"cookie": []string{c}}}
 				cj.SetCookies(u, req.Cookies())
 			}
 		default:
