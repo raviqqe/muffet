@@ -54,7 +54,7 @@ func (c *command) runWithError(ss []string) (bool, error) {
 					Proxy:                 args.Proxy,
 					SkipTLSVerification:   args.SkipTLSVerification,
 					Timeout:               time.Duration(args.Timeout) * time.Second,
-					Headers:               args.Headers,
+					Header:                args.Header,
 				},
 			),
 			args.RateLimit,

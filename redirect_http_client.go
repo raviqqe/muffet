@@ -17,9 +17,9 @@ func newRedirectHttpClient(c httpClient, maxRedirections int) httpClient {
 	return &redirectHttpClient{c, maxRedirections}
 }
 
-func (c *redirectHttpClient) Get(u *url.URL, headers map[string]string) (httpResponse, error) {
-	if headers == nil {
-		headers = map[string]string{}
+func (c *redirectHttpClient) Get(u *url.URL, header http.Header) (httpResponse, error) {
+	if header == nil {
+		header = http.Header{}
 	}
 
 	cj, err := cookiejar.New(nil)
@@ -31,7 +31,7 @@ func (c *redirectHttpClient) Get(u *url.URL, headers map[string]string) (httpRes
 	i := 0
 
 	for {
-		r, err := c.client.Get(u, headers)
+		r, err := c.client.Get(u, header)
 		if err != nil {
 			return nil, c.formatError(err, i, u)
 		}

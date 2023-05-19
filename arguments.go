@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"errors"
+	"net/http"
 	"regexp"
 	"strings"
 
@@ -41,7 +42,7 @@ type arguments struct {
 	URL                 string
 	ExcludedPatterns    []*regexp.Regexp
 	IncludePatterns     []*regexp.Regexp
-	Headers             map[string]string
+	Header              http.Header
 }
 
 func getArguments(ss []string) (*arguments, error) {
@@ -70,7 +71,7 @@ func getArguments(ss []string) (*arguments, error) {
 		return nil, err
 	}
 
-	args.Headers, err = parseHeaders(args.RawHeaders)
+	args.Header, err = parseHeaders(args.RawHeaders)
 	if err != nil {
 		return nil, err
 	}
@@ -110,8 +111,8 @@ func compileRegexps(regexps []string) ([]*regexp.Regexp, error) {
 	return rs, nil
 }
 
-func parseHeaders(headers []string) (map[string]string, error) {
-	m := make(map[string]string, len(headers))
+func parseHeaders(headers []string) (http.Header, error) {
+	m := make(http.Header, len(headers))
 
 	for _, s := range headers {
 		i := strings.IndexRune(s, ':')
@@ -120,7 +121,10 @@ func parseHeaders(headers []string) (map[string]string, error) {
 			return nil, errors.New("invalid header format")
 		}
 
-		m[s[:i]] = strings.TrimSpace(s[i+1:])
+		k := s[:i]
+		v := strings.TrimSpace(s[i+1:])
+
+		m[k] = append(m[k], v)
 	}
 
 	return m, nil
