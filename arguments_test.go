@@ -80,11 +80,20 @@ func TestParseHeader(t *testing.T) {
 		},
 		{
 			[]string{"MyHeader: foo"},
-			http.Header{"MyHeader": []string{"foo"}},
+			(func() http.Header {
+				h := http.Header{}
+				h.Add("MyHeader", "foo")
+				return h
+			})(),
 		},
 		{
 			[]string{"MyHeader: foo", "YourHeader: bar"},
-			http.Header{"MyHeader": []string{"foo"}, "YourHeader": []string{"bar"}},
+			(func() http.Header {
+				h := http.Header{}
+				h.Add("MyHeader", "foo")
+				h.Add("YourHeader", "bar")
+				return h
+			})(),
 		},
 	} {
 		hs, err := parseHeaders(c.arguments)

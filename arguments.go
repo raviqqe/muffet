@@ -112,7 +112,7 @@ func compileRegexps(regexps []string) ([]*regexp.Regexp, error) {
 }
 
 func parseHeaders(headers []string) (http.Header, error) {
-	m := make(http.Header, len(headers))
+	h := make(http.Header, len(headers))
 
 	for _, s := range headers {
 		i := strings.IndexRune(s, ':')
@@ -121,10 +121,10 @@ func parseHeaders(headers []string) (http.Header, error) {
 			return nil, errors.New("invalid header format")
 		}
 
-		m.Add(s[:i], strings.TrimSpace(s[i+1:]))
+		h.Add(s[:i], strings.TrimSpace(s[i+1:]))
 	}
 
-	return m, nil
+	return h, nil
 }
 
 func reconcileDeprecatedArguments(args *arguments) {
