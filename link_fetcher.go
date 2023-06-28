@@ -8,23 +8,23 @@ import (
 )
 
 type linkFetcher struct {
-	client     httpClient
-	pageParser *pageParser
-	cache      cache
-	options    linkFetcherOptions
+	client      httpClient
+	pageParsers []pageParser
+	cache       cache
+	options     linkFetcherOptions
 }
 
 type fetchResult struct {
 	StatusCode int
-	Page       *page
+	Page       page
 }
 
-func newLinkFetcher(c httpClient, pp *pageParser, o linkFetcherOptions) *linkFetcher {
-	return &linkFetcher{c, pp, newCache(), o}
+func newLinkFetcher(c httpClient, ps []pageParser, o linkFetcherOptions) *linkFetcher {
+	return &linkFetcher{c, ps, newCache(), o}
 }
 
 // Fetch fetches a link and returns a successful status code and optionally HTML page, or an error.
-func (f *linkFetcher) Fetch(u string) (int, *page, error) {
+func (f *linkFetcher) Fetch(u string) (int, page, error) {
 	u, fr, err := separateFragment(u)
 	if err != nil {
 		return 0, nil, err
@@ -43,7 +43,7 @@ func (f *linkFetcher) Fetch(u string) (int, *page, error) {
 	return s, p, nil
 }
 
-func (f *linkFetcher) sendRequestWithCache(u string) (int, *page, error) {
+func (f *linkFetcher) sendRequestWithCache(u string) (int, page, error) {
 	x, store := f.cache.LoadOrStore(u)
 
 	if store == nil {
@@ -67,7 +67,7 @@ func (f *linkFetcher) sendRequestWithCache(u string) (int, *page, error) {
 	return s, p, err
 }
 
-func (f *linkFetcher) sendRequest(s string) (int, *page, error) {
+func (f *linkFetcher) sendRequest(s string) (int, page, error) {
 	u, err := url.Parse(s)
 	if err != nil {
 		return 0, nil, err
@@ -77,13 +77,15 @@ func (f *linkFetcher) sendRequest(s string) (int, *page, error) {
 
 	if err != nil {
 		return 0, nil, err
-	} else if s := strings.TrimSpace(r.Header("Content-Type")); s != "" {
-		t, _, err := mime.ParseMediaType(s)
+	}
+
+	t := ""
+
+	if s := strings.TrimSpace(r.Header("Content-Type")); s != "" {
+		t, _, err = mime.ParseMediaType(s)
 
 		if err != nil {
 			return 0, nil, err
-		} else if t != "text/html" {
-			return r.StatusCode(), nil, nil
 		}
 	}
 
@@ -92,12 +94,21 @@ func (f *linkFetcher) sendRequest(s string) (int, *page, error) {
 		return 0, nil, err
 	}
 
-	p, err := f.pageParser.Parse(r.URL(), bs)
-	if err != nil {
-		return 0, nil, err
+	for _, pp := range f.pageParsers {
+		u, err := url.Parse(r.URL())
+		if err != nil {
+			return 0, nil, err
+		}
+
+		p, err := pp.Parse(u, t, bs)
+		if err != nil {
+			return 0, nil, err
+		} else if p != nil {
+			return r.StatusCode(), p, nil
+		}
 	}
 
-	return r.StatusCode(), p, nil
+	return r.StatusCode(), nil, nil
 }
 
 func separateFragment(s string) (string, string, error) {

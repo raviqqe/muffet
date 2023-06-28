@@ -28,6 +28,15 @@ func newFakeHtmlResponse(location string, body string) *fakeHttpResponse {
 	)
 }
 
+func newFakeXmlResponse(location string, body string) *fakeHttpResponse {
+	return newFakeHttpResponse(
+		200,
+		location,
+		[]byte(body),
+		map[string]string{"content-type": "application/xml"},
+	)
+}
+
 func (r *fakeHttpResponse) URL() string {
 	return r.location
 }

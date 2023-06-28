@@ -12,7 +12,7 @@ func newTestPageChecker(c *fakeHttpClient) *pageChecker {
 	return newPageChecker(
 		newLinkFetcher(
 			c,
-			newPageParser(newLinkFinder(nil, nil)),
+			[]pageParser{newHtmlPageParser(newLinkFinder(nil, nil))},
 			linkFetcherOptions{},
 		),
 		newLinkValidator("foo.com", nil, nil),
@@ -20,11 +20,11 @@ func newTestPageChecker(c *fakeHttpClient) *pageChecker {
 	)
 }
 
-func newTestPage(t *testing.T, fragments map[string]struct{}, links map[string]error) *page {
+func newTestPage(t *testing.T, fragments map[string]struct{}, links map[string]error) page {
 	u, err := url.Parse("http://foo.com")
 	assert.Nil(t, err)
 
-	return newPage(u, fragments, links)
+	return newHtmlPage(u, fragments, links)
 }
 
 func TestPageCheckerCheckOnePage(t *testing.T) {

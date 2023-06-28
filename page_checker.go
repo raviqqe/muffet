@@ -26,14 +26,14 @@ func (c *pageChecker) Results() <-chan *pageResult {
 	return c.results
 }
 
-func (c *pageChecker) Check(page *page) {
+func (c *pageChecker) Check(page page) {
 	c.addPage(page)
 	c.daemonManager.Run()
 
 	close(c.results)
 }
 
-func (c *pageChecker) checkPage(p *page) {
+func (c *pageChecker) checkPage(p page) {
 	us := p.Links()
 
 	sc := make(chan *successLinkResult, len(us))
@@ -85,7 +85,7 @@ func (c *pageChecker) checkPage(p *page) {
 	c.results <- &pageResult{p.URL().String(), ss, es}
 }
 
-func (c *pageChecker) addPage(p *page) {
+func (c *pageChecker) addPage(p page) {
 	if !c.donePages.Add(p.URL().String()) {
 		c.daemonManager.Add(func() { c.checkPage(p) })
 	}
