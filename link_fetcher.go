@@ -8,10 +8,10 @@ import (
 )
 
 type linkFetcher struct {
-	client     httpClient
-	htmlPageParser *htmlPageParser
-	cache      cache
-	options    linkFetcherOptions
+	client      httpClient
+	pageParsers []pageParser
+	cache       cache
+	options     linkFetcherOptions
 }
 
 type fetchResult struct {
@@ -19,8 +19,8 @@ type fetchResult struct {
 	Page       page
 }
 
-func newLinkFetcher(c httpClient, pp *htmlPageParser, o linkFetcherOptions) *linkFetcher {
-	return &linkFetcher{c, pp, newCache(), o}
+func newLinkFetcher(c httpClient, ps []pageParser, o linkFetcherOptions) *linkFetcher {
+	return &linkFetcher{c, ps, newCache(), o}
 }
 
 // Fetch fetches a link and returns a successful status code and optionally HTML page, or an error.
@@ -77,13 +77,15 @@ func (f *linkFetcher) sendRequest(s string) (int, page, error) {
 
 	if err != nil {
 		return 0, nil, err
-	} else if s := strings.TrimSpace(r.Header("Content-Type")); s != "" {
-		t, _, err := mime.ParseMediaType(s)
+	}
+
+	t := ""
+
+	if s := strings.TrimSpace(r.Header("Content-Type")); s != "" {
+		t, _, err = mime.ParseMediaType(s)
 
 		if err != nil {
 			return 0, nil, err
-		} else if t != "text/html" && t != "application/xml" {
-			return r.StatusCode(), nil, nil
 		}
 	}
 
@@ -92,12 +94,16 @@ func (f *linkFetcher) sendRequest(s string) (int, page, error) {
 		return 0, nil, err
 	}
 
-	p, err := f.htmlPageParser.Parse(r.URL(), bs)
-	if err != nil {
-		return 0, nil, err
+	for _, pp := range f.pageParsers {
+		p, err := pp.Parse(r.URL(), t, bs)
+		if err != nil {
+			return 0, nil, err
+		} else if p != nil {
+			return r.StatusCode(), p, nil
+		}
 	}
 
-	return r.StatusCode(), p, nil
+	return r.StatusCode(), nil, nil
 }
 
 func separateFragment(s string) (string, string, error) {

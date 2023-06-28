@@ -13,15 +13,19 @@ func newSitemapPageParser() *sitemapPageParser {
 	return &sitemapPageParser{}
 }
 
-func (f *sitemapPageParser) Parse(urlString string, bs []byte) (*sitemapXmlPage, error) {
-	uu, err := url.Parse(urlString)
+func (f *sitemapPageParser) Parse(rawURL string, typ string, bs []byte) (page, error) {
+	if typ != "application/xml" {
+		return nil, nil
+	}
+
+	u, err := url.Parse(rawURL)
 	if err != nil {
 		return nil, err
 	}
 
-	us := map[string]error{}
+	ls := map[string]error{}
 	c := func(e interface{ GetLocation() string }) error {
-		us[e.GetLocation()] = nil
+		ls[e.GetLocation()] = nil
 		return nil
 	}
 
@@ -31,7 +35,7 @@ func (f *sitemapPageParser) Parse(urlString string, bs []byte) (*sitemapXmlPage,
 
 	// TODO Detect XML files as sitemaps.
 	if err == nil {
-		return newSitemapXmlPage(uu, us), nil
+		return newSitemapXmlPage(u, ls), nil
 	}
 
 	err = sitemap.ParseIndex(bytes.NewReader(bs), func(e sitemap.IndexEntry) error {
@@ -43,5 +47,5 @@ func (f *sitemapPageParser) Parse(urlString string, bs []byte) (*sitemapXmlPage,
 		return nil, nil
 	}
 
-	return newSitemapXmlPage(uu, us), nil
+	return newSitemapXmlPage(u, ls), nil
 }
