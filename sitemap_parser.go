@@ -23,7 +23,6 @@ func (f *sitemapPageParser) Parse(urlString string, bs []byte) (*sitemapXmlPage,
 	us := map[string]error{}
 	c := func(e interface{ GetLocation() string }) error {
 		us[e.GetLocation()] = nil
-
 		return nil
 	}
 
