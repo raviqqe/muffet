@@ -26,8 +26,11 @@ func (c *pageChecker) Results() <-chan *pageResult {
 	return c.results
 }
 
-func (c *pageChecker) Check(page *page) {
-	c.addPage(page)
+func (c *pageChecker) Check(ps []*page) {
+	for _, p := range ps {
+		c.addPage(p)
+	}
+
 	c.daemonManager.Run()
 
 	close(c.results)
