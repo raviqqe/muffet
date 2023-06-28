@@ -34,7 +34,7 @@ func (f *sitemapPageParser) Parse(rawURL string, typ string, bs []byte) (page, e
 	})
 
 	// TODO Detect XML files as sitemaps.
-	if err == nil {
+	if err == nil && len(ls) != 0 {
 		return newSitemapPage(u, ls), nil
 	}
 
@@ -43,7 +43,7 @@ func (f *sitemapPageParser) Parse(rawURL string, typ string, bs []byte) (page, e
 	})
 
 	// TODO Detect XML files as sitemaps.
-	if err != nil {
+	if err != nil && len(ls) != 0 {
 		return nil, nil
 	}
 
