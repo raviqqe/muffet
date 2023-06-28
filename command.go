@@ -78,7 +78,7 @@ func (c *command) runWithError(ss []string) (bool, error) {
 	if err != nil {
 		return false, fmt.Errorf("failed to fetch root page: %v", err)
 	} else if p == nil {
-		return false, errors.New("root page has invalid type")
+		return false, errors.New("root page has invalid content type")
 	}
 
 	rd := (*robotstxt.RobotsData)(nil)
