@@ -13,14 +13,9 @@ func newSitemapPageParser() *sitemapPageParser {
 	return &sitemapPageParser{}
 }
 
-func (f *sitemapPageParser) Parse(rawURL string, typ string, bs []byte) (page, error) {
+func (f *sitemapPageParser) Parse(u *url.URL, typ string, bs []byte) (page, error) {
 	if typ != "application/xml" {
 		return nil, nil
-	}
-
-	u, err := url.Parse(rawURL)
-	if err != nil {
-		return nil, err
 	}
 
 	ls := map[string]error{}
@@ -29,7 +24,7 @@ func (f *sitemapPageParser) Parse(rawURL string, typ string, bs []byte) (page, e
 		return nil
 	}
 
-	err = sitemap.Parse(bytes.NewReader(bs), func(e sitemap.Entry) error {
+	err := sitemap.Parse(bytes.NewReader(bs), func(e sitemap.Entry) error {
 		return c(e)
 	})
 

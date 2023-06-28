@@ -95,7 +95,12 @@ func (f *linkFetcher) sendRequest(s string) (int, page, error) {
 	}
 
 	for _, pp := range f.pageParsers {
-		p, err := pp.Parse(r.URL(), t, bs)
+		u, err := url.Parse(r.URL())
+		if err != nil {
+			return 0, nil, err
+		}
+
+		p, err := pp.Parse(u, t, bs)
 		if err != nil {
 			return 0, nil, err
 		} else if p != nil {

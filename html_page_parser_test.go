@@ -1,6 +1,7 @@
 package main
 
 import (
+	"net/url"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -8,28 +9,29 @@ import (
 
 const HTML_MIME_TYPE = "text/html"
 
-func TestHtmlPageParserParsePage(t *testing.T) {
-	_, err := newHtmlPageParser(newLinkFinder(nil, nil)).Parse("http://foo.com", HTML_MIME_TYPE, nil)
+func parseURL(t *testing.T, s string) *url.URL {
+	u, err := url.Parse(s)
+
 	assert.Nil(t, err)
+
+	return u
 }
 
-func TestHtmlPageParserFailWithInvalidURL(t *testing.T) {
-	_, err := newHtmlPageParser(newLinkFinder(nil, nil)).Parse(":", HTML_MIME_TYPE, nil)
-	assert.NotNil(t, err)
+func TestHtmlPageParserParsePage(t *testing.T) {
+	_, err := newHtmlPageParser(newLinkFinder(nil, nil)).Parse(parseURL(t, "http://foo.com"), HTML_MIME_TYPE, nil)
+	assert.Nil(t, err)
 }
 
 func TestHtmlPageParserSetCorrectURL(t *testing.T) {
-	s := "http://foo.com"
+	u := parseURL(t, "http://foo.com")
 
-	p, err := newHtmlPageParser(newLinkFinder(nil, nil)).Parse(s, HTML_MIME_TYPE, nil)
+	p, err := newHtmlPageParser(newLinkFinder(nil, nil)).Parse(u, HTML_MIME_TYPE, nil)
 	assert.Nil(t, err)
-	assert.Equal(t, s, p.URL().String())
+	assert.Equal(t, u.String(), p.URL().String())
 }
 
 func TestHtmlPageParserIgnorePageURLFragment(t *testing.T) {
-	s := "http://foo.com#id"
-
-	p, err := newHtmlPageParser(newLinkFinder(nil, nil)).Parse(s, HTML_MIME_TYPE, nil)
+	p, err := newHtmlPageParser(newLinkFinder(nil, nil)).Parse(parseURL(t, "http://foo.com#id"), HTML_MIME_TYPE, nil)
 	assert.Nil(t, err)
 	assert.Equal(t, "http://foo.com", p.URL().String())
 }
@@ -37,14 +39,14 @@ func TestHtmlPageParserIgnorePageURLFragment(t *testing.T) {
 func TestHtmlPageParserKeepQuery(t *testing.T) {
 	s := "http://foo.com?bar=baz"
 
-	p, err := newHtmlPageParser(newLinkFinder(nil, nil)).Parse(s, HTML_MIME_TYPE, nil)
+	p, err := newHtmlPageParser(newLinkFinder(nil, nil)).Parse(parseURL(t, s), HTML_MIME_TYPE, nil)
 	assert.Nil(t, err)
 	assert.Equal(t, s, p.URL().String())
 }
 
 func TestHtmlPageParserResolveLinksWithBaseTag(t *testing.T) {
 	p, err := newHtmlPageParser(newLinkFinder(nil, nil)).Parse(
-		"http://foo.com",
+		parseURL(t, "http://foo.com"),
 		HTML_MIME_TYPE,
 		[]byte(`
 			<html>
@@ -63,7 +65,7 @@ func TestHtmlPageParserResolveLinksWithBaseTag(t *testing.T) {
 
 func TestHtmlPageParserResolveLinksWithBlankBaseTag(t *testing.T) {
 	p, err := newHtmlPageParser(newLinkFinder(nil, nil)).Parse(
-		"http://foo.com",
+		parseURL(t, "http://foo.com"),
 		HTML_MIME_TYPE,
 		[]byte(`
 			<html>
@@ -82,7 +84,7 @@ func TestHtmlPageParserResolveLinksWithBlankBaseTag(t *testing.T) {
 
 func TestHtmlPageParserFailToParseWithInvalidBaseTag(t *testing.T) {
 	_, err := newHtmlPageParser(newLinkFinder(nil, nil)).Parse(
-		"http://foo.com",
+		parseURL(t, "http://foo.com"),
 		HTML_MIME_TYPE,
 		[]byte(`
 			<html>
@@ -99,7 +101,7 @@ func TestHtmlPageParserFailToParseWithInvalidBaseTag(t *testing.T) {
 
 func TestHtmlPageParserParseID(t *testing.T) {
 	p, err := newHtmlPageParser(newLinkFinder(nil, nil)).Parse(
-		"http://foo.com",
+		parseURL(t, "http://foo.com"),
 		HTML_MIME_TYPE,
 		[]byte(`<p id="foo" />`),
 	)
@@ -109,7 +111,7 @@ func TestHtmlPageParserParseID(t *testing.T) {
 
 func TestHtmlPageParserParseName(t *testing.T) {
 	p, err := newHtmlPageParser(newLinkFinder(nil, nil)).Parse(
-		"http://foo.com",
+		parseURL(t, "http://foo.com"),
 		HTML_MIME_TYPE,
 		[]byte(`<p name="foo" />`),
 	)
@@ -119,7 +121,7 @@ func TestHtmlPageParserParseName(t *testing.T) {
 
 func TestHtmlPageParserParseIDAndName(t *testing.T) {
 	p, err := newHtmlPageParser(newLinkFinder(nil, nil)).Parse(
-		"http://foo.com",
+		parseURL(t, "http://foo.com"),
 		HTML_MIME_TYPE,
 		[]byte(`<p id="foo" name="bar" />`),
 	)
@@ -139,7 +141,7 @@ func TestHtmlPageParserParseLinks(t *testing.T) {
 		},
 	} {
 		p, err := newHtmlPageParser(newLinkFinder(nil, nil)).Parse(
-			"http://foo.com",
+			parseURL(t, "http://foo.com"),
 			HTML_MIME_TYPE,
 			[]byte(ss[0]),
 		)

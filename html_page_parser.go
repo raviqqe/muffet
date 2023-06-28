@@ -17,17 +17,12 @@ func newHtmlPageParser(f linkFinder) *htmlPageParser {
 	return &htmlPageParser{f}
 }
 
-func (p htmlPageParser) Parse(rawURL string, typ string, body []byte) (page, error) {
+func (p htmlPageParser) Parse(u *url.URL, typ string, body []byte) (page, error) {
 	if typ != "text/html" {
 		return nil, nil
 	}
 
 	n, err := html.Parse(bytes.NewReader(body))
-	if err != nil {
-		return nil, err
-	}
-
-	u, err := url.Parse(rawURL)
 	if err != nil {
 		return nil, err
 	}
