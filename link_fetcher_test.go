@@ -15,7 +15,7 @@ func newTestLinkFetcher(c *fakeHttpClient) *linkFetcher {
 }
 
 func newTestLinkFetcherWithOptions(c *fakeHttpClient, o linkFetcherOptions) *linkFetcher {
-	return newLinkFetcher(c, []pageParser{newHtmlPageParser(newLinkFinder(nil, nil))}, o)
+	return newLinkFetcher(c, []pageParser{newSitemapPageParser(), newHtmlPageParser(newLinkFinder(nil, nil))}, o)
 }
 
 func TestNewFetcher(t *testing.T) {
@@ -160,6 +160,66 @@ func TestLinkFetcherFetchSkippingTextFragment(t *testing.T) {
 
 	_, _, err := f.Fetch(s + "#:~:text=foo")
 	assert.Nil(t, err)
+}
+
+func TestLinkFetcherFetchSitemap(t *testing.T) {
+	f := newTestLinkFetcher(
+		newFakeHttpClient(
+			func(u *url.URL) (*fakeHttpResponse, error) {
+				if u.String() != "http://foo.com/sitemap.xml" {
+					return nil, errors.New("")
+				}
+
+				return newFakeXmlResponse("http://foo.com/sitemap.xml", `
+					<?xml version="1.0" encoding="UTF-8"?>
+					<urlset
+						xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+						xmlns:news="http://www.google.com/schemas/sitemap-news/0.9"
+						xmlns:xhtml="http://www.w3.org/1999/xhtml"
+						xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
+						xmlns:video="http://www.google.com/schemas/sitemap-video/1.1"
+					>
+						<url>
+							<loc>https://foo.com/</loc>
+						</url>
+					</urlset>
+				`), nil
+			}),
+	)
+
+	s, p, err := f.Fetch("http://foo.com/sitemap.xml")
+
+	assert.Equal(t, 200, s)
+	assert.NotNil(t, p)
+	assert.Nil(t, err)
+	assert.Equal(t, map[string]error{"https://foo.com/": nil}, p.Links())
+}
+
+func TestLinkFetcherFetchSitemapIndex(t *testing.T) {
+	f := newTestLinkFetcher(
+		newFakeHttpClient(
+			func(u *url.URL) (*fakeHttpResponse, error) {
+				if u.String() != "http://foo.com/sitemap-index.xml" {
+					return nil, errors.New("")
+				}
+
+				return newFakeXmlResponse("http://foo.com/sitemap-index.xml", `
+					<?xml version="1.0" encoding="UTF-8"?>
+					<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+						<sitemap>
+							<loc>https://foo.com/sitemap-0.xml</loc>
+						</sitemap>
+					</sitemapindex>
+				`), nil
+			}),
+	)
+
+	s, p, err := f.Fetch("http://foo.com/sitemap-index.xml")
+
+	assert.Equal(t, 200, s)
+	assert.NotNil(t, p)
+	assert.Nil(t, err)
+	assert.Equal(t, map[string]error{"https://foo.com/sitemap-0.xml": nil}, p.Links())
 }
 
 func TestLinkFetcherFailToFetch(t *testing.T) {
