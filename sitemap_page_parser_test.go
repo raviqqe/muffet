@@ -52,3 +52,10 @@ func TestSitemapPageParserFailToParseXML(t *testing.T) {
 	assert.Nil(t, err)
 	assert.Nil(t, p)
 }
+
+func TestSitemapPageParserFailToParseHTML(t *testing.T) {
+	p, err := newSitemapPageParser().Parse(parseURL(t, "https://foo.com/sitemap.xml"), "text/html", []byte(""))
+
+	assert.Nil(t, err)
+	assert.Nil(t, p)
+}
