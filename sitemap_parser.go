@@ -2,7 +2,6 @@ package main
 
 import (
 	"bytes"
-	"fmt"
 	"net/url"
 
 	sitemap "github.com/oxffaa/gopher-parse-sitemap"
@@ -30,6 +29,7 @@ func (f *sitemapPageParser) Parse(urlString string, bs []byte) (*sitemapXmlPage,
 		return c(e)
 	})
 
+	// TODO Detect XML files as sitemaps.
 	if err == nil {
 		return newSitemapXmlPage(uu, us), nil
 	}
@@ -38,8 +38,9 @@ func (f *sitemapPageParser) Parse(urlString string, bs []byte) (*sitemapXmlPage,
 		return c(e)
 	})
 
+	// TODO Detect XML files as sitemaps.
 	if err != nil {
-		return nil, fmt.Errorf("failed to parse sitemap: %v", err)
+		return nil, nil
 	}
 
 	return newSitemapXmlPage(uu, us), nil
