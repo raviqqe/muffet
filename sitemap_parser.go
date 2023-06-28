@@ -14,22 +14,20 @@ func newSitemapPageParser() *sitemapPageParser {
 	return &sitemapPageParser{}
 }
 
-func (f *sitemapPageParser) Parse(uu *url.URL, bs []byte) (*sitemapXmlPage, error) {
+func (f *sitemapPageParser) Parse(urlString string, bs []byte) (*sitemapXmlPage, error) {
+	uu, err := url.Parse(urlString)
+	if err != nil {
+		return nil, err
+	}
+
 	us := map[string]error{}
 	c := func(e interface{ GetLocation() string }) error {
-		s := e.GetLocation()
-		u, err := url.Parse(s)
-		if err != nil {
-			us[s] = err
-			return nil
-		}
-
-		us[uu.ResolveReference(u).String()] = nil
+		us[e.GetLocation()] = nil
 
 		return nil
 	}
 
-	err := sitemap.Parse(bytes.NewReader(bs), func(e sitemap.Entry) error {
+	err = sitemap.Parse(bytes.NewReader(bs), func(e sitemap.Entry) error {
 		return c(e)
 	})
 

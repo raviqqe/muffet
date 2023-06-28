@@ -82,7 +82,7 @@ func (f *linkFetcher) sendRequest(s string) (int, page, error) {
 
 		if err != nil {
 			return 0, nil, err
-		} else if t != "text/html" {
+		} else if t != "text/html" && t != "application/xml" {
 			return r.StatusCode(), nil, nil
 		}
 	}
