@@ -17,7 +17,7 @@ func newPageParser(f linkFinder) *pageParser {
 	return &pageParser{f}
 }
 
-func (p pageParser) Parse(rawURL string, body []byte) (*page, error) {
+func (p pageParser) Parse(rawURL string, body []byte) (page, error) {
 	n, err := html.Parse(bytes.NewReader(body))
 	if err != nil {
 		return nil, err
