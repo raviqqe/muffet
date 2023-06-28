@@ -26,7 +26,7 @@ func (c *pageChecker) Results() <-chan *pageResult {
 	return c.results
 }
 
-func (c *pageChecker) Check(page *page) {
+func (c *pageChecker) Check(page page) {
 	c.addPage(page)
 	c.daemonManager.Run()
 
