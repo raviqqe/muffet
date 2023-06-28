@@ -35,7 +35,7 @@ func (f *sitemapPageParser) Parse(rawURL string, typ string, bs []byte) (page, e
 
 	// TODO Detect XML files as sitemaps.
 	if err == nil {
-		return newSitemapXmlPage(u, ls), nil
+		return newSitemapPage(u, ls), nil
 	}
 
 	err = sitemap.ParseIndex(bytes.NewReader(bs), func(e sitemap.IndexEntry) error {
@@ -47,5 +47,5 @@ func (f *sitemapPageParser) Parse(rawURL string, typ string, bs []byte) (page, e
 		return nil, nil
 	}
 
-	return newSitemapXmlPage(u, ls), nil
+	return newSitemapPage(u, ls), nil
 }
