@@ -17,7 +17,7 @@ Application Options:
       --follow-robots-txt                   Follow robots.txt when scraping
                                             pages
       --follow-sitemap-xml                  Scrape only pages listed in
-                                            sitemap.xml
+                                            sitemap.xml (deprecated)
       --header=<header>...                  Custom headers
   -f, --ignore-fragments                    Ignore URL fragments
       --format=[text|json|junit]            Output format (default: text)
