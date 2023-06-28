@@ -45,3 +45,10 @@ func TestSitemapPageParserParseIndexPage(t *testing.T) {
 	assert.Equal(t, map[string]error{"https://foo.com/sitemap-0.xml": nil}, p.Links())
 	assert.Equal(t, map[string]struct{}(nil), p.Fragments())
 }
+
+func TestSitemapPageParserFailToParseXML(t *testing.T) {
+	p, err := newSitemapPageParser().Parse(parseURL(t, "https://foo.com/sitemap.xml"), SITEMAP_MIME_TYPE, []byte(""))
+
+	assert.Nil(t, err)
+	assert.Nil(t, p)
+}
