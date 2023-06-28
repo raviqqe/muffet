@@ -9,15 +9,15 @@ import (
 	"golang.org/x/net/html/atom"
 )
 
-type pageParser struct {
+type htmlPageParser struct {
 	linkFinder linkFinder
 }
 
-func newPageParser(f linkFinder) *pageParser {
-	return &pageParser{f}
+func newHtmlPageParser(f linkFinder) *htmlPageParser {
+	return &htmlPageParser{f}
 }
 
-func (p pageParser) Parse(rawURL string, body []byte) (page, error) {
+func (p htmlPageParser) Parse(rawURL string, body []byte) (page, error) {
 	n, err := html.Parse(bytes.NewReader(body))
 	if err != nil {
 		return nil, err

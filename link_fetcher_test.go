@@ -15,7 +15,7 @@ func newTestLinkFetcher(c *fakeHttpClient) *linkFetcher {
 }
 
 func newTestLinkFetcherWithOptions(c *fakeHttpClient, o linkFetcherOptions) *linkFetcher {
-	return newLinkFetcher(c, newPageParser(newLinkFinder(nil, nil)), o)
+	return newLinkFetcher(c, newHtmlPageParser(newLinkFinder(nil, nil)), o)
 }
 
 func TestNewFetcher(t *testing.T) {

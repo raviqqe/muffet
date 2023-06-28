@@ -9,7 +9,7 @@ import (
 
 type linkFetcher struct {
 	client     httpClient
-	pageParser *pageParser
+	htmlPageParser *htmlPageParser
 	cache      cache
 	options    linkFetcherOptions
 }
@@ -19,7 +19,7 @@ type fetchResult struct {
 	Page       page
 }
 
-func newLinkFetcher(c httpClient, pp *pageParser, o linkFetcherOptions) *linkFetcher {
+func newLinkFetcher(c httpClient, pp *htmlPageParser, o linkFetcherOptions) *linkFetcher {
 	return &linkFetcher{c, pp, newCache(), o}
 }
 
@@ -92,7 +92,7 @@ func (f *linkFetcher) sendRequest(s string) (int, page, error) {
 		return 0, nil, err
 	}
 
-	p, err := f.pageParser.Parse(r.URL(), bs)
+	p, err := f.htmlPageParser.Parse(r.URL(), bs)
 	if err != nil {
 		return 0, nil, err
 	}
