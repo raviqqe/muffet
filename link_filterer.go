@@ -7,7 +7,6 @@ import (
 
 	"github.com/yhat/scrape"
 	"golang.org/x/net/html"
-	"golang.org/x/net/html/atom"
 )
 
 var validSchemes = map[string]struct{}{
