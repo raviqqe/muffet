@@ -64,11 +64,13 @@ func (c *command) runWithError(ss []string) (bool, error) {
 		args.MaxRedirections,
 	)
 
+	fl := newLinkFilterer(args.ExcludedPatterns, args.IncludePatterns)
+
 	f := newLinkFetcher(
 		client,
 		[]pageParser{
 			newSitemapPageParser(),
-			newHtmlPageParser(newLinkFinder(args.ExcludedPatterns, args.IncludePatterns)),
+			newHtmlPageParser(newLinkFinder(fl)),
 		},
 		linkFetcherOptions{
 			args.IgnoreFragments,
