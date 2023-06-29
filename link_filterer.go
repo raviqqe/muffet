@@ -3,10 +3,6 @@ package main
 import (
 	"net/url"
 	"regexp"
-	"strings"
-
-	"github.com/yhat/scrape"
-	"golang.org/x/net/html"
 )
 
 var validSchemes = map[string]struct{}{
@@ -32,27 +28,6 @@ func (f linkFilterer) Filter(u *url.URL) bool {
 	}
 
 	return !f.isLinkExcluded(s) && f.isLinkIncluded(s)
-}
-
-func (linkFilterer) parseLinks(n *html.Node, a string) []string {
-	s := scrape.Attr(n, a)
-	ss := []string{}
-
-	switch a {
-	case "srcset":
-		for _, s := range strings.Split(s, ",") {
-			ss = append(ss, imageDescriptorPattern.ReplaceAllString(strings.TrimSpace(s), ""))
-		}
-	case "content":
-		switch scrape.Attr(n, "property") {
-		case "og:image", "og:audio", "og:video", "og:image:url", "og:image:secure_url", "twitter:image":
-			ss = append(ss, s)
-		}
-	default:
-		ss = append(ss, s)
-	}
-
-	return ss
 }
 
 func (f linkFilterer) isLinkExcluded(u string) bool {
