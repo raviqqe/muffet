@@ -10,12 +10,6 @@ import (
 	"golang.org/x/net/html/atom"
 )
 
-var validSchemes = map[string]struct{}{
-	"":      {},
-	"http":  {},
-	"https": {},
-}
-
 var atomToAttributes = map[atom.Atom][]string{
 	atom.A:      {"href"},
 	atom.Frame:  {"src"},
@@ -64,7 +58,7 @@ func (f linkFinder) Find(n *html.Node, base *url.URL) map[string]error {
 
 				s = base.ResolveReference(u).String()
 
-				if _, ok := validSchemes[u.Scheme]; ok && !f.isLinkExcluded(s) && f.isLinkIncluded(s) {
+				if linkFilterer.Filter(foo) {
 					ls[s] = nil
 				}
 			}
@@ -93,22 +87,4 @@ func (linkFinder) parseLinks(n *html.Node, a string) []string {
 	}
 
 	return ss
-}
-
-func (f linkFinder) isLinkExcluded(u string) bool {
-	return f.matches(u, f.excludedPatterns)
-}
-
-func (f linkFinder) isLinkIncluded(u string) bool {
-	return len(f.includedPatterns) == 0 || f.matches(u, f.includedPatterns)
-}
-
-func (f linkFinder) matches(u string, rs []*regexp.Regexp) bool {
-	for _, r := range rs {
-		if r.MatchString(u) {
-			return true
-		}
-	}
-
-	return false
 }
