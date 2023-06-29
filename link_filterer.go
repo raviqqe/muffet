@@ -27,11 +27,11 @@ func newLinkFilterer(es []*regexp.Regexp, is []*regexp.Regexp) linkFilterer {
 func (f linkFilterer) Filter(u *url.URL) bool {
 	s := u.String()
 
-	if _, ok := validSchemes[u.Scheme]; ok && !f.isLinkExcluded(s) && f.isLinkIncluded(s) {
-		return true
+	if _, ok := validSchemes[u.Scheme]; !ok {
+		return false
 	}
 
-	return false
+	return !f.isLinkExcluded(s) && f.isLinkIncluded(s)
 }
 
 func (linkFilterer) parseLinks(n *html.Node, a string) []string {
