@@ -7,6 +7,10 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func newTestLinkFilterer() linkFilterer {
+	return newLinkFilterer(nil, nil)
+}
+
 func TestLinkFiltererIsLinkExcluded(t *testing.T) {
 	for _, x := range []struct {
 		regexps []string

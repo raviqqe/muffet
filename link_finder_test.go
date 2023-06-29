@@ -11,7 +11,7 @@ import (
 )
 
 func newTestLinkFinder() linkFinder {
-	return newLinkFinder(newLinkFilterer(nil, nil))
+	return newLinkFinder(newTestLinkFilterer())
 }
 
 func TestLinkFinderFindLinks(t *testing.T) {

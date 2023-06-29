@@ -7,20 +7,27 @@ import (
 	sitemap "github.com/oxffaa/gopher-parse-sitemap"
 )
 
-type sitemapPageParser struct{}
-
-func newSitemapPageParser() *sitemapPageParser {
-	return &sitemapPageParser{}
+type sitemapPageParser struct {
+	linkFilterer linkFilterer
 }
 
-func (f *sitemapPageParser) Parse(u *url.URL, typ string, bs []byte) (page, error) {
+func newSitemapPageParser(f linkFilterer) *sitemapPageParser {
+	return &sitemapPageParser{f}
+}
+
+func (p *sitemapPageParser) Parse(u *url.URL, typ string, bs []byte) (page, error) {
 	if typ != "application/xml" {
 		return nil, nil
 	}
 
 	ls := map[string]error{}
 	c := func(e interface{ GetLocation() string }) error {
-		ls[e.GetLocation()] = nil
+		u, err := url.Parse(e.GetLocation())
+
+		if p.linkFilterer.Filter(u) {
+			ls[u.String()] = err
+		}
+
 		return nil
 	}
 

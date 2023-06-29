@@ -69,7 +69,7 @@ func (c *command) runWithError(ss []string) (bool, error) {
 	f := newLinkFetcher(
 		client,
 		[]pageParser{
-			newSitemapPageParser(),
+			newSitemapPageParser(fl),
 			newHtmlPageParser(newLinkFinder(fl)),
 		},
 		linkFetcherOptions{

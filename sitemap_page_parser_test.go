@@ -9,7 +9,7 @@ import (
 const SITEMAP_MIME_TYPE = "application/xml"
 
 func TestSitemapPageParserParsePage(t *testing.T) {
-	p, err := newSitemapPageParser().Parse(parseURL(t, "https://foo.com/sitemap.xml"), SITEMAP_MIME_TYPE, []byte(`
+	p, err := newSitemapPageParser(newTestLinkFilterer()).Parse(parseURL(t, "https://foo.com/sitemap.xml"), SITEMAP_MIME_TYPE, []byte(`
 		<?xml version="1.0" encoding="UTF-8"?>
 		<urlset
 			xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
@@ -31,7 +31,7 @@ func TestSitemapPageParserParsePage(t *testing.T) {
 }
 
 func TestSitemapPageParserParseIndexPage(t *testing.T) {
-	p, err := newSitemapPageParser().Parse(parseURL(t, "https://foo.com/sitemap.xml"), SITEMAP_MIME_TYPE, []byte(`
+	p, err := newSitemapPageParser(newTestLinkFilterer()).Parse(parseURL(t, "https://foo.com/sitemap.xml"), SITEMAP_MIME_TYPE, []byte(`
 		<?xml version="1.0" encoding="UTF-8"?>
 		<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 			<sitemap>
@@ -47,14 +47,14 @@ func TestSitemapPageParserParseIndexPage(t *testing.T) {
 }
 
 func TestSitemapPageParserFailToParseXML(t *testing.T) {
-	p, err := newSitemapPageParser().Parse(parseURL(t, "https://foo.com/sitemap.xml"), SITEMAP_MIME_TYPE, []byte(""))
+	p, err := newSitemapPageParser(newTestLinkFilterer()).Parse(parseURL(t, "https://foo.com/sitemap.xml"), SITEMAP_MIME_TYPE, []byte(""))
 
 	assert.Nil(t, err)
 	assert.Nil(t, p)
 }
 
 func TestSitemapPageParserFailToParseHTML(t *testing.T) {
-	p, err := newSitemapPageParser().Parse(parseURL(t, "https://foo.com/sitemap.xml"), "text/html", []byte(""))
+	p, err := newSitemapPageParser(newTestLinkFilterer()).Parse(parseURL(t, "https://foo.com/sitemap.xml"), "text/html", []byte(""))
 
 	assert.Nil(t, err)
 	assert.Nil(t, p)
