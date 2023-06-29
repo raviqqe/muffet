@@ -25,12 +25,11 @@ var atomToAttributes = map[atom.Atom][]string{
 var imageDescriptorPattern = regexp.MustCompile(" [^ ]*$")
 
 type linkFinder struct {
-	excludedPatterns []*regexp.Regexp
-	includedPatterns []*regexp.Regexp
+	linkFilterer linkFilterer
 }
 
-func newLinkFinder(es []*regexp.Regexp, is []*regexp.Regexp) linkFinder {
-	return linkFinder{excludedPatterns: es, includedPatterns: is}
+func newLinkFinder(f linkFilterer) linkFinder {
+	return linkFinder{f}
 }
 
 func (f linkFinder) Find(n *html.Node, base *url.URL) map[string]error {
@@ -59,7 +58,7 @@ func (f linkFinder) Find(n *html.Node, base *url.URL) map[string]error {
 				u = base.ResolveReference(u)
 
 				if f.linkFilterer.Filter(u) {
-					ls[s] = nil
+					ls[u.String()] = nil
 				}
 			}
 		}
