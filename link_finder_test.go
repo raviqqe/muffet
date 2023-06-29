@@ -10,6 +10,10 @@ import (
 	"golang.org/x/net/html"
 )
 
+func newTestLinkFinder() linkFinder {
+	return newLinkFinder(newTestLinkFilterer())
+}
+
 func TestLinkFinderFindLinks(t *testing.T) {
 	b, err := url.Parse("https://localhost")
 	assert.Nil(t, err)
@@ -39,7 +43,7 @@ func TestLinkFinderFindLinks(t *testing.T) {
 
 		s, e := 0, 0
 
-		for _, err := range newLinkFinder(nil, nil).Find(n, b) {
+		for _, err := range newTestLinkFinder().Find(n, b) {
 			if err == nil {
 				s++
 			} else {
@@ -61,7 +65,7 @@ func TestLinkFinderFindLinkWithoutEncodedSpaces(t *testing.T) {
 	)
 	assert.Nil(t, err)
 
-	ls := newLinkFinder(nil, nil).Find(n, b)
+	ls := newTestLinkFinder().Find(n, b)
 
 	err, ok := ls["http://foo.com/a%20b"]
 	assert.True(t, ok)
@@ -77,7 +81,7 @@ func TestLinkFinderFindLinkWithoutSpacesNotEncoded(t *testing.T) {
 	)
 	assert.Nil(t, err)
 
-	ls := newLinkFinder(nil, nil).Find(n, b)
+	ls := newTestLinkFinder().Find(n, b)
 
 	err, ok := ls["http://foo.com/a%20b"]
 	assert.True(t, ok)
@@ -93,7 +97,7 @@ func TestLinkFinderFindLinkWithLeadingAndTrailingSpaces(t *testing.T) {
 	)
 	assert.Nil(t, err)
 
-	ls := newLinkFinder(nil, nil).Find(n, b)
+	ls := newTestLinkFinder().Find(n, b)
 
 	err, ok := ls["http://foo.com"]
 	assert.True(t, ok)
@@ -107,94 +111,10 @@ func TestLinkFinderFailWithInvalidURL(t *testing.T) {
 	n, err := html.Parse(strings.NewReader(htmlWithBody(`<a href=":" />`)))
 	assert.Nil(t, err)
 
-	ls := newLinkFinder(nil, nil).Find(n, b)
+	ls := newTestLinkFinder().Find(n, b)
 
 	assert.Equal(t, 1, len(ls))
 	assert.NotNil(t, ls[":"])
-}
-
-func TestLinkFinderIsLinkExcluded(t *testing.T) {
-	for _, x := range []struct {
-		regexps []string
-		answer  bool
-	}{
-		{
-			[]string{"foo\\.com"},
-			true,
-		},
-		{
-			[]string{"foo"},
-			true,
-		},
-		{
-			[]string{"bar", "foo"},
-			true,
-		},
-		{
-			[]string{"bar"},
-			false,
-		},
-	} {
-		rs, err := compileRegexps(x.regexps)
-		assert.Nil(t, err)
-
-		assert.Equal(t, x.answer, newLinkFinder(rs, nil).isLinkExcluded("http://foo.com"))
-	}
-}
-
-func TestLinkFinderIsLinkIncluded(t *testing.T) {
-	for _, x := range []struct {
-		regexps []string
-		answer  bool
-	}{
-		{
-			[]string{"foo\\.com"},
-			true,
-		},
-		{
-			[]string{"foo"},
-			true,
-		},
-		{
-			[]string{"bar", "foo"},
-			true,
-		},
-		{
-			[]string{"bar"},
-			false,
-		},
-	} {
-		rs, err := compileRegexps(x.regexps)
-		assert.Nil(t, err)
-
-		assert.Equal(t, x.answer, newLinkFinder(nil, rs).isLinkIncluded("http://foo.com"))
-	}
-}
-
-func TestLinkFinderExcludeEntireUrl(t *testing.T) {
-	b, err := url.Parse("http://foo.com")
-	assert.Nil(t, err)
-
-	n, err := html.Parse(strings.NewReader(htmlWithBody(`<a href="/bar" />`)))
-	assert.Nil(t, err)
-
-	rs, err := compileRegexps([]string{"foo"})
-	assert.Nil(t, err)
-
-	assert.Equal(t, map[string]error{}, newLinkFinder(rs, nil).Find(n, b))
-}
-
-func TestLinkFinderIncludeEntireUrl(t *testing.T) {
-	b, err := url.Parse("http://foo.com")
-	assert.Nil(t, err)
-
-	n, err := html.Parse(strings.NewReader(htmlWithBody(`<a href="/bar" />`)))
-	assert.Nil(t, err)
-
-	rs, err := compileRegexps([]string{"foo"})
-	assert.Nil(t, err)
-
-	assert.Equal(t, map[string]error{"http://foo.com/bar": nil}, newLinkFinder(nil, rs).Find(n, b))
 }
 
 func TestLinkFinderFindLinkInSrcSet(t *testing.T) {
@@ -206,7 +126,7 @@ func TestLinkFinderFindLinkInSrcSet(t *testing.T) {
 	)
 	assert.Nil(t, err)
 
-	ls := newLinkFinder(nil, nil).Find(n, b)
+	ls := newTestLinkFinder().Find(n, b)
 
 	err, ok := ls["http://foo.com/foo.png"]
 	assert.True(t, ok)
@@ -222,7 +142,7 @@ func TestLinkFinderFindMultipleLinksInSrcSet(t *testing.T) {
 	)
 	assert.Nil(t, err)
 
-	ls := newLinkFinder(nil, nil).Find(n, b)
+	ls := newTestLinkFinder().Find(n, b)
 
 	err, ok := ls["http://foo.com/foo.png"]
 	assert.True(t, ok)
@@ -242,7 +162,7 @@ func TestLinkFinderFindMultipleLinksInSrcSetWithDescriptors(t *testing.T) {
 	)
 	assert.Nil(t, err)
 
-	ls := newLinkFinder(nil, nil).Find(n, b)
+	ls := newTestLinkFinder().Find(n, b)
 
 	err, ok := ls["http://foo.com/foo.png"]
 	assert.True(t, ok)
@@ -262,7 +182,7 @@ func TestLinkFinderFindMetaTags(t *testing.T) {
 	)
 	assert.Nil(t, err)
 
-	ls := newLinkFinder(nil, nil).Find(n, b)
+	ls := newTestLinkFinder().Find(n, b)
 
 	err, ok := ls["http://foo.com/foo.png"]
 	assert.True(t, ok)
@@ -278,7 +198,7 @@ func TestLinkFinderIgnoreMetaTags(t *testing.T) {
 	)
 	assert.Nil(t, err)
 
-	ls := newLinkFinder(nil, nil).Find(n, b)
+	ls := newTestLinkFinder().Find(n, b)
 
 	assert.Len(t, ls, 0)
 }

@@ -10,12 +10,6 @@ import (
 	"golang.org/x/net/html/atom"
 )
 
-var validSchemes = map[string]struct{}{
-	"":      {},
-	"http":  {},
-	"https": {},
-}
-
 var atomToAttributes = map[atom.Atom][]string{
 	atom.A:      {"href"},
 	atom.Frame:  {"src"},
@@ -31,12 +25,11 @@ var atomToAttributes = map[atom.Atom][]string{
 var imageDescriptorPattern = regexp.MustCompile(" [^ ]*$")
 
 type linkFinder struct {
-	excludedPatterns []*regexp.Regexp
-	includedPatterns []*regexp.Regexp
+	linkFilterer linkFilterer
 }
 
-func newLinkFinder(es []*regexp.Regexp, is []*regexp.Regexp) linkFinder {
-	return linkFinder{excludedPatterns: es, includedPatterns: is}
+func newLinkFinder(f linkFilterer) linkFinder {
+	return linkFinder{f}
 }
 
 func (f linkFinder) Find(n *html.Node, base *url.URL) map[string]error {
@@ -62,10 +55,10 @@ func (f linkFinder) Find(n *html.Node, base *url.URL) map[string]error {
 					continue
 				}
 
-				s = base.ResolveReference(u).String()
+				u = base.ResolveReference(u)
 
-				if _, ok := validSchemes[u.Scheme]; ok && !f.isLinkExcluded(s) && f.isLinkIncluded(s) {
-					ls[s] = nil
+				if f.linkFilterer.IsValid(u) {
+					ls[u.String()] = nil
 				}
 			}
 		}
@@ -93,22 +86,4 @@ func (linkFinder) parseLinks(n *html.Node, a string) []string {
 	}
 
 	return ss
-}
-
-func (f linkFinder) isLinkExcluded(u string) bool {
-	return f.matches(u, f.excludedPatterns)
-}
-
-func (f linkFinder) isLinkIncluded(u string) bool {
-	return len(f.includedPatterns) == 0 || f.matches(u, f.includedPatterns)
-}
-
-func (f linkFinder) matches(u string, rs []*regexp.Regexp) bool {
-	for _, r := range rs {
-		if r.MatchString(u) {
-			return true
-		}
-	}
-
-	return false
 }
