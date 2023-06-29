@@ -1,6 +1,7 @@
 package main
 
 import (
+	"regexp"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -43,6 +44,27 @@ func TestSitemapPageParserParseIndexPage(t *testing.T) {
 	assert.Nil(t, err)
 	assert.Equal(t, "https://foo.com/sitemap.xml", p.URL().String())
 	assert.Equal(t, map[string]error{"https://foo.com/sitemap-0.xml": nil}, p.Links())
+	assert.Equal(t, map[string]struct{}(nil), p.Fragments())
+}
+
+func TestSitemapPageParserExcludeLink(t *testing.T) {
+	p, err := newSitemapPageParser(
+		newLinkFilterer([]*regexp.Regexp{regexp.MustCompile("private")}, nil),
+	).Parse(parseURL(t, "https://foo.com/sitemap.xml"), SITEMAP_MIME_TYPE, []byte(`
+		<?xml version="1.0" encoding="UTF-8"?>
+		<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+			<sitemap>
+				<loc>https://foo.com/private-sitemap.xml</loc>
+			</sitemap>
+			<sitemap>
+				<loc>https://foo.com/public-sitemap.xml</loc>
+			</sitemap>
+		</sitemapindex>
+	`))
+
+	assert.Nil(t, err)
+	assert.Equal(t, "https://foo.com/sitemap.xml", p.URL().String())
+	assert.Equal(t, map[string]error{"https://foo.com/public-sitemap.xml": nil}, p.Links())
 	assert.Equal(t, map[string]struct{}(nil), p.Fragments())
 }
 
