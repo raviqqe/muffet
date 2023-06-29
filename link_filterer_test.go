@@ -76,7 +76,7 @@ func TestLinkFiltererExcludeEntireUrl(t *testing.T) {
 	rs, err := compileRegexps([]string{"foo"})
 	assert.Nil(t, err)
 
-	assert.False(t, newLinkFilterer(rs, nil).Filter(b))
+	assert.False(t, newLinkFilterer(rs, nil).IsValid(b))
 }
 
 func TestLinkFiltererIncludeEntireUrl(t *testing.T) {
@@ -86,5 +86,5 @@ func TestLinkFiltererIncludeEntireUrl(t *testing.T) {
 	rs, err := compileRegexps([]string{"foo"})
 	assert.Nil(t, err)
 
-	assert.True(t, newLinkFilterer(nil, rs).Filter(b))
+	assert.True(t, newLinkFilterer(nil, rs).IsValid(b))
 }

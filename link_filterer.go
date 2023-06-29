@@ -20,7 +20,7 @@ func newLinkFilterer(es []*regexp.Regexp, is []*regexp.Regexp) linkFilterer {
 	return linkFilterer{excludedPatterns: es, includedPatterns: is}
 }
 
-func (f linkFilterer) Filter(u *url.URL) bool {
+func (f linkFilterer) IsValid(u *url.URL) bool {
 	s := u.String()
 
 	if _, ok := validSchemes[u.Scheme]; !ok {

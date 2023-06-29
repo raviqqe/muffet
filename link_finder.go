@@ -57,7 +57,7 @@ func (f linkFinder) Find(n *html.Node, base *url.URL) map[string]error {
 
 				u = base.ResolveReference(u)
 
-				if f.linkFilterer.Filter(u) {
+				if f.linkFilterer.IsValid(u) {
 					ls[u.String()] = nil
 				}
 			}

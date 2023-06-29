@@ -24,7 +24,7 @@ func (p *sitemapPageParser) Parse(u *url.URL, typ string, bs []byte) (page, erro
 	c := func(e interface{ GetLocation() string }) error {
 		u, err := url.Parse(e.GetLocation())
 
-		if p.linkFilterer.Filter(u) {
+		if p.linkFilterer.IsValid(u) {
 			ls[u.String()] = err
 		}
 
