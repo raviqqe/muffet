@@ -18,4 +18,4 @@ git config --global user.email "$GIT_EMAIL"
 git tag $version
 git push --tags
 
-curl -sL https://git.io/goreleaser | bash
+curl -fsSL https://git.io/goreleaser | bash
