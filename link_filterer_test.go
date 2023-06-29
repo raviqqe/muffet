@@ -88,3 +88,10 @@ func TestLinkFiltererIncludeEntireUrl(t *testing.T) {
 
 	assert.True(t, newLinkFilterer(nil, rs).IsValid(b))
 }
+
+func TestLinkFiltererExcludeInvalidScheme(t *testing.T) {
+	b, err := url.Parse("mailto:foo@bar.baz")
+	assert.Nil(t, err)
+
+	assert.False(t, newLinkFilterer(nil, nil).IsValid(b))
+}
