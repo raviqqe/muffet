@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"net/url"
 	"testing"
 
@@ -12,35 +13,43 @@ func newTestLinkFilterer() linkFilterer {
 }
 
 func TestLinkFiltererIsLinkExcluded(t *testing.T) {
+	u, err := url.Parse("http://foo.com")
+	assert.Nil(t, err)
+
 	for _, x := range []struct {
 		regexps []string
 		answer  bool
 	}{
 		{
 			[]string{"foo\\.com"},
-			true,
+			false,
 		},
 		{
 			[]string{"foo"},
-			true,
+			false,
 		},
 		{
 			[]string{"bar", "foo"},
-			true,
+			false,
 		},
 		{
 			[]string{"bar"},
-			false,
+			true,
 		},
 	} {
-		rs, err := compileRegexps(x.regexps)
-		assert.Nil(t, err)
+		t.Run(fmt.Sprint(x.regexps), func(t *testing.T) {
+			rs, err := compileRegexps(x.regexps)
+			assert.Nil(t, err)
 
-		assert.Equal(t, x.answer, newLinkFilterer(rs, nil).isLinkExcluded("http://foo.com"))
+			assert.Equal(t, x.answer, newLinkFilterer(rs, nil).IsValid(u))
+		})
 	}
 }
 
 func TestLinkFiltererIsLinkIncluded(t *testing.T) {
+	u, err := url.Parse("http://foo.com")
+	assert.Nil(t, err)
+
 	for _, x := range []struct {
 		regexps []string
 		answer  bool
@@ -62,10 +71,12 @@ func TestLinkFiltererIsLinkIncluded(t *testing.T) {
 			false,
 		},
 	} {
-		rs, err := compileRegexps(x.regexps)
-		assert.Nil(t, err)
+		t.Run(fmt.Sprint(x.regexps), func(t *testing.T) {
+			rs, err := compileRegexps(x.regexps)
+			assert.Nil(t, err)
 
-		assert.Equal(t, x.answer, newLinkFilterer(nil, rs).isLinkIncluded("http://foo.com"))
+			assert.Equal(t, x.answer, newLinkFilterer(nil, rs).IsValid(u))
+		})
 	}
 }
 
