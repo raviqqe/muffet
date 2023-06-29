@@ -16,20 +16,6 @@ var validSchemes = map[string]struct{}{
 	"https": {},
 }
 
-var atomToAttributes = map[atom.Atom][]string{
-	atom.A:      {"href"},
-	atom.Frame:  {"src"},
-	atom.Iframe: {"src"},
-	atom.Img:    {"src"},
-	atom.Link:   {"href"},
-	atom.Script: {"src"},
-	atom.Source: {"src", "srcset"},
-	atom.Track:  {"src"},
-	atom.Meta:   {"content"},
-}
-
-var imageDescriptorPattern = regexp.MustCompile(" [^ ]*$")
-
 type linkFilterer struct {
 	excludedPatterns []*regexp.Regexp
 	includedPatterns []*regexp.Regexp
@@ -39,39 +25,12 @@ func newLinkFilterer(es []*regexp.Regexp, is []*regexp.Regexp) linkFilterer {
 	return linkFilterer{excludedPatterns: es, includedPatterns: is}
 }
 
-func (f linkFilterer) Find(n *html.Node, base *url.URL) map[string]error {
-	ls := map[string]error{}
-
-	for _, n := range scrape.FindAllNested(n, func(n *html.Node) bool {
-		_, ok := atomToAttributes[n.DataAtom]
-		return ok
-	}) {
-		for _, a := range atomToAttributes[n.DataAtom] {
-			ss := f.parseLinks(n, a)
-
-			for _, s := range ss {
-				s := strings.TrimSpace(s)
-
-				if s == "" {
-					continue
-				}
-
-				u, err := url.Parse(s)
-				if err != nil {
-					ls[s] = err
-					continue
-				}
-
-				s = base.ResolveReference(u).String()
-
-				if _, ok := validSchemes[u.Scheme]; ok && !f.isLinkExcluded(s) && f.isLinkIncluded(s) {
-					ls[s] = nil
-				}
-			}
-		}
+func (f linkFilterer) Filter(u *url.URL) bool {
+	if _, ok := validSchemes[u.Scheme]; ok && !f.isLinkExcluded(s) && f.isLinkIncluded(s) {
+		return true
 	}
 
-	return ls
+	return false
 }
 
 func (linkFilterer) parseLinks(n *html.Node, a string) []string {
