@@ -16,7 +16,7 @@ func newSitemapPageParser(f linkFilterer) *sitemapPageParser {
 }
 
 func (p *sitemapPageParser) Parse(u *url.URL, typ string, bs []byte) (page, error) {
-	if typ != "application/xml" {
+	if typ != "application/xml" && typ != "text/xml" {
 		return nil, nil
 	}
 
