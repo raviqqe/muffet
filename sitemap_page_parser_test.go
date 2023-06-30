@@ -51,9 +51,7 @@ func TestSitemapPageParserParsePageMimeTypeAlias(t *testing.T) {
 	`))
 
 	assert.Nil(t, err)
-	if !assert.NotNil(t, p) {
-		return
-	}
+	assert.NotNil(t, p)
 	assert.Equal(t, "https://foo.com/sitemap.xml", p.URL().String())
 	assert.Equal(t, map[string]error{"https://foo.com/": nil}, p.Links())
 	assert.Equal(t, map[string]struct{}(nil), p.Fragments())
