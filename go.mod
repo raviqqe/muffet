@@ -14,12 +14,12 @@ require (
 	github.com/temoto/robotstxt v1.1.2
 	github.com/valyala/fasthttp v1.48.0
 	github.com/yhat/scrape v0.0.0-20161128144610-24b7890b0945
-	go.uber.org/ratelimit v0.2.0
+	go.uber.org/ratelimit v0.3.0
 	golang.org/x/net v0.12.0
 )
 
 require (
-	github.com/andres-erbsen/clock v0.0.0-20160526145045-9e14626cd129 // indirect
+	github.com/benbjohnson/clock v1.3.0 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/klauspost/compress v1.16.3 // indirect
 	github.com/kr/text v0.2.0 // indirect
