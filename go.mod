@@ -15,7 +15,7 @@ require (
 	github.com/valyala/fasthttp v1.49.0
 	github.com/yhat/scrape v0.0.0-20161128144610-24b7890b0945
 	go.uber.org/ratelimit v0.3.0
-	golang.org/x/net v0.14.0
+	golang.org/x/net v0.15.0
 )
 
 require (
@@ -26,8 +26,8 @@ require (
 	github.com/niemeyer/pretty v0.0.0-20200227124842-a10e7caefd8e // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
-	golang.org/x/sys v0.11.0 // indirect
-	golang.org/x/text v0.12.0 // indirect
+	golang.org/x/sys v0.12.0 // indirect
+	golang.org/x/text v0.13.0 // indirect
 	gopkg.in/check.v1 v1.0.0-20200227125254-8fa46927fb4f // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
