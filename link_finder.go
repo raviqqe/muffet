@@ -44,7 +44,7 @@ func (f linkFinder) Find(n *html.Node, base *url.URL) map[string]error {
 			ss := f.parseLinks(n, a)
 
 			for _, s := range ss {
-				s := strings.TrimSpace(s)
+				s := f.trimSpace(s)
 
 				if s == "" {
 					continue
