@@ -68,14 +68,14 @@ func (f linkFinder) Find(n *html.Node, base *url.URL) map[string]error {
 	return ls
 }
 
-func (linkFinder) parseLinks(n *html.Node, a string) []string {
+func (f linkFinder) parseLinks(n *html.Node, a string) []string {
 	s := scrape.Attr(n, a)
 	ss := []string{}
 
 	switch a {
 	case "srcset":
 		for _, s := range strings.Split(s, ",") {
-			ss = append(ss, imageDescriptorPattern.ReplaceAllString(strings.TrimSpace(s), ""))
+			ss = append(ss, imageDescriptorPattern.ReplaceAllString(f.trimSpace(s), ""))
 		}
 	case "content":
 		switch scrape.Attr(n, "property") {
