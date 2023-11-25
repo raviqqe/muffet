@@ -189,6 +189,27 @@ func TestLinkFinderFindMetaTags(t *testing.T) {
 	assert.Nil(t, err)
 }
 
+func TestLinkFinderFindLinkWithSpaces(t *testing.T) {
+	b, err := url.Parse("http://foo.com")
+	assert.Nil(t, err)
+
+	n, err := html.Parse(strings.NewReader(
+		htmlWithBody(`
+    <a href="https:
+    //foo.com
+    /
+    foo.html" />
+    `)),
+	)
+	assert.Nil(t, err)
+
+	ls := newTestLinkFinder().Find(n, b)
+
+	err, ok := ls["http://foo.com/foo.html"]
+	assert.True(t, ok)
+	assert.Nil(t, err)
+}
+
 func TestLinkFinderIgnoreMetaTags(t *testing.T) {
 	b, err := url.Parse("http://foo.com")
 	assert.Nil(t, err)
