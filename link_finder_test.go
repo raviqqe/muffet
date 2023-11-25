@@ -189,23 +189,18 @@ func TestLinkFinderFindMetaTags(t *testing.T) {
 	assert.Nil(t, err)
 }
 
-func TestLinkFinderFindLinkWithSpaces(t *testing.T) {
+func TestLinkFinderFindDataSchemeLinkWithSpaces(t *testing.T) {
 	b, err := url.Parse("http://foo.com")
 	assert.Nil(t, err)
 
 	n, err := html.Parse(strings.NewReader(
-		htmlWithBody(`
-    <a href="http:
-    //foo.com
-    /
-    foo.html" />
-    `)),
+		htmlWithBody(`<a href="data:text/plain, Hello,%20world! " />`)),
 	)
 	assert.Nil(t, err)
 
 	ls := newTestLinkFinder().Find(n, b)
 
-	err, ok := ls["http://foo.com/foo.html"]
+	err, ok := ls["data:text/plain, Hello,%20world!"]
 	assert.True(t, ok)
 	assert.Nil(t, err)
 }
