@@ -4,6 +4,7 @@ import (
 	"net/url"
 	"regexp"
 	"strings"
+	"unicode"
 
 	"github.com/yhat/scrape"
 	"golang.org/x/net/html"
@@ -22,7 +23,7 @@ var atomToAttributes = map[atom.Atom][]string{
 	atom.Meta:   {"content"},
 }
 
-var imageDescriptorPattern = regexp.MustCompile(" [^ ]*$")
+var imageDescriptorPattern = regexp.MustCompile(`(\S)\s+\S+\s*$`)
 
 type linkFinder struct {
 	linkFilterer linkFilterer
@@ -43,7 +44,7 @@ func (f linkFinder) Find(n *html.Node, base *url.URL) map[string]error {
 			ss := f.parseLinks(n, a)
 
 			for _, s := range ss {
-				s := strings.TrimSpace(s)
+				s := f.trimUrl(s)
 
 				if s == "" {
 					continue
@@ -67,14 +68,14 @@ func (f linkFinder) Find(n *html.Node, base *url.URL) map[string]error {
 	return ls
 }
 
-func (linkFinder) parseLinks(n *html.Node, a string) []string {
+func (f linkFinder) parseLinks(n *html.Node, a string) []string {
 	s := scrape.Attr(n, a)
 	ss := []string{}
 
 	switch a {
 	case "srcset":
 		for _, s := range strings.Split(s, ",") {
-			ss = append(ss, imageDescriptorPattern.ReplaceAllString(strings.TrimSpace(s), ""))
+			ss = append(ss, f.trimUrl(imageDescriptorPattern.ReplaceAllString(s, "$1")))
 		}
 	case "content":
 		switch scrape.Attr(n, "property") {
@@ -86,4 +87,20 @@ func (linkFinder) parseLinks(n *html.Node, a string) []string {
 	}
 
 	return ss
+}
+
+func (linkFinder) trimUrl(s string) string {
+	s = strings.TrimSpace(s)
+
+	if !strings.HasPrefix(s, "data:") {
+		return s
+	}
+
+	return strings.Map(func(r rune) rune {
+		if unicode.IsSpace(r) {
+			return -1
+		}
+
+		return r
+	}, s)
 }
