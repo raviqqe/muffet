@@ -44,7 +44,7 @@ func (f linkFinder) Find(n *html.Node, base *url.URL) map[string]error {
 			ss := f.parseLinks(n, a)
 
 			for _, s := range ss {
-				s := f.trimSpace(s)
+				s := f.trimUrl(s)
 
 				if s == "" {
 					continue
@@ -75,7 +75,7 @@ func (f linkFinder) parseLinks(n *html.Node, a string) []string {
 	switch a {
 	case "srcset":
 		for _, s := range strings.Split(s, ",") {
-			ss = append(ss, f.trimSpace(imageDescriptorPattern.ReplaceAllString(s, "$1")))
+			ss = append(ss, f.trimUrl(imageDescriptorPattern.ReplaceAllString(s, "$1")))
 		}
 	case "content":
 		switch scrape.Attr(n, "property") {
@@ -89,7 +89,13 @@ func (f linkFinder) parseLinks(n *html.Node, a string) []string {
 	return ss
 }
 
-func (linkFinder) trimSpace(s string) string {
+func (linkFinder) trimUrl(s string) string {
+	s = strings.TrimSpace(s)
+
+	if !strings.HasPrefix(s, "data:") {
+		return s
+	}
+
 	return strings.Map(func(r rune) rune {
 		if unicode.IsSpace(r) {
 			return -1

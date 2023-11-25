@@ -200,9 +200,7 @@ func TestLinkFinderFindDataSchemeLinkWithSpaces(t *testing.T) {
 
 	ls := newTestLinkFinder().Find(n, b)
 
-	err, ok := ls["data:text/plain, Hello,%20world!"]
-	assert.True(t, ok)
-	assert.Nil(t, err)
+	assert.Len(t, ls, 0)
 }
 
 func TestLinkFinderIgnoreMetaTags(t *testing.T) {
