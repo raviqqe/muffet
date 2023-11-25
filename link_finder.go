@@ -4,6 +4,7 @@ import (
 	"net/url"
 	"regexp"
 	"strings"
+	"unicode"
 
 	"github.com/yhat/scrape"
 	"golang.org/x/net/html"
@@ -86,4 +87,14 @@ func (linkFinder) parseLinks(n *html.Node, a string) []string {
 	}
 
 	return ss
+}
+
+func (linkFinder) trimSpace(s string) string {
+	return strings.Map(func(r rune) rune {
+		if unicode.IsSpace(r) {
+			return -1
+		}
+
+		return r
+	}, s)
 }
