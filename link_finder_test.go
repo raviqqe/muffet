@@ -195,7 +195,7 @@ func TestLinkFinderFindLinkWithSpaces(t *testing.T) {
 
 	n, err := html.Parse(strings.NewReader(
 		htmlWithBody(`
-    <a href="https:
+    <a href="http:
     //foo.com
     /
     foo.html" />
