@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"os"
 	"strings"
 	"time"
 
@@ -33,7 +34,12 @@ func (c *command) Run(args []string) bool {
 }
 
 func (c *command) runWithError(ss []string) (bool, error) {
-	args, err := getArguments(ss)
+	var iniReader io.Reader = nil
+	// We try to read the ini file, if it fails, we just don't use it
+	if r, err := os.Open("muffet.ini"); err == nil {
+		iniReader = r
+	}
+	args, err := getArguments(ss, iniReader)
 	if err != nil {
 		return false, err
 	} else if args.Help {
