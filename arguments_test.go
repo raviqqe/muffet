@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"net/http"
 	"testing"
 
@@ -40,7 +41,7 @@ func TestGetArguments(t *testing.T) {
 		{"--help"},
 		{"--version"},
 	} {
-		_, err := getArguments(ss)
+		_, err := getArguments(ss, nil)
 		assert.Nil(t, err)
 	}
 }
@@ -60,9 +61,32 @@ func TestGetArgumentsError(t *testing.T) {
 		{"-t", "foo", "https://foo.com"},
 		{"--timeout", "foo", "https://foo.com"},
 	} {
-		_, err := getArguments(ss)
+		_, err := getArguments(ss, nil)
 		assert.NotNil(t, err)
 	}
+}
+
+func TestGetArgumentsWithIniFile(t *testing.T) {
+	ini := `
+bufferSize = 8192
+exclude = foo.com 
+exclude = bar.com
+maxConnectionsPerHost = 122
+`
+	args := []string{"--header", "a:fo", "--max-connections-per-host", "123", "https://baz.com"}
+	outArgs, err := getArguments(args, bytes.NewBufferString(ini))
+	assert.Nil(t, err)
+
+	// Just from the ini file (the global default is overriden)
+	assert.Equal(t, 8192, outArgs.BufferSize)
+	// Not set anywhere (the global default is taken)
+	assert.Equal(t, 512, outArgs.MaxConnections)
+	// Command line takes priority over ini file
+	assert.Equal(t, 123, outArgs.MaxConnectionsPerHost)
+	// Just on command line
+	assert.Equal(t, []string{"a:fo"}, outArgs.RawHeaders)
+	// Repeated entry in ini file lead to multiple items
+	assert.Equal(t, []string{"foo.com", "bar.com"}, outArgs.RawExcludedPatterns)
 }
 
 func TestHelp(t *testing.T) {

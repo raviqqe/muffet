@@ -17,6 +17,7 @@ website recursively.
 - High compatibility with web browsers
 - Different tag support (`a`, `img`, `link`, `script`, etc)
 - Multiple output formats (text, JSON, and JUnit XML)
+- ini file support (configuration can be read from `muffet.ini` file)
 
 ## Installation
 

@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"errors"
+	"io"
 	"net/http"
 	"regexp"
 	"strings"
@@ -11,32 +12,32 @@ import (
 )
 
 type arguments struct {
-	BufferSize            int      `short:"b" long:"buffer-size" value-name:"<size>" default:"4096" description:"HTTP response buffer size in bytes"`
-	MaxConnections        int      `short:"c" long:"max-connections" value-name:"<count>" default:"512" description:"Maximum number of HTTP connections"`
-	MaxConnectionsPerHost int      `long:"max-connections-per-host" value-name:"<count>" default:"512" description:"Maximum number of HTTP connections per host"`
-	MaxResponseBodySize   int      `long:"max-response-body-size" value-name:"<size>" default:"10000000" description:"Maximum response body size to read"`
-	RawExcludedPatterns   []string `short:"e" long:"exclude" value-name:"<pattern>..." description:"Exclude URLs matched with given regular expressions"`
-	RawIncludedPatterns   []string `short:"i" long:"include" value-name:"<pattern>..." description:"Include URLs matched with given regular expressions"`
-	FollowRobotsTxt       bool     `long:"follow-robots-txt" description:"Follow robots.txt when scraping pages"`
+	BufferSize            int      `short:"b" long:"buffer-size" value-name:"<size>" default:"4096" description:"HTTP response buffer size in bytes" ini-name:"bufferSize"`
+	MaxConnections        int      `short:"c" long:"max-connections" value-name:"<count>" default:"512" description:"Maximum number of HTTP connections" ini-name:"maxConnections"`
+	MaxConnectionsPerHost int      `long:"max-connections-per-host" value-name:"<count>" default:"512" description:"Maximum number of HTTP connections per host" ini-name:"maxConnectionsPerHost"`
+	MaxResponseBodySize   int      `long:"max-response-body-size" value-name:"<size>" default:"10000000" description:"Maximum response body size to read" ini-name:"maxResponseBodySize"`
+	RawExcludedPatterns   []string `short:"e" long:"exclude" value-name:"<pattern>..." description:"Exclude URLs matched with given regular expressions" ini-name:"exclude"`
+	RawIncludedPatterns   []string `short:"i" long:"include" value-name:"<pattern>..." description:"Include URLs matched with given regular expressions" ini-name:"include"`
+	FollowRobotsTxt       bool     `long:"follow-robots-txt" description:"Follow robots.txt when scraping pages" ini-name:"followRobotsTxt"`
 	FollowSitemapXML      bool     `long:"follow-sitemap-xml" description:"Scrape only pages listed in sitemap.xml (deprecated)"`
-	RawHeaders            []string `long:"header" value-name:"<header>..." description:"Custom headers"`
+	RawHeaders            []string `long:"header" value-name:"<header>..." description:"Custom headers" ini-name:"header"`
 	// TODO Remove a short option.
 	IgnoreFragments bool   `short:"f" long:"ignore-fragments" description:"Ignore URL fragments"`
-	Format          string `long:"format" description:"Output format" default:"text" choice:"text" choice:"json" choice:"junit"`
+	Format          string `long:"format" description:"Output format" default:"text" choice:"text" choice:"json" choice:"junit" ini-name:"format"`
 	// TODO Remove this option.
 	JSONOutput bool `long:"json" description:"Output results in JSON (deprecated)"`
 	// TODO Remove this option.
 	VerboseJSON bool `long:"experimental-verbose-json" description:"Include successful results in JSON (deprecated)"`
 	// TODO Remove this option.
 	JUnitOutput         bool   `long:"junit" description:"Output results as JUnit XML file (deprecated)"`
-	MaxRedirections     int    `short:"r" long:"max-redirections" value-name:"<count>" default:"64" description:"Maximum number of redirections"`
-	RateLimit           int    `long:"rate-limit" value-name:"<rate>" description:"Max requests per second"`
-	Timeout             int    `short:"t" long:"timeout" value-name:"<seconds>" default:"10" description:"Timeout for HTTP requests in seconds"`
-	Verbose             bool   `short:"v" long:"verbose" description:"Show successful results too"`
-	Proxy               string `long:"proxy" value-name:"<host>" description:"HTTP proxy host"`
-	SkipTLSVerification bool   `long:"skip-tls-verification" description:"Skip TLS certificate verification"`
-	OnePageOnly         bool   `long:"one-page-only" description:"Only check links found in the given URL"`
-	Color               color  `long:"color" description:"Color output" choice:"auto" choice:"always" choice:"never" default:"auto"`
+	MaxRedirections     int    `short:"r" long:"max-redirections" value-name:"<count>" default:"64" description:"Maximum number of redirections" ini-name:"maxRedirections"`
+	RateLimit           int    `long:"rate-limit" value-name:"<rate>" description:"Max requests per second" ini-name:"rateLimit"`
+	Timeout             int    `short:"t" long:"timeout" value-name:"<seconds>" default:"10" description:"Timeout for HTTP requests in seconds" ini-name:"timeout"`
+	Verbose             bool   `short:"v" long:"verbose" description:"Show successful results too" ini-name:"verbose"`
+	Proxy               string `long:"proxy" value-name:"<host>" description:"HTTP proxy host" ini-name:"proxy"`
+	SkipTLSVerification bool   `long:"skip-tls-verification" description:"Skip TLS certificate verification" ini-name:"skipTLSVerification"`
+	OnePageOnly         bool   `long:"one-page-only" description:"Only check links found in the given URL" ini-name:"onePageOnly"`
+	Color               color  `long:"color" description:"Color output" choice:"auto" choice:"always" choice:"never" default:"auto" color:"color"`
 	Help                bool   `short:"h" long:"help" description:"Show this help"`
 	Version             bool   `long:"version" description:"Show version"`
 	URL                 string
@@ -45,9 +46,17 @@ type arguments struct {
 	Header              http.Header
 }
 
-func getArguments(ss []string) (*arguments, error) {
+func getArguments(ss []string, iniFileReader io.Reader) (*arguments, error) {
 	args := arguments{}
-	ss, err := flags.NewParser(&args, flags.PassDoubleDash).ParseArgs(ss)
+	parser := flags.NewParser(&args, flags.PassDoubleDash)
+	if iniFileReader != nil {
+		iniParser := flags.NewIniParser(parser)
+		err := iniParser.Parse(iniFileReader)
+		if err != nil {
+			return nil, err
+		}
+	}
+	ss, err := parser.ParseArgs(ss)
 
 	if err != nil {
 		return nil, err
