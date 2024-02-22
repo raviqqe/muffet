@@ -23,6 +23,7 @@ func TestGetArguments(t *testing.T) {
 		{"--header", "User-Agent: custom-agent", "https://foo.com"},
 		{"-r", "4", "https://foo.com"},
 		{"--max-redirections", "4", "https://foo.com"},
+		{"--status-codes", "200..299,403", "https://foo.com"},
 		{"--follow-robots-txt", "https://foo.com"},
 		{"--follow-sitemap-xml", "https://foo.com"},
 		{"-t", "10", "https://foo.com"},
@@ -57,6 +58,7 @@ func TestGetArgumentsError(t *testing.T) {
 		{"--header", "MyHeader", "https://foo.com"},
 		{"-l", "foo", "https://foo.com"},
 		{"--max-redirections", "foo", "https://foo.com"},
+		{"--status-codes", "foo", "https://foo.com"},
 		{"-t", "foo", "https://foo.com"},
 		{"--timeout", "foo", "https://foo.com"},
 	} {

@@ -30,6 +30,7 @@ type arguments struct {
 	// TODO Remove this option.
 	JUnitOutput         bool   `long:"junit" description:"Output results as JUnit XML file (deprecated)"`
 	MaxRedirections     int    `short:"r" long:"max-redirections" value-name:"<count>" default:"64" description:"Maximum number of redirections"`
+	RawStatusCodes      string `long:"status-codes" value-name:"<codes>" default:"200..299" description:"Accepted HTTP response status codes"`
 	RateLimit           int    `long:"rate-limit" value-name:"<rate>" description:"Max requests per second"`
 	Timeout             int    `short:"t" long:"timeout" value-name:"<seconds>" default:"10" description:"Timeout for HTTP requests in seconds"`
 	Verbose             bool   `short:"v" long:"verbose" description:"Show successful results too"`
@@ -43,6 +44,7 @@ type arguments struct {
 	ExcludedPatterns    []*regexp.Regexp
 	IncludePatterns     []*regexp.Regexp
 	Header              http.Header
+	StatusCodes         statusCodeCollection
 }
 
 func getArguments(ss []string) (*arguments, error) {
@@ -72,6 +74,11 @@ func getArguments(ss []string) (*arguments, error) {
 	}
 
 	args.Header, err = parseHeaders(args.RawHeaders)
+	if err != nil {
+		return nil, err
+	}
+
+	args.StatusCodes, err = parseStatusCodeCollection(args.RawStatusCodes)
 	if err != nil {
 		return nil, err
 	}

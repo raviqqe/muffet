@@ -9,12 +9,13 @@ import (
 )
 
 type redirectHttpClient struct {
-	client          httpClient
-	maxRedirections int
+	client              httpClient
+	maxRedirections     int
+	acceptedStatusCodes statusCodeCollection
 }
 
-func newRedirectHttpClient(c httpClient, maxRedirections int) httpClient {
-	return &redirectHttpClient{c, maxRedirections}
+func newRedirectHttpClient(c httpClient, maxRedirections int, acceptedStatusCodes statusCodeCollection) httpClient {
+	return &redirectHttpClient{c, maxRedirections, acceptedStatusCodes}
 }
 
 func (c *redirectHttpClient) Get(u *url.URL, header http.Header) (httpResponse, error) {
@@ -40,10 +41,11 @@ func (c *redirectHttpClient) Get(u *url.URL, header http.Header) (httpResponse, 
 			return nil, c.formatError(err, i, u)
 		}
 
-		switch r.StatusCode() / 100 {
-		case 2:
+		code := r.StatusCode()
+
+		if c.acceptedStatusCodes.isInCollection(code) {
 			return r, nil
-		case 3:
+		} else if code >= 300 && code <= 399 {
 			i++
 
 			if i > c.maxRedirections {
@@ -63,8 +65,8 @@ func (c *redirectHttpClient) Get(u *url.URL, header http.Header) (httpResponse, 
 			}
 
 			cj.SetCookies(u, parseCookies(r.Header("set-cookie")))
-		default:
-			return nil, c.formatError(fmt.Errorf("%v", r.StatusCode()), i, u)
+		} else {
+			return nil, c.formatError(fmt.Errorf("%v", code), i, u)
 		}
 	}
 }
