@@ -2,6 +2,8 @@ Usage:
   muffet.test [options] <url>
 
 Application Options:
+      --accepted-status-codes=<codes>       Accepted HTTP response status codes
+                                            (default: 200..300)
   -b, --buffer-size=<size>                  HTTP response buffer size in bytes
                                             (default: 4096)
   -c, --max-connections=<count>             Maximum number of HTTP connections
@@ -28,8 +30,6 @@ Application Options:
                                             (deprecated)
   -r, --max-redirections=<count>            Maximum number of redirections
                                             (default: 64)
-      --status-codes=<codes>                Accepted HTTP response status codes
-                                            (default: 200..299)
       --rate-limit=<rate>                   Max requests per second
   -t, --timeout=<seconds>                   Timeout for HTTP requests in
                                             seconds (default: 10)

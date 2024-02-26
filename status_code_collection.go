@@ -24,7 +24,7 @@ func parseStatusCodeCollection(value string) (statusCodeCollection, error) {
 	}
 
 	if len(statusCodeRanges) == 0 {
-		statusCodeRanges = append(statusCodeRanges, statusCodeRange{200, 299})
+		statusCodeRanges = append(statusCodeRanges, statusCodeRange{200, 300})
 	}
 
 	return statusCodeCollection{statusCodeRanges}, nil

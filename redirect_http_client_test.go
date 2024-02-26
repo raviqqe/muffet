@@ -10,7 +10,7 @@ import (
 
 const testUrl = "http://foo.com"
 
-var acceptedStatusCodes = statusCodeCollection{[]statusCodeRange{{200, 299}}}
+var acceptedStatusCodes = statusCodeCollection{[]statusCodeRange{{200, 300}}}
 
 func TestNewRedirectHttpClient(t *testing.T) {
 	newRedirectHttpClient(newFakeHttpClient(nil), 42, acceptedStatusCodes)

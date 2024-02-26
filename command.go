@@ -62,7 +62,7 @@ func (c *command) runWithError(ss []string) (bool, error) {
 			args.MaxConnectionsPerHost,
 		),
 		args.MaxRedirections,
-		args.StatusCodes,
+		args.AcceptedStatusCodes,
 	)
 
 	fl := newLinkFilterer(args.ExcludedPatterns, args.IncludePatterns)

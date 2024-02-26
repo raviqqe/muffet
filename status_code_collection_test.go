@@ -20,7 +20,7 @@ func TestParsingEmptyStatusCodeCollection(t *testing.T) {
 }
 
 func TestParsingValidStatusCodeCollection(t *testing.T) {
-	collection, err := parseStatusCodeCollection("200..206,403")
+	collection, err := parseStatusCodeCollection("200..207,403")
 
 	assert.Nil(t, err)
 
@@ -41,5 +41,7 @@ func TestParsingInvalidStatusCodeCollection(t *testing.T) {
 	collection, err := parseStatusCodeCollection("200,foo")
 
 	assert.NotNil(t, err)
-	assert.Nil(t, collection)
+
+	assert.NotNil(t, collection)
+	assert.NotNil(t, collection.isInCollection(200))
 }

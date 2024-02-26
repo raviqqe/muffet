@@ -11,15 +11,16 @@ import (
 )
 
 type arguments struct {
-	BufferSize            int      `short:"b" long:"buffer-size" value-name:"<size>" default:"4096" description:"HTTP response buffer size in bytes"`
-	MaxConnections        int      `short:"c" long:"max-connections" value-name:"<count>" default:"512" description:"Maximum number of HTTP connections"`
-	MaxConnectionsPerHost int      `long:"max-connections-per-host" value-name:"<count>" default:"512" description:"Maximum number of HTTP connections per host"`
-	MaxResponseBodySize   int      `long:"max-response-body-size" value-name:"<size>" default:"10000000" description:"Maximum response body size to read"`
-	RawExcludedPatterns   []string `short:"e" long:"exclude" value-name:"<pattern>..." description:"Exclude URLs matched with given regular expressions"`
-	RawIncludedPatterns   []string `short:"i" long:"include" value-name:"<pattern>..." description:"Include URLs matched with given regular expressions"`
-	FollowRobotsTxt       bool     `long:"follow-robots-txt" description:"Follow robots.txt when scraping pages"`
-	FollowSitemapXML      bool     `long:"follow-sitemap-xml" description:"Scrape only pages listed in sitemap.xml (deprecated)"`
-	RawHeaders            []string `long:"header" value-name:"<header>..." description:"Custom headers"`
+	RawAcceptedStatusCodes string   `long:"accepted-status-codes" value-name:"<codes>" default:"200..300" description:"Accepted HTTP response status codes"`
+	BufferSize             int      `short:"b" long:"buffer-size" value-name:"<size>" default:"4096" description:"HTTP response buffer size in bytes"`
+	MaxConnections         int      `short:"c" long:"max-connections" value-name:"<count>" default:"512" description:"Maximum number of HTTP connections"`
+	MaxConnectionsPerHost  int      `long:"max-connections-per-host" value-name:"<count>" default:"512" description:"Maximum number of HTTP connections per host"`
+	MaxResponseBodySize    int      `long:"max-response-body-size" value-name:"<size>" default:"10000000" description:"Maximum response body size to read"`
+	RawExcludedPatterns    []string `short:"e" long:"exclude" value-name:"<pattern>..." description:"Exclude URLs matched with given regular expressions"`
+	RawIncludedPatterns    []string `short:"i" long:"include" value-name:"<pattern>..." description:"Include URLs matched with given regular expressions"`
+	FollowRobotsTxt        bool     `long:"follow-robots-txt" description:"Follow robots.txt when scraping pages"`
+	FollowSitemapXML       bool     `long:"follow-sitemap-xml" description:"Scrape only pages listed in sitemap.xml (deprecated)"`
+	RawHeaders             []string `long:"header" value-name:"<header>..." description:"Custom headers"`
 	// TODO Remove a short option.
 	IgnoreFragments bool   `short:"f" long:"ignore-fragments" description:"Ignore URL fragments"`
 	Format          string `long:"format" description:"Output format" default:"text" choice:"text" choice:"json" choice:"junit"`
@@ -30,7 +31,6 @@ type arguments struct {
 	// TODO Remove this option.
 	JUnitOutput         bool   `long:"junit" description:"Output results as JUnit XML file (deprecated)"`
 	MaxRedirections     int    `short:"r" long:"max-redirections" value-name:"<count>" default:"64" description:"Maximum number of redirections"`
-	RawStatusCodes      string `long:"status-codes" value-name:"<codes>" default:"200..299" description:"Accepted HTTP response status codes"`
 	RateLimit           int    `long:"rate-limit" value-name:"<rate>" description:"Max requests per second"`
 	Timeout             int    `short:"t" long:"timeout" value-name:"<seconds>" default:"10" description:"Timeout for HTTP requests in seconds"`
 	Verbose             bool   `short:"v" long:"verbose" description:"Show successful results too"`
@@ -41,10 +41,10 @@ type arguments struct {
 	Help                bool   `short:"h" long:"help" description:"Show this help"`
 	Version             bool   `long:"version" description:"Show version"`
 	URL                 string
+	AcceptedStatusCodes statusCodeCollection
 	ExcludedPatterns    []*regexp.Regexp
 	IncludePatterns     []*regexp.Regexp
 	Header              http.Header
-	StatusCodes         statusCodeCollection
 }
 
 func getArguments(ss []string) (*arguments, error) {
@@ -78,7 +78,7 @@ func getArguments(ss []string) (*arguments, error) {
 		return nil, err
 	}
 
-	args.StatusCodes, err = parseStatusCodeCollection(args.RawStatusCodes)
+	args.AcceptedStatusCodes, err = parseStatusCodeCollection(args.RawAcceptedStatusCodes)
 	if err != nil {
 		return nil, err
 	}

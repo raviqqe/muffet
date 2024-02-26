@@ -10,15 +10,15 @@ func TestParsingFixedStatusCode(t *testing.T) {
 
 	assert.Nil(t, err)
 	assert.Equal(t, 403, code.start)
-	assert.Equal(t, 403, code.end)
+	assert.Equal(t, 404, code.end)
 }
 
 func TestParsingStatusCodeRange(t *testing.T) {
-	code, err := parseStatusCodeRange("200..299")
+	code, err := parseStatusCodeRange("200..300")
 
 	assert.Nil(t, err)
 	assert.Equal(t, 200, code.start)
-	assert.Equal(t, 299, code.end)
+	assert.Equal(t, 300, code.end)
 }
 
 func TestParsingInvalidStatusCode(t *testing.T) {
@@ -29,7 +29,7 @@ func TestParsingInvalidStatusCode(t *testing.T) {
 }
 
 func TestInRangeOfStatusCode(t *testing.T) {
-	code := statusCodeRange{200, 299}
+	code := statusCodeRange{200, 300}
 
 	assert.False(t, code.isInRange(199))
 	assert.True(t, code.isInRange(200))

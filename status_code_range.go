@@ -18,7 +18,7 @@ func parseStatusCodeRange(value string) (*statusCodeRange, error) {
 	fixedMatch := fixedCodePattern.FindAllStringSubmatch(value, -1)
 	if len(fixedMatch) > 0 {
 		code, _ := strconv.Atoi(fixedMatch[0][1])
-		return &statusCodeRange{code, code}, nil
+		return &statusCodeRange{code, code + 1}, nil
 	}
 
 	rangeMatch := rangeCodePattern.FindAllStringSubmatch(value, -1)
@@ -32,5 +32,5 @@ func parseStatusCodeRange(value string) (*statusCodeRange, error) {
 }
 
 func (r *statusCodeRange) isInRange(code int) bool {
-	return r.start <= code && r.end >= code
+	return code >= r.start && code < r.end
 }
