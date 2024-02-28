@@ -11,6 +11,7 @@ import (
 func TestGetArguments(t *testing.T) {
 	for _, ss := range [][]string{
 		{"https://foo.com"},
+		{"--accepted-status-codes", "200..300,403", "https://foo.com"},
 		{"-b", "42", "https://foo.com"},
 		{"--buffer-size", "42", "https://foo.com"},
 		{"-c", "1", "https://foo.com"},
@@ -48,6 +49,7 @@ func TestGetArguments(t *testing.T) {
 func TestGetArgumentsError(t *testing.T) {
 	for _, ss := range [][]string{
 		{},
+		{"--accepted-status-codes", "foo", "https://foo.com"},
 		{"-b", "foo", "https://foo.com"},
 		{"--buffer-size", "foo", "https://foo.com"},
 		{"-c", "foo", "https://foo.com"},

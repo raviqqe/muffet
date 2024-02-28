@@ -10,8 +10,10 @@ import (
 
 const testUrl = "http://foo.com"
 
+var acceptedStatusCodes = statusCodeCollection{[]statusCodeRange{{200, 300}}}
+
 func TestNewRedirectHttpClient(t *testing.T) {
-	newRedirectHttpClient(newFakeHttpClient(nil), 42)
+	newRedirectHttpClient(newFakeHttpClient(nil), 42, acceptedStatusCodes)
 }
 
 func TestRedirectHttpClientGet(t *testing.T) {
@@ -30,6 +32,7 @@ func TestRedirectHttpClientGet(t *testing.T) {
 			},
 		),
 		42,
+		acceptedStatusCodes,
 	).Get(u, nil)
 
 	assert.Nil(t, err)
@@ -62,6 +65,7 @@ func TestRedirectHttpClientGetWithRedirect(t *testing.T) {
 			},
 		),
 		42,
+		acceptedStatusCodes,
 	).Get(u, nil)
 
 	assert.Nil(t, err)
@@ -96,6 +100,7 @@ func TestRedirectHttpClientGetWithRedirects(t *testing.T) {
 			},
 		),
 		maxRedirections,
+		acceptedStatusCodes,
 	).Get(u, nil)
 
 	assert.Nil(t, err)
@@ -134,6 +139,7 @@ func TestRedirectHttpClientGetWithRelativeRedirect(t *testing.T) {
 			},
 		),
 		maxRedirections,
+		acceptedStatusCodes,
 	).Get(u, nil)
 
 	assert.Nil(t, err)
@@ -163,6 +169,7 @@ func TestRedirectHttpClientFailWithTooManyRedirects(t *testing.T) {
 			},
 		),
 		maxRedirections,
+		acceptedStatusCodes,
 	).Get(u, nil)
 
 	assert.Nil(t, r)
@@ -182,6 +189,7 @@ func TestRedirectHttpClientFailWithUnsetLocationHeader(t *testing.T) {
 			},
 		),
 		42,
+		acceptedStatusCodes,
 	).Get(u, nil)
 
 	assert.Nil(t, r)
@@ -205,6 +213,7 @@ func TestRedirectHttpClientFailWithInvalidLocationURL(t *testing.T) {
 			},
 		),
 		42,
+		acceptedStatusCodes,
 	).Get(u, nil)
 
 	assert.Nil(t, r)
@@ -223,6 +232,7 @@ func TestRedirectHttpClientFailWithInvalidStatusCode(t *testing.T) {
 			},
 		),
 		42,
+		acceptedStatusCodes,
 	).Get(u, nil)
 
 	assert.Nil(t, r)
@@ -253,6 +263,7 @@ func TestRedirectHttpClientFailAfterRedirect(t *testing.T) {
 			},
 		),
 		42,
+		acceptedStatusCodes,
 	).Get(u, nil)
 
 	assert.Nil(t, r)
