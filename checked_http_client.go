@@ -23,9 +23,9 @@ func (c *checkedHttpClient) Get(u *url.URL, header http.Header) (httpResponse, e
 
 	code := r.StatusCode()
 
-	if c.acceptedStatusCodes.Contains(code) {
-		return r, nil
-	} else {
+	if !c.acceptedStatusCodes.Contains(code) {
 		return nil, fmt.Errorf("%v", code)
 	}
+
+	return r, nil
 }
