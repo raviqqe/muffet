@@ -50,7 +50,6 @@ func (c *redirectHttpClient) Get(u *url.URL, header http.Header) (httpResponse, 
 		}
 
 		u, err = u.Parse(s)
-
 		if err != nil {
 			return nil, err
 		}
