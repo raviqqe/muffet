@@ -30,11 +30,11 @@ func TestParsingInvalidStatusCode(t *testing.T) {
 func TestInRangeOfStatusCode(t *testing.T) {
 	r := statusCodeRange{200, 300}
 
-	assert.False(t, r.isInRange(199))
-	assert.True(t, r.isInRange(200))
-	assert.True(t, r.isInRange(201))
+	assert.False(t, r.Contains(199))
+	assert.True(t, r.Contains(200))
+	assert.True(t, r.Contains(201))
 
-	assert.True(t, r.isInRange(298))
-	assert.True(t, r.isInRange(299))
-	assert.False(t, r.isInRange(300))
+	assert.True(t, r.Contains(298))
+	assert.True(t, r.Contains(299))
+	assert.False(t, r.Contains(300))
 }
