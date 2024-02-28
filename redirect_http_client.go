@@ -23,14 +23,11 @@ func (c *redirectHttpClient) Get(u *url.URL, header http.Header) (httpResponse, 
 	}
 
 	cj, err := cookiejar.New(nil)
-
 	if err != nil {
 		return nil, err
 	}
 
-	i := 0
-
-	for {
+	for i := range c.maxRedirections + 1 {
 		for _, c := range cj.Cookies(u) {
 			header.Add("cookie", c.String())
 		}
@@ -44,12 +41,6 @@ func (c *redirectHttpClient) Get(u *url.URL, header http.Header) (httpResponse, 
 
 		if c := r.StatusCode(); c < 300 || c >= 400 {
 			return r, nil
-		}
-
-		i++
-
-		if i > c.maxRedirections {
-			return nil, errors.New("too many redirections")
 		}
 
 		s := r.Header("Location")
@@ -66,6 +57,8 @@ func (c *redirectHttpClient) Get(u *url.URL, header http.Header) (httpResponse, 
 
 		cj.SetCookies(u, parseCookies(r.Header("set-cookie")))
 	}
+
+	return nil, errors.New("too many redirections")
 }
 
 func parseCookies(s string) []*http.Cookie {
