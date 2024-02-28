@@ -32,7 +32,7 @@ func parseStatusCodeRange(s string) (*statusCodeRange, error) {
 		cs[i] = c
 	}
 
-	return &statusCodeRange{c[0], c[1]}, nil
+	return &statusCodeRange{cs[0], cs[1]}, nil
 }
 
 func (r statusCodeRange) isInRange(code int) bool {
