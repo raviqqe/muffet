@@ -211,24 +211,6 @@ func TestRedirectHttpClientFailWithInvalidLocationURL(t *testing.T) {
 	assert.Contains(t, err.Error(), "parse")
 }
 
-func TestRedirectHttpClientFailWithInvalidStatusCode(t *testing.T) {
-	u, err := url.Parse(testUrl)
-
-	assert.Nil(t, err)
-
-	r, err := newRedirectHttpClient(
-		newFakeHttpClient(
-			func(u *url.URL) (*fakeHttpResponse, error) {
-				return newFakeHttpResponse(404, testUrl, nil, nil), nil
-			},
-		),
-		42,
-	).Get(u, nil)
-
-	assert.Nil(t, r)
-	assert.Equal(t, err.Error(), "404")
-}
-
 func TestRedirectHttpClientFailAfterRedirect(t *testing.T) {
 	u, err := url.Parse(testUrl)
 
@@ -249,7 +231,7 @@ func TestRedirectHttpClientFailAfterRedirect(t *testing.T) {
 					), nil
 				}
 
-				return newFakeHttpResponse(404, "", nil, nil), nil
+				return nil, errors.New("foo")
 			},
 		),
 		42,
