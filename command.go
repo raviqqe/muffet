@@ -44,24 +44,26 @@ func (c *command) runWithError(ss []string) (bool, error) {
 		return true, nil
 	}
 
-	client := newRedirectHttpClient(
-		newThrottledHttpClient(
-			c.httpClientFactory.Create(
-				httpClientOptions{
-					MaxConnectionsPerHost: args.MaxConnectionsPerHost,
-					MaxResponseBodySize:   args.MaxResponseBodySize,
-					BufferSize:            args.BufferSize,
-					Proxy:                 args.Proxy,
-					SkipTLSVerification:   args.SkipTLSVerification,
-					Timeout:               time.Duration(args.Timeout) * time.Second,
-					Header:                args.Header,
-				},
+	client := newCheckedHttpClient(
+		newRedirectHttpClient(
+			newThrottledHttpClient(
+				c.httpClientFactory.Create(
+					httpClientOptions{
+						MaxConnectionsPerHost: args.MaxConnectionsPerHost,
+						MaxResponseBodySize:   args.MaxResponseBodySize,
+						BufferSize:            args.BufferSize,
+						Proxy:                 args.Proxy,
+						SkipTLSVerification:   args.SkipTLSVerification,
+						Timeout:               time.Duration(args.Timeout) * time.Second,
+						Header:                args.Header,
+					},
+				),
+				args.RateLimit,
+				args.MaxConnections,
+				args.MaxConnectionsPerHost,
 			),
-			args.RateLimit,
-			args.MaxConnections,
-			args.MaxConnectionsPerHost,
+			args.MaxRedirections,
 		),
-		args.MaxRedirections,
 		args.AcceptedStatusCodes,
 	)
 

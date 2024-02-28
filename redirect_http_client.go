@@ -9,13 +9,12 @@ import (
 )
 
 type redirectHttpClient struct {
-	client              httpClient
-	maxRedirections     int
-	acceptedStatusCodes statusCodeSet
+	client          httpClient
+	maxRedirections int
 }
 
-func newRedirectHttpClient(c httpClient, maxRedirections int, acceptedStatusCodes statusCodeSet) httpClient {
-	return &redirectHttpClient{c, maxRedirections, acceptedStatusCodes}
+func newRedirectHttpClient(c httpClient, maxRedirections int) httpClient {
+	return &redirectHttpClient{c, maxRedirections}
 }
 
 func (c *redirectHttpClient) Get(u *url.URL, header http.Header) (httpResponse, error) {
@@ -37,46 +36,38 @@ func (c *redirectHttpClient) Get(u *url.URL, header http.Header) (httpResponse, 
 		}
 
 		r, err := c.client.Get(u, header)
-		if err != nil {
-			return nil, c.formatError(err, i, u)
+		if err != nil && i == 0 {
+			return nil, err
+		} else if err != nil {
+			return nil, fmt.Errorf("%w (following redirect %v)", err, u.String())
 		}
 
 		code := r.StatusCode()
 
-		if c.acceptedStatusCodes.Contains(code) {
+		if code < 300 || code >= 400 {
 			return r, nil
-		} else if code >= 300 && code <= 399 {
-			i++
-
-			if i > c.maxRedirections {
-				return nil, errors.New("too many redirections")
-			}
-
-			s := r.Header("Location")
-
-			if len(s) == 0 {
-				return nil, errors.New("location header not set")
-			}
-
-			u, err = u.Parse(s)
-
-			if err != nil {
-				return nil, err
-			}
-
-			cj.SetCookies(u, parseCookies(r.Header("set-cookie")))
-		} else {
-			return nil, c.formatError(fmt.Errorf("%v", code), i, u)
 		}
-	}
-}
 
-func (*redirectHttpClient) formatError(err error, redirections int, u *url.URL) error {
-	if redirections == 0 {
-		return err
-	}
+		i++
 
-	return fmt.Errorf("%w (following redirect %v)", err, u.String())
+		if i > c.maxRedirections {
+			return nil, errors.New("too many redirections")
+		}
+
+		s := r.Header("Location")
+
+		if len(s) == 0 {
+			return nil, errors.New("location header not set")
+		}
+
+		u, err = u.Parse(s)
+
+		if err != nil {
+			return nil, err
+		}
+
+		cj.SetCookies(u, parseCookies(r.Header("set-cookie")))
+	}
 }
 
 func parseCookies(s string) []*http.Cookie {
