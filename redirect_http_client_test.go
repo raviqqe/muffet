@@ -3,6 +3,7 @@ package main
 import (
 	"errors"
 	"net/url"
+	"strconv"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -30,6 +31,28 @@ func TestRedirectHttpClientGet(t *testing.T) {
 			},
 		),
 		42,
+	).Get(u, nil)
+
+	assert.Nil(t, err)
+	assert.Equal(t, 200, r.StatusCode())
+}
+
+func TestRedirectHttpClientGetWithoutRedirect(t *testing.T) {
+	u, err := url.Parse(testUrl)
+
+	assert.Nil(t, err)
+
+	r, err := newRedirectHttpClient(
+		newFakeHttpClient(
+			func(u *url.URL) (*fakeHttpResponse, error) {
+				if u.String() != testUrl {
+					return nil, errors.New("")
+				}
+
+				return newFakeHtmlResponse(testUrl, ""), nil
+			},
+		),
+		0,
 	).Get(u, nil)
 
 	assert.Nil(t, err)
@@ -142,32 +165,34 @@ func TestRedirectHttpClientGetWithRelativeRedirect(t *testing.T) {
 }
 
 func TestRedirectHttpClientFailWithTooManyRedirects(t *testing.T) {
-	const maxRedirections = 42
+	for _, n := range []int{0, 1, 42} {
+		t.Run(strconv.Itoa(n), func(t *testing.T) {
+			u, err := url.Parse(testUrl)
 
-	u, err := url.Parse(testUrl)
+			assert.Nil(t, err)
 
-	assert.Nil(t, err)
+			i := 0
+			r, err := newRedirectHttpClient(
+				newFakeHttpClient(
+					func(u *url.URL) (*fakeHttpResponse, error) {
+						i++
 
-	i := 0
-	r, err := newRedirectHttpClient(
-		newFakeHttpClient(
-			func(u *url.URL) (*fakeHttpResponse, error) {
-				i++
+						return newFakeHttpResponse(
+							300,
+							testUrl,
+							nil,
+							map[string]string{"location": testUrl},
+						), nil
+					},
+				),
+				n,
+			).Get(u, nil)
 
-				return newFakeHttpResponse(
-					300,
-					testUrl,
-					nil,
-					map[string]string{"location": testUrl},
-				), nil
-			},
-		),
-		maxRedirections,
-	).Get(u, nil)
-
-	assert.Nil(t, r)
-	assert.Equal(t, err.Error(), "too many redirections")
-	assert.Equal(t, maxRedirections+1, i)
+			assert.Nil(t, r)
+			assert.Equal(t, err.Error(), "too many redirections")
+			assert.Equal(t, n+1, i)
+		})
+	}
 }
 
 func TestRedirectHttpClientFailWithUnsetLocationHeader(t *testing.T) {
