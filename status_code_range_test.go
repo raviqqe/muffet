@@ -6,36 +6,35 @@ import (
 )
 
 func TestParsingFixedStatusCode(t *testing.T) {
-	code, err := parseStatusCodeRange("403")
+	r, err := parseStatusCodeRange("403")
 
 	assert.Nil(t, err)
-	assert.Equal(t, 403, code.start)
-	assert.Equal(t, 404, code.end)
+	assert.Equal(t, 403, r.start)
+	assert.Equal(t, 404, r.end)
 }
 
 func TestParsingStatusCodeRange(t *testing.T) {
-	code, err := parseStatusCodeRange("200..300")
+	r, err := parseStatusCodeRange("200..300")
 
 	assert.Nil(t, err)
-	assert.Equal(t, 200, code.start)
-	assert.Equal(t, 300, code.end)
+	assert.Equal(t, 200, r.start)
+	assert.Equal(t, 300, r.end)
 }
 
 func TestParsingInvalidStatusCode(t *testing.T) {
-	code, err := parseStatusCodeRange("foo")
+	_, err := parseStatusCodeRange("foo")
 
 	assert.NotNil(t, err)
-	assert.Nil(t, code)
 }
 
 func TestInRangeOfStatusCode(t *testing.T) {
-	code := statusCodeRange{200, 300}
+	r := statusCodeRange{200, 300}
 
-	assert.False(t, code.isInRange(199))
-	assert.True(t, code.isInRange(200))
-	assert.True(t, code.isInRange(201))
+	assert.False(t, r.isInRange(199))
+	assert.True(t, r.isInRange(200))
+	assert.True(t, r.isInRange(201))
 
-	assert.True(t, code.isInRange(298))
-	assert.True(t, code.isInRange(299))
-	assert.False(t, code.isInRange(300))
+	assert.True(t, r.isInRange(298))
+	assert.True(t, r.isInRange(299))
+	assert.False(t, r.isInRange(300))
 }

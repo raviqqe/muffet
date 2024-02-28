@@ -41,7 +41,7 @@ type arguments struct {
 	Help                bool   `short:"h" long:"help" description:"Show this help"`
 	Version             bool   `long:"version" description:"Show version"`
 	URL                 string
-	AcceptedStatusCodes statusCodeCollection
+	AcceptedStatusCodes statusCodeSet
 	ExcludedPatterns    []*regexp.Regexp
 	IncludePatterns     []*regexp.Regexp
 	Header              http.Header
@@ -78,7 +78,7 @@ func getArguments(ss []string) (*arguments, error) {
 		return nil, err
 	}
 
-	args.AcceptedStatusCodes, err = parseStatusCodeCollection(args.RawAcceptedStatusCodes)
+	args.AcceptedStatusCodes, err = parseStatusCodeSet(args.RawAcceptedStatusCodes)
 	if err != nil {
 		return nil, err
 	}

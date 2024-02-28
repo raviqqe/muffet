@@ -11,10 +11,10 @@ import (
 type redirectHttpClient struct {
 	client              httpClient
 	maxRedirections     int
-	acceptedStatusCodes statusCodeCollection
+	acceptedStatusCodes statusCodeSet
 }
 
-func newRedirectHttpClient(c httpClient, maxRedirections int, acceptedStatusCodes statusCodeCollection) httpClient {
+func newRedirectHttpClient(c httpClient, maxRedirections int, acceptedStatusCodes statusCodeSet) httpClient {
 	return &redirectHttpClient{c, maxRedirections, acceptedStatusCodes}
 }
 
@@ -43,7 +43,7 @@ func (c *redirectHttpClient) Get(u *url.URL, header http.Header) (httpResponse, 
 
 		code := r.StatusCode()
 
-		if c.acceptedStatusCodes.isInCollection(code) {
+		if c.acceptedStatusCodes.isInSet(code) {
 			return r, nil
 		} else if code >= 300 && code <= 399 {
 			i++
