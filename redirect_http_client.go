@@ -43,7 +43,7 @@ func (c *redirectHttpClient) Get(u *url.URL, header http.Header) (httpResponse, 
 
 		code := r.StatusCode()
 
-		if c.acceptedStatusCodes.isInSet(code) {
+		if c.acceptedStatusCodes.Contains(code) {
 			return r, nil
 		} else if code >= 300 && code <= 399 {
 			i++

@@ -35,6 +35,6 @@ func parseStatusCodeRange(s string) (*statusCodeRange, error) {
 	return &statusCodeRange{cs[0], cs[1]}, nil
 }
 
-func (r statusCodeRange) isInRange(code int) bool {
+func (r statusCodeRange) Contains(code int) bool {
 	return code >= r.start && code < r.end
 }
