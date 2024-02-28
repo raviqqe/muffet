@@ -37,9 +37,7 @@ func (c *redirectHttpClient) Get(u *url.URL, header http.Header) (httpResponse, 
 			return nil, err
 		} else if err != nil {
 			return nil, fmt.Errorf("%w (following redirect %v)", err, u.String())
-		}
-
-		if c := r.StatusCode(); c < 300 || c >= 400 {
+		} else if c := r.StatusCode(); c < 300 || c >= 400 {
 			return r, nil
 		}
 
