@@ -21,17 +21,18 @@ func parseStatusCodeRange(s string) (*statusCodeRange, error) {
 		return nil, fmt.Errorf("invalid status code range: %v", s)
 	}
 
-	start, err := strconv.Atoi(ss[0])
-	if err != nil {
-		return nil, fmt.Errorf("invalid status code: %v", ss[0])
+	cs := []int{0, 0}
+
+	for i, s := range ss {
+		c, err := strconv.Atoi(s)
+		if err != nil {
+			return nil, fmt.Errorf("invalid status code: %v", s)
+		}
+
+		cs[i] = c
 	}
 
-	end, err := strconv.Atoi(ss[1])
-	if err != nil {
-		return nil, fmt.Errorf("invalid status code: %v", ss[1])
-	}
-
-	return &statusCodeRange{start, end}, nil
+	return &statusCodeRange{c[0], c[1]}, nil
 }
 
 func (r statusCodeRange) isInRange(code int) bool {

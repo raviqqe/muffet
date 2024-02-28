@@ -19,8 +19,8 @@ func parseStatusCodeSet(value string) (statusCodeSet, error) {
 	return rs, nil
 }
 
-func (c statusCodeSet) isInSet(code int) bool {
-	for r := range c {
+func (s statusCodeSet) isInSet(code int) bool {
+	for r := range s {
 		if r.isInRange(code) {
 			return true
 		}
