@@ -1,36 +1,40 @@
 package main
 
 import (
-	"errors"
-	"regexp"
+	"fmt"
 	"strconv"
+	"strings"
 )
-
-var fixedCodePattern = regexp.MustCompile(`^\s*(\d{3})\s*$`)
-var rangeCodePattern = regexp.MustCompile(`^\s*(\d{3})\s*\.\.\s*(\d{3})\s*$`)
 
 type statusCodeRange struct {
 	start int
 	end   int
 }
 
-func parseStatusCodeRange(value string) (*statusCodeRange, error) {
-	fixedMatch := fixedCodePattern.FindAllStringSubmatch(value, -1)
-	if len(fixedMatch) > 0 {
-		code, _ := strconv.Atoi(fixedMatch[0][1])
-		return &statusCodeRange{code, code + 1}, nil
+func parseStatusCodeRange(s string) (*statusCodeRange, error) {
+	if c, err := strconv.Atoi(s); err == nil {
+		return &statusCodeRange{c, c + 1}, nil
 	}
 
-	rangeMatch := rangeCodePattern.FindAllStringSubmatch(value, -1)
-	if len(rangeMatch) > 0 {
-		start, _ := strconv.Atoi(rangeMatch[0][1])
-		end, _ := strconv.Atoi(rangeMatch[0][2])
-		return &statusCodeRange{start, end}, nil
+	ss := strings.Split(s, "..")
+	if len(ss) != 2 {
+		return nil, fmt.Errorf("invalid status code range: %v", s)
 	}
 
-	return nil, errors.New("invalid HTTP response status code value")
+	cs := []int{0, 0}
+
+	for i, s := range ss {
+		c, err := strconv.Atoi(s)
+		if err != nil {
+			return nil, fmt.Errorf("invalid status code: %v", s)
+		}
+
+		cs[i] = c
+	}
+
+	return &statusCodeRange{cs[0], cs[1]}, nil
 }
 
-func (r *statusCodeRange) isInRange(code int) bool {
+func (r statusCodeRange) isInRange(code int) bool {
 	return code >= r.start && code < r.end
 }
