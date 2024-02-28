@@ -3,6 +3,7 @@ package main
 import (
 	"errors"
 	"net/url"
+	"strconv"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -10,10 +11,8 @@ import (
 
 const testUrl = "http://foo.com"
 
-var acceptedStatusCodes = statusCodeSet{{200, 300}: struct{}{}}
-
 func TestNewRedirectHttpClient(t *testing.T) {
-	newRedirectHttpClient(newFakeHttpClient(nil), 42, acceptedStatusCodes)
+	newRedirectHttpClient(newFakeHttpClient(nil), 42)
 }
 
 func TestRedirectHttpClientGet(t *testing.T) {
@@ -32,7 +31,28 @@ func TestRedirectHttpClientGet(t *testing.T) {
 			},
 		),
 		42,
-		acceptedStatusCodes,
+	).Get(u, nil)
+
+	assert.Nil(t, err)
+	assert.Equal(t, 200, r.StatusCode())
+}
+
+func TestRedirectHttpClientGetWithoutRedirect(t *testing.T) {
+	u, err := url.Parse(testUrl)
+
+	assert.Nil(t, err)
+
+	r, err := newRedirectHttpClient(
+		newFakeHttpClient(
+			func(u *url.URL) (*fakeHttpResponse, error) {
+				if u.String() != testUrl {
+					return nil, errors.New("")
+				}
+
+				return newFakeHtmlResponse(testUrl, ""), nil
+			},
+		),
+		0,
 	).Get(u, nil)
 
 	assert.Nil(t, err)
@@ -65,7 +85,6 @@ func TestRedirectHttpClientGetWithRedirect(t *testing.T) {
 			},
 		),
 		42,
-		acceptedStatusCodes,
 	).Get(u, nil)
 
 	assert.Nil(t, err)
@@ -100,7 +119,6 @@ func TestRedirectHttpClientGetWithRedirects(t *testing.T) {
 			},
 		),
 		maxRedirections,
-		acceptedStatusCodes,
 	).Get(u, nil)
 
 	assert.Nil(t, err)
@@ -139,7 +157,6 @@ func TestRedirectHttpClientGetWithRelativeRedirect(t *testing.T) {
 			},
 		),
 		maxRedirections,
-		acceptedStatusCodes,
 	).Get(u, nil)
 
 	assert.Nil(t, err)
@@ -148,33 +165,34 @@ func TestRedirectHttpClientGetWithRelativeRedirect(t *testing.T) {
 }
 
 func TestRedirectHttpClientFailWithTooManyRedirects(t *testing.T) {
-	const maxRedirections = 42
+	for _, n := range []int{0, 1, 42} {
+		t.Run(strconv.Itoa(n), func(t *testing.T) {
+			u, err := url.Parse(testUrl)
 
-	u, err := url.Parse(testUrl)
+			assert.Nil(t, err)
 
-	assert.Nil(t, err)
+			i := 0
+			r, err := newRedirectHttpClient(
+				newFakeHttpClient(
+					func(u *url.URL) (*fakeHttpResponse, error) {
+						i++
 
-	i := 0
-	r, err := newRedirectHttpClient(
-		newFakeHttpClient(
-			func(u *url.URL) (*fakeHttpResponse, error) {
-				i++
+						return newFakeHttpResponse(
+							300,
+							testUrl,
+							nil,
+							map[string]string{"location": testUrl},
+						), nil
+					},
+				),
+				n,
+			).Get(u, nil)
 
-				return newFakeHttpResponse(
-					300,
-					testUrl,
-					nil,
-					map[string]string{"location": testUrl},
-				), nil
-			},
-		),
-		maxRedirections,
-		acceptedStatusCodes,
-	).Get(u, nil)
-
-	assert.Nil(t, r)
-	assert.Equal(t, err.Error(), "too many redirections")
-	assert.Equal(t, maxRedirections+1, i)
+			assert.Nil(t, r)
+			assert.Equal(t, err.Error(), "too many redirections")
+			assert.Equal(t, n+1, i)
+		})
+	}
 }
 
 func TestRedirectHttpClientFailWithUnsetLocationHeader(t *testing.T) {
@@ -189,7 +207,6 @@ func TestRedirectHttpClientFailWithUnsetLocationHeader(t *testing.T) {
 			},
 		),
 		42,
-		acceptedStatusCodes,
 	).Get(u, nil)
 
 	assert.Nil(t, r)
@@ -213,30 +230,10 @@ func TestRedirectHttpClientFailWithInvalidLocationURL(t *testing.T) {
 			},
 		),
 		42,
-		acceptedStatusCodes,
 	).Get(u, nil)
 
 	assert.Nil(t, r)
 	assert.Contains(t, err.Error(), "parse")
-}
-
-func TestRedirectHttpClientFailWithInvalidStatusCode(t *testing.T) {
-	u, err := url.Parse(testUrl)
-
-	assert.Nil(t, err)
-
-	r, err := newRedirectHttpClient(
-		newFakeHttpClient(
-			func(u *url.URL) (*fakeHttpResponse, error) {
-				return newFakeHttpResponse(404, testUrl, nil, nil), nil
-			},
-		),
-		42,
-		acceptedStatusCodes,
-	).Get(u, nil)
-
-	assert.Nil(t, r)
-	assert.Equal(t, err.Error(), "404")
 }
 
 func TestRedirectHttpClientFailAfterRedirect(t *testing.T) {
@@ -259,11 +256,10 @@ func TestRedirectHttpClientFailAfterRedirect(t *testing.T) {
 					), nil
 				}
 
-				return newFakeHttpResponse(404, "", nil, nil), nil
+				return nil, errors.New("foo")
 			},
 		),
 		42,
-		acceptedStatusCodes,
 	).Get(u, nil)
 
 	assert.Nil(t, r)
