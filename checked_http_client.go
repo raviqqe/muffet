@@ -19,11 +19,7 @@ func (c *checkedHttpClient) Get(u *url.URL, header http.Header) (httpResponse, e
 	r, err := c.client.Get(u, header)
 	if err != nil {
 		return nil, err
-	}
-
-	code := r.StatusCode()
-
-	if !c.acceptedStatusCodes.Contains(code) {
+	} else if code := r.StatusCode(); !c.acceptedStatusCodes.Contains(code) {
 		return nil, fmt.Errorf("%v", code)
 	}
 
