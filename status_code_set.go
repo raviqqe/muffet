@@ -1,9 +1,6 @@
 package main
 
-import (
-	"fmt"
-	"strings"
-)
+import "strings"
 
 type statusCodeSet map[statusCodeRange]struct{}
 
@@ -11,10 +8,6 @@ func parseStatusCodeSet(value string) (statusCodeSet, error) {
 	rs := statusCodeSet{}
 
 	for _, r := range strings.Split(value, ",") {
-		if len(value) == 0 {
-			return nil, fmt.Errorf("invalid status code range: %s", value)
-		}
-
 		r, err := parseStatusCodeRange(r)
 		if err != nil {
 			return nil, err
