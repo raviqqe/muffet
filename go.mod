@@ -14,7 +14,7 @@ require (
 	github.com/temoto/robotstxt v1.1.2
 	github.com/valyala/fasthttp v1.52.0
 	github.com/yhat/scrape v0.0.0-20161128144610-24b7890b0945
-	go.uber.org/ratelimit v0.3.0
+	go.uber.org/ratelimit v0.3.1
 	golang.org/x/net v0.21.0
 )
 
