@@ -22,14 +22,8 @@ type arguments struct {
 	FollowSitemapXML       bool     `long:"follow-sitemap-xml" description:"Scrape only pages listed in sitemap.xml (deprecated)"`
 	RawHeaders             []string `long:"header" value-name:"<header>..." description:"Custom headers"`
 	// TODO Remove a short option.
-	IgnoreFragments bool   `short:"f" long:"ignore-fragments" description:"Ignore URL fragments"`
-	Format          string `long:"format" description:"Output format" default:"text" choice:"text" choice:"json" choice:"junit"`
-	// TODO Remove this option.
-	JSONOutput bool `long:"json" description:"Output results in JSON (deprecated)"`
-	// TODO Remove this option.
-	VerboseJSON bool `long:"experimental-verbose-json" description:"Include successful results in JSON (deprecated)"`
-	// TODO Remove this option.
-	JUnitOutput         bool   `long:"junit" description:"Output results as JUnit XML file (deprecated)"`
+	IgnoreFragments     bool   `short:"f" long:"ignore-fragments" description:"Ignore URL fragments"`
+	Format              string `long:"format" description:"Output format" default:"text" choice:"text" choice:"json" choice:"junit"`
 	MaxRedirections     int    `short:"r" long:"max-redirections" value-name:"<count>" default:"64" description:"Maximum number of redirections"`
 	RateLimit           int    `long:"rate-limit" value-name:"<rate>" description:"Max requests per second"`
 	Timeout             int    `short:"t" long:"timeout" value-name:"<seconds>" default:"10" description:"Timeout for HTTP requests in seconds"`
@@ -58,8 +52,6 @@ func getArguments(ss []string) (*arguments, error) {
 	} else if len(ss) != 1 {
 		return nil, errors.New("invalid number of arguments")
 	}
-
-	reconcileDeprecatedArguments(&args)
 
 	args.URL = ss[0]
 
@@ -132,13 +124,4 @@ func parseHeaders(headers []string) (http.Header, error) {
 	}
 
 	return h, nil
-}
-
-func reconcileDeprecatedArguments(args *arguments) {
-	if args.JSONOutput {
-		args.Format = "json"
-		args.Verbose = args.Verbose || args.VerboseJSON
-	} else if args.JUnitOutput {
-		args.Format = "junit"
-	}
 }
