@@ -236,7 +236,7 @@ func TestCommandFailToRunWithJSONOutput(t *testing.T) {
 
 			return nil, errors.New("foo")
 		},
-	).Run([]string{"--json", "http://foo.com"})
+	).Run([]string{"--format=json", "http://foo.com"})
 
 	assert.False(t, ok)
 	assert.Greater(t, b.Len(), 0)
@@ -250,7 +250,7 @@ func TestCommandDoNotIncludeSuccessfulPageInJSONOutput(t *testing.T) {
 		func(u *url.URL) (*fakeHttpResponse, error) {
 			return newFakeHtmlResponse("", ""), nil
 		},
-	).Run([]string{"--json", "http://foo.com"})
+	).Run([]string{"--format=json", "http://foo.com"})
 
 	assert.True(t, ok)
 	assert.Equal(t, strings.TrimSpace(b.String()), "[]")
@@ -285,7 +285,7 @@ func TestCommandFailToRunWithJUnitOutput(t *testing.T) {
 
 			return nil, errors.New("foo")
 		},
-	).Run([]string{"--junit", "http://foo.com"})
+	).Run([]string{"--format=junit", "http://foo.com"})
 
 	assert.False(t, ok)
 	assert.Greater(t, b.Len(), 0)
@@ -295,7 +295,7 @@ func TestCommandFailWithVerboseAndJUnitOptions(t *testing.T) {
 	b := &bytes.Buffer{}
 
 	ok := newTestCommandWithStderr(b, nil).Run(
-		[]string{"--junit", "--verbose", "http://foo.com"},
+		[]string{"--format=junit", "--verbose", "http://foo.com"},
 	)
 
 	assert.False(t, ok)
