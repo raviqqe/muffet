@@ -19,7 +19,6 @@ type arguments struct {
 	RawExcludedPatterns    []string `short:"e" long:"exclude" value-name:"<pattern>..." description:"Exclude URLs matched with given regular expressions"`
 	RawIncludedPatterns    []string `short:"i" long:"include" value-name:"<pattern>..." description:"Include URLs matched with given regular expressions"`
 	FollowRobotsTxt        bool     `long:"follow-robots-txt" description:"Follow robots.txt when scraping pages"`
-	FollowSitemapXML       bool     `long:"follow-sitemap-xml" description:"Scrape only pages listed in sitemap.xml (deprecated)"`
 	RawHeaders             []string `long:"header" value-name:"<header>..." description:"Custom headers"`
 	// TODO Remove a short option.
 	IgnoreFragments     bool   `short:"f" long:"ignore-fragments" description:"Ignore URL fragments"`
