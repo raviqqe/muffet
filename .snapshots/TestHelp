@@ -23,11 +23,6 @@ Application Options:
       --header=<header>...                  Custom headers
   -f, --ignore-fragments                    Ignore URL fragments
       --format=[text|json|junit]            Output format (default: text)
-      --json                                Output results in JSON (deprecated)
-      --experimental-verbose-json           Include successful results in JSON
-                                            (deprecated)
-      --junit                               Output results as JUnit XML file
-                                            (deprecated)
   -r, --max-redirections=<count>            Maximum number of redirections
                                             (default: 64)
       --rate-limit=<rate>                   Max requests per second
