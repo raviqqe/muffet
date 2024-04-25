@@ -10,7 +10,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: go build
-      - uses: golangci/golangci-lint-action@v4
+      - uses: golangci/golangci-lint-action@v5
       - run: go test -race -covermode atomic -coverprofile coverage.txt
       - uses: codecov/codecov-action@v4
   spell_check:
