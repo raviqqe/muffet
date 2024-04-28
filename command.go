@@ -99,14 +99,6 @@ func (c *command) runWithError(ss []string) (bool, error) {
 
 	sm := (map[string]struct{})(nil)
 
-	if args.FollowSitemapXML {
-		sm, err = newSitemapFetcher(client).Fetch(p.URL())
-
-		if err != nil {
-			return false, err
-		}
-	}
-
 	checker := newPageChecker(
 		f,
 		newLinkValidator(p.URL().Hostname(), rd, sm),
