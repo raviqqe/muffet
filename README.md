@@ -21,7 +21,7 @@ website recursively.
 ## Installation
 
 ```sh
-go install github.com/raviqqe/muffet/v2@latest
+go install github.com/raviqqe/muffet/v3@latest
 ```
 
 ### Homebrew
