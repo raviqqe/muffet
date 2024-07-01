@@ -217,6 +217,36 @@ func TestLinkFinderIgnoreMetaTags(t *testing.T) {
 	assert.Len(t, ls, 0)
 }
 
+func TestLinkFinderIgnorePreconnect(t *testing.T) {
+	b, err := url.Parse("https://localhost")
+	assert.Nil(t, err)
+
+	for _, c := range []struct {
+		html      string
+		linkCount int
+	}{
+		{`<link rel="preconnect" href="https://fonts.googleapis.com">`, 0},
+		{`<link rel="dns-prefetch" href="https://fonts.googleapis.com">`, 0},
+		{`<link rel="dns-prefetch" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,300;0,400;0,700;1,400&amp;family=Source+Sans+Pro:ital,wght@0,300;0,400;0,600;1,400&amp;display=swap" rel="stylesheet">`, 1},
+	} {
+		n, err := html.Parse(strings.NewReader(htmlWithBody(c.html)))
+		assert.Nil(t, err)
+
+		s, e := 0, 0
+
+		for _, err := range newTestLinkFinder().Find(n, b) {
+			if err == nil {
+				s++
+			} else {
+				e++
+			}
+		}
+
+		assert.Equal(t, c.linkCount, s)
+		assert.Equal(t, 0, e)
+	}
+}
+
 func htmlWithBody(b string) string {
 	return fmt.Sprintf(`<html><body>%v</body></html>`, b)
 }
