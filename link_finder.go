@@ -40,6 +40,16 @@ func (f linkFinder) Find(n *html.Node, base *url.URL) map[string]error {
 		_, ok := atomToAttributes[n.DataAtom]
 		return ok
 	}) {
+
+		// https://github.com/raviqqe/muffet/issues/391
+		// preconnect and dns-prefetch hrefs are not http resources
+		if n.DataAtom == atom.Link {
+			rel := scrape.Attr(n, "rel")
+			if rel == "preconnect" || rel == "dns-prefetch" {
+				continue
+			}
+		}
+
 		for _, a := range atomToAttributes[n.DataAtom] {
 			ss := f.parseLinks(n, a)
 
