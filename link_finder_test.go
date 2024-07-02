@@ -225,9 +225,9 @@ func TestLinkFinderIgnorePreconnect(t *testing.T) {
 		html      string
 		linkCount int
 	}{
-		{`<link rel="preconnect" href="https://fonts.googleapis.com">`, 0},
-		{`<link rel="dns-prefetch" href="https://fonts.googleapis.com">`, 0},
-		{`<link rel="dns-prefetch" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,300;0,400;0,700;1,400&amp;family=Source+Sans+Pro:ital,wght@0,300;0,400;0,600;1,400&amp;display=swap" rel="stylesheet">`, 1},
+		{`<link rel="preconnect" href="https://foo.com">`, 0},
+		{`<link rel="dns-prefetch" href="https://foo.com">`, 0},
+		{`<link rel="dns-prefetch" href="https://foo.com"><link href="https://bar.com/baz.css" rel="stylesheet">`, 1},
 	} {
 		n, err := html.Parse(strings.NewReader(htmlWithBody(c.html)))
 		assert.Nil(t, err)
