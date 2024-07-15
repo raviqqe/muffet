@@ -13,6 +13,7 @@ type httpClientOptions struct {
 	SkipTLSVerification bool
 	Timeout             time.Duration
 	Header              http.Header
+	CustomDnsAddr       string
 }
 
 type httpClientFactory interface {
