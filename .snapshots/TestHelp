@@ -22,6 +22,8 @@ Application Options:
                                             sitemap.xml (deprecated)
       --header=<header>...                  Custom headers
   -f, --ignore-fragments                    Ignore URL fragments
+      --dns-resolver=                       Custom DNS resolver to resolve host
+                                            addresses
       --format=[text|json|junit]            Output format (default: text)
       --json                                Output results in JSON (deprecated)
       --experimental-verbose-json           Include successful results in JSON

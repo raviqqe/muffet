@@ -11,5 +11,5 @@ func TestFasthttpHttpClientFactoryCreateWithProxy(t *testing.T) {
 }
 
 func TestFasthttpHttpClientFactoryCreateWithCustomDnsResolver(t *testing.T) {
-	newFasthttpHttpClientFactory().Create(httpClientOptions{CustomDnsAddr: "1.1.1.1:53"})
+	newFasthttpHttpClientFactory().Create(httpClientOptions{DnsResolver: "1.1.1.1:53"})
 }

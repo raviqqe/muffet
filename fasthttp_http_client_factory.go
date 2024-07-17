@@ -25,20 +25,21 @@ func (*fasthttpHttpClientFactory) Create(o httpClientOptions) httpClient {
 		d = fasthttpproxy.FasthttpHTTPDialerTimeout(o.Proxy, tcpTimeout)
 	}
 
-	if o.CustomDnsAddr != "" {
-		d = func(addr string) (net.Conn, error) {
-			dialer := fasthttp.TCPDialer{
-				Concurrency: 1000,
-				Resolver: &net.Resolver{
-					PreferGo:     true,
-					StrictErrors: false,
-					Dial: func(ctx context.Context, network string, address string) (net.Conn, error) {
-						internalDialer := net.Dialer{}
-						return internalDialer.DialContext(ctx, "udp", o.CustomDnsAddr)
-					},
+	if o.DnsResolver != "" {
+		nd := &net.Dialer{}
+		td := &fasthttp.TCPDialer{
+			Concurrency: concurrency,
+			Resolver: &net.Resolver{
+				PreferGo:     true,
+				StrictErrors: false,
+				Dial: func(ctx context.Context, network string, address string) (net.Conn, error) {
+					return nd.DialContext(ctx, "udp", o.DnsResolver)
 				},
-			}
-			return dialer.DialTimeout(addr, tcpTimeout)
+			},
+		}
+
+		d = func(addr string) (net.Conn, error) {
+			return td.DialTimeout(addr, tcpTimeout)
 		}
 	}
 
