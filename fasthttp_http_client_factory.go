@@ -17,28 +17,25 @@ func newFasthttpHttpClientFactory() *fasthttpHttpClientFactory {
 }
 
 func (*fasthttpHttpClientFactory) Create(o httpClientOptions) httpClient {
-	d := func(addr string) (net.Conn, error) {
-		return fasthttp.DialTimeout(addr, tcpTimeout)
+	d := func(address string) (net.Conn, error) {
+		return fasthttp.DialTimeout(address, tcpTimeout)
 	}
 
 	if o.Proxy != "" {
 		d = fasthttpproxy.FasthttpHTTPDialerTimeout(o.Proxy, tcpTimeout)
-	}
-
-	if o.CustomDnsAddr != "" {
-		d = func(addr string) (net.Conn, error) {
-			dialer := fasthttp.TCPDialer{
-				Concurrency: 1000,
-				Resolver: &net.Resolver{
-					PreferGo:     true,
-					StrictErrors: false,
-					Dial: func(ctx context.Context, network string, address string) (net.Conn, error) {
-						internalDialer := net.Dialer{}
-						return internalDialer.DialContext(ctx, "udp", o.CustomDnsAddr)
-					},
+	} else if o.DnsResolver != "" {
+		nd := &net.Dialer{}
+		td := &fasthttp.TCPDialer{
+			Concurrency: concurrency,
+			Resolver: &net.Resolver{
+				Dial: func(ctx context.Context, network, address string) (net.Conn, error) {
+					return nd.DialContext(ctx, "udp", o.DnsResolver)
 				},
-			}
-			return dialer.DialTimeout(addr, tcpTimeout)
+			},
+		}
+
+		d = func(address string) (net.Conn, error) {
+			return td.DialTimeout(address, tcpTimeout)
 		}
 	}
 
