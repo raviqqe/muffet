@@ -12,6 +12,8 @@ Application Options:
                                             per host (default: 512)
       --max-response-body-size=<size>       Maximum response body size to read
                                             (default: 10000000)
+      --custom-dns-addr=                    Custom DNS server to be used for
+                                            requests
   -e, --exclude=<pattern>...                Exclude URLs matched with given
                                             regular expressions
   -i, --include=<pattern>...                Include URLs matched with given
