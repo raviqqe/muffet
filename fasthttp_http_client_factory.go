@@ -17,8 +17,8 @@ func newFasthttpHttpClientFactory() *fasthttpHttpClientFactory {
 }
 
 func (*fasthttpHttpClientFactory) Create(o httpClientOptions) httpClient {
-	d := func(addr string) (net.Conn, error) {
-		return fasthttp.DialTimeout(addr, tcpTimeout)
+	d := func(address string) (net.Conn, error) {
+		return fasthttp.DialTimeout(address, tcpTimeout)
 	}
 
 	if o.Proxy != "" {
