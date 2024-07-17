@@ -36,8 +36,8 @@ func (*fasthttpHttpClientFactory) Create(o httpClientOptions) httpClient {
 			},
 		}
 
-		d = func(addr string) (net.Conn, error) {
-			return td.DialTimeout(addr, tcpTimeout)
+		d = func(address string) (net.Conn, error) {
+			return td.DialTimeout(address, tcpTimeout)
 		}
 	}
 
