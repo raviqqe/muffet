@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"crypto/tls"
 	"net"
 
@@ -22,6 +23,23 @@ func (*fasthttpHttpClientFactory) Create(o httpClientOptions) httpClient {
 
 	if o.Proxy != "" {
 		d = fasthttpproxy.FasthttpHTTPDialerTimeout(o.Proxy, tcpTimeout)
+	}
+
+	if o.CustomDnsAddr != "" {
+		d = func(addr string) (net.Conn, error) {
+			dialer := fasthttp.TCPDialer{
+				Concurrency: 1000,
+				Resolver: &net.Resolver{
+					PreferGo:     true,
+					StrictErrors: false,
+					Dial: func(ctx context.Context, network string, address string) (net.Conn, error) {
+						internalDialer := net.Dialer{}
+						return internalDialer.DialContext(ctx, "udp", o.CustomDnsAddr)
+					},
+				},
+			}
+			return dialer.DialTimeout(addr, tcpTimeout)
+		}
 	}
 
 	return newFasthttpHttpClient(

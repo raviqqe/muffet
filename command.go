@@ -56,6 +56,7 @@ func (c *command) runWithError(ss []string) (bool, error) {
 						SkipTLSVerification:   args.SkipTLSVerification,
 						Timeout:               time.Duration(args.Timeout) * time.Second,
 						Header:                args.Header,
+						CustomDnsAddr:         args.CustomDnsAddr,
 					},
 				),
 				args.RateLimit,
