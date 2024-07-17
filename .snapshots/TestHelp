@@ -22,7 +22,7 @@ Application Options:
                                             sitemap.xml (deprecated)
       --header=<header>...                  Custom headers
   -f, --ignore-fragments                    Ignore URL fragments
-      --dns-resolver=                       Custom DNS resolver to resolve host
+      --dns-resolver=<address>              Custom DNS resolver to resolve host
                                             addresses
       --format=[text|json|junit]            Output format (default: text)
       --json                                Output results in JSON (deprecated)
