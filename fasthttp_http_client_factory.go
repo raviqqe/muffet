@@ -23,9 +23,7 @@ func (*fasthttpHttpClientFactory) Create(o httpClientOptions) httpClient {
 
 	if o.Proxy != "" {
 		d = fasthttpproxy.FasthttpHTTPDialerTimeout(o.Proxy, tcpTimeout)
-	}
-
-	if o.DnsResolver != "" {
+	} else if o.DnsResolver != "" {
 		nd := &net.Dialer{}
 		td := &fasthttp.TCPDialer{
 			Concurrency: concurrency,
