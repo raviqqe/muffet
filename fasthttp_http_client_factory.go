@@ -28,6 +28,7 @@ func (*fasthttpHttpClientFactory) Create(o httpClientOptions) httpClient {
 		td := &fasthttp.TCPDialer{
 			Concurrency: concurrency,
 			Resolver: &net.Resolver{
+				PreferGo: true,
 				Dial: func(ctx context.Context, network, address string) (net.Conn, error) {
 					return nd.DialContext(ctx, "udp", o.DnsResolver)
 				},
