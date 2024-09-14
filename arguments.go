@@ -11,7 +11,7 @@ import (
 )
 
 type arguments struct {
-	RawAcceptedStatusCodes string   `long:"accepted-status-codes" value-name:"<codes>" default:"200..300" description:"Accepted HTTP response status codes"`
+	RawAcceptedStatusCodes string   `long:"accepted-status-codes" value-name:"<codes>" default:"200..300" description:"Accepted HTTP response status codes, example '200..300,403'"`
 	BufferSize             int      `short:"b" long:"buffer-size" value-name:"<size>" default:"4096" description:"HTTP response buffer size in bytes"`
 	MaxConnections         int      `short:"c" long:"max-connections" value-name:"<count>" default:"512" description:"Maximum number of HTTP connections"`
 	MaxConnectionsPerHost  int      `long:"max-connections-per-host" value-name:"<count>" default:"512" description:"Maximum number of HTTP connections per host"`
