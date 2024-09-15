@@ -3,7 +3,8 @@ Usage:
 
 Application Options:
       --accepted-status-codes=<codes>       Accepted HTTP response status codes
-                                            (default: 200..300)
+                                            (e.g. '200..300,403') (default:
+                                            200..300)
   -b, --buffer-size=<size>                  HTTP response buffer size in bytes
                                             (default: 4096)
   -c, --max-connections=<count>             Maximum number of HTTP connections
