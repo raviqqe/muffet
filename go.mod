@@ -3,7 +3,7 @@ module github.com/raviqqe/muffet/v2
 go 1.22.0
 
 require (
-	github.com/andybalholm/brotli v1.1.0
+	github.com/andybalholm/brotli v1.1.1
 	github.com/bradleyjkemp/cupaloy v2.3.0+incompatible
 	github.com/jessevdk/go-flags v1.6.1
 	github.com/logrusorgru/aurora/v3 v3.0.0
