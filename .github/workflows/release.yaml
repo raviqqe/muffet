@@ -23,4 +23,4 @@ jobs:
         with:
           fetch-depth: 0
       - run: echo ${{ secrets.DOCKER_ACCESS_TOKEN }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
-      - run: tools/docker.sh "linux/amd64,linux/arm64"
+      - run: tools/docker.sh
