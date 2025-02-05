@@ -18,7 +18,7 @@ func newFasthttpHttpClientFactory() *fasthttpHttpClientFactory {
 
 func (*fasthttpHttpClientFactory) Create(o httpClientOptions) httpClient {
 	d := func(address string) (net.Conn, error) {
-		return fasthttp.DialTimeout(address, tcpTimeout)
+		return fasthttp.DialDualStackTimeout(address, tcpTimeout)
 	}
 
 	if o.Proxy != "" {
@@ -36,7 +36,7 @@ func (*fasthttpHttpClientFactory) Create(o httpClientOptions) httpClient {
 		}
 
 		d = func(address string) (net.Conn, error) {
-			return td.DialTimeout(address, tcpTimeout)
+			return td.DialDualStackTimeout(address, tcpTimeout)
 		}
 	}
 
@@ -48,6 +48,7 @@ func (*fasthttpHttpClientFactory) Create(o httpClientOptions) httpClient {
 				InsecureSkipVerify: o.SkipTLSVerification,
 			},
 			Dial:                     d,
+			DialDualStack:            true,
 			DisablePathNormalizing:   true,
 			NoDefaultUserAgentHeader: true,
 			MaxResponseBodySize:      o.MaxResponseBodySize,
