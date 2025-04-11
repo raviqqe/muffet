@@ -18,7 +18,13 @@ func newFasthttpHttpClientFactory() *fasthttpHttpClientFactory {
 
 func (*fasthttpHttpClientFactory) Create(o httpClientOptions) httpClient {
 	d := func(address string) (net.Conn, error) {
-		return fasthttp.DialDualStackTimeout(address, tcpTimeout)
+		c, err := fasthttp.DialDualStackTimeout(address, tcpTimeout)
+
+		if err == nil {
+			return c, nil
+		}
+
+		return fasthttp.DialTimeout(address, tcpTimeout)
 	}
 
 	if o.Proxy != "" {
