@@ -5,7 +5,7 @@ on:
       - main
   pull_request:
 jobs:
-  release_go:
+  go_release:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -19,7 +19,7 @@ jobs:
           snapshot: ${{ github.ref != 'refs/heads/main' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  release_docker:
+  docker_release:
     needs: release
     runs-on: ubuntu-latest
     if: ${{ github.ref == 'refs/heads/main' }}
@@ -32,8 +32,8 @@ jobs:
       - run: tools/docker.sh
   release:
     needs:
-      - release_go
-      - reelase_docker
+      - go_release
+      - docker_release
     if: always()
     runs-on: ubuntu-latest
     steps:
