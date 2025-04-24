@@ -5,7 +5,7 @@ description: How to install Muffet in different platforms
 
 ## Go
 
-If your system has the Go programming language installed already, you can run the `go install` command to install Muffet.
+If your system provides [the Go programming language](https://go.dev/) installed already, you can run the `go install` command to install Muffet.
 
 ```sh
 go install github.com/raviqqe/muffet/v2@latest
