@@ -3,7 +3,6 @@ ADD . /app
 WORKDIR /app
 RUN CGO_ENABLED=0 GOOS=linux go install .
 
-FROM alpine
-RUN apk --no-cache add ca-certificates
+FROM scratch
 COPY --from=build /go/bin/muffet /muffet
 ENTRYPOINT ["/muffet"]
