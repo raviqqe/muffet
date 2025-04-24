@@ -3,6 +3,7 @@ package main
 import (
 	"os"
 
+	_ "github.com/breml/rootcerts"
 	"github.com/mattn/go-colorable"
 	"github.com/mattn/go-isatty"
 )
