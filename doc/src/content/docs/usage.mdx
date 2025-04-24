@@ -5,11 +5,19 @@ description: How to use Muffet in terminal and CI platforms
 
 import Help from "../../components/Help.md";
 
-## Basic usage
+## Command line
 
 By running `muffet --help` in your terminal, you can see help messsages for the basic usage of Muffet.
 
 <Help />
+
+## Docker
+
+If your website is hosted remotely or your Docker installation allows you to connect to the host network, you can run Muffet in a Docker image to test your websites.
+
+```sh
+docker run raviqqe/muffet https://shady.bakery.hotland
+```
 
 ## GitHub Action
 
