@@ -8,7 +8,6 @@ export default defineConfig({
     sitemap(),
     starlight({
       title: "Muffet",
-      customCss: ["./src/index.css"],
       favicon: "/icon.svg",
       head: [
         {
