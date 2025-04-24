@@ -8,8 +8,7 @@
 
 ![demo](img/demo.gif)
 
-Muffet is a website link checker which scrapes and inspects all pages in a
-website recursively.
+Muffet is a website link checker which scrapes and inspects all pages in a website recursively.
 
 ## Features
 
@@ -24,11 +23,7 @@ website recursively.
 go install github.com/raviqqe/muffet/v2@latest
 ```
 
-### Homebrew
-
-```sh
-brew install muffet
-```
+For more information, see [the install page](https://raviqqe.github.io/muffet/install).
 
 ## Usage
 
@@ -36,19 +31,7 @@ brew install muffet
 muffet https://shady.bakery.hotland
 ```
 
-For more information, see `muffet --help`.
-
-### Docker
-
-```sh
-docker run raviqqe/muffet https://shady.bakery.hotland
-```
-
-### GitHub Action
-
-- [My Broken Link Checker](https://github.com/ruzickap/action-my-broken-link-checker)
-
-Currently, we do not provide any official one. Feel free to create an issue if you want!
+For more information including usage on Docker and GitHub Actions, see [the usage page](https://raviqqe.github.io/muffet/usage).
 
 ## License
 
