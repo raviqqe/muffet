@@ -1,11 +1,9 @@
 import { readFile, readdir, stat } from "node:fs/promises";
 import { join, parse } from "node:path";
 import sitemap from "@astrojs/sitemap";
-import solid from "@astrojs/solid-js";
 import starlight from "@astrojs/starlight";
 import { defineConfig } from "astro/config";
 import { capitalize, sortBy } from "es-toolkit";
-import wasm from "vite-plugin-wasm";
 
 type Item = { label: string; link: string } | { label: string; items: Item[] };
 
@@ -42,15 +40,8 @@ const listItems = async (directory: string): Promise<Item[]> =>
 
 export default defineConfig({
   base: "/stak",
-  vite: {
-    plugins: [wasm()],
-    worker: {
-      format: "es",
-    },
-  },
   integrations: [
     sitemap(),
-    solid(),
     starlight({
       title: "Stak Scheme",
       customCss: ["./src/index.css"],
@@ -87,51 +78,8 @@ export default defineConfig({
           link: "/",
         },
         {
-          label: "Guides",
-          items: [
-            {
-              label: "Install",
-              link: "/install",
-            },
-            {
-              label: "Embedding Scheme in Rust",
-              link: "/embedding-scripts",
-            },
-            {
-              label: "Running in no-std and no-alloc environment",
-              link: "/no-std-no-alloc",
-            },
-            {
-              label: "Hot reloading",
-              link: "/hot-reload",
-            },
-            {
-              label: "Writing a Scheme subset",
-              link: "/writing-scheme-subset",
-            },
-          ],
-        },
-        {
-          label: "Limitations",
-          link: "/limitations",
-        },
-        {
-          label: "Demo",
-          items: [
-            {
-              label: "Interpreter",
-              link: "/demo/interpreter",
-            },
-            {
-              label: "Compiler",
-              link: "/demo/compiler",
-            },
-          ],
-        },
-
-        {
-          label: "Examples",
-          items: await listItems("examples"),
+          label: "Install",
+          link: "/install",
         },
       ],
     }),
