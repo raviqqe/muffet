@@ -1,0 +1,15 @@
+.boxShadow {
+  box-shadow: 0 0.1rem 0.2rem rgba(0, 0, 0, 0.2);
+}
+
+.textArea {
+  composes: boxShadow;
+  font-family: monospace;
+  padding: 1rem;
+  box-sizing: border-box;
+  overflow: auto;
+  border: 0.1rem solid gray;
+  border-radius: 0.5rem;
+  color: var(--primary-text-color);
+  background-color: var(--secondary-background-color);
+}

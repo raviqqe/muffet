@@ -1,0 +1,9 @@
+{
+  "short_name": "Muffet",
+  "name": "Muffet, the fast link checker",
+  "icons": [{ "src": "icon.svg", "sizes": "any" }],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "rebeccapurple",
+  "background_color": "snow"
+}
