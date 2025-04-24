@@ -25,3 +25,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: raviqqe/markdown-link-check@main
+  docker:
+    needs: release
+    runs-on: ubuntu-latest
+    if: ${{ github.ref == 'refs/heads/main' }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: docker/setup-buildx-action@v3
+      - run: echo ${{ secrets.DOCKER_ACCESS_TOKEN }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
+      - run: tools/docker.sh
