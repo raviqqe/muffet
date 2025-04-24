@@ -3,7 +3,7 @@
 set -e
 
 (
-  echo '```sh'
+  echo '```text'
   go run .. --help
   echo '```'
 ) >src/components/Help.md
