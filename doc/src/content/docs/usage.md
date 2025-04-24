@@ -3,9 +3,11 @@ title: Usage
 description: How to use Muffet in terminal and CI platforms
 ---
 
+## Basic usage
+
 > WIP
 
-### GitHub Action
+## GitHub Action
 
 - [My Broken Link Checker](https://github.com/ruzickap/action-my-broken-link-checker)
 
