@@ -21,7 +21,7 @@ brew install muffet
 
 ### Docker
 
-You can install the Docker image of Muffet.
+You can install [the Docker image](https://hub.docker.com/r/raviqqe/muffet) of Muffet.
 
 ```sh
 docker pull raviqqe/muffet
