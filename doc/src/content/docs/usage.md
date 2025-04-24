@@ -5,6 +5,8 @@ description: How to use Muffet in terminal and CI platforms
 
 ## Basic usage
 
+By running `muffet --help` in your terminal, you can see help messsages for the basic usage of Muffet.
+
 > WIP
 
 ## GitHub Action
