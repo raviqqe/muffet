@@ -44,12 +44,13 @@ export default defineConfig({
           label: "Install",
           link: "/install",
         },
+        {
+          label: "Usage",
+          link: "/usage",
+        },
       ],
     }),
   ],
   prefetch: { prefetchAll: true },
-  redirects: {
-    "/demo": "/interpreter-demo",
-  },
   site: "https://raviqqe.github.io/muffet",
 });
