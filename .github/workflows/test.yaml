@@ -14,7 +14,6 @@ jobs:
       - run: go test -race -covermode atomic -coverprofile coverage.txt
       - uses: codecov/codecov-action@v5
   docker_test:
-    needs: release
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
