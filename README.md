@@ -18,7 +18,7 @@ website recursively.
 - Different tag support (`a`, `img`, `link`, `script`, etc)
 - Multiple output formats (text, JSON, and JUnit XML)
 
-## Installation
+## Install
 
 ```sh
 go install github.com/raviqqe/muffet/v2@latest
