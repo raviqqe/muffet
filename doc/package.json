@@ -1,0 +1,28 @@
+{
+  "name": "doc",
+  "type": "module",
+  "version": "0.1.0",
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "tools/usage.sh && astro build",
+    "preview": "astro preview",
+    "lint": "npm run lint:biome && eslint --cache src",
+    "lint:biome": "biome ci",
+    "format": "biome format --write ."
+  },
+  "dependencies": {
+    "@astrojs/sitemap": "^3.3.0",
+    "@astrojs/starlight": "^0.34.0",
+    "@biomejs/biome": "^1.9.4",
+    "astro": "^5.7.4",
+    "es-toolkit": "^1.35.0"
+  },
+  "devDependencies": {
+    "@raviqqe/biome-config": "^1.0.2",
+    "@raviqqe/eslint-config": "^4.1.16",
+    "@types/node": "^22.14.1",
+    "eslint": "^9.25.1",
+    "typescript": "^5.8.3"
+  }
+}

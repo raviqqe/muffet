@@ -1,0 +1,7 @@
+{
+  "extends": ["./node_modules/@raviqqe/biome-config/biome.json"],
+  "css": {
+    "formatter": { "enabled": false },
+    "linter": { "enabled": false }
+  }
+}

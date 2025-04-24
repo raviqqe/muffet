@@ -1,0 +1,64 @@
+name: document
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: document-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  web_build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: doc
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+      - uses: actions/configure-pages@v5
+      - run: npm ci
+      - run: npm run build
+      - uses: actions/upload-artifact@v4
+        with:
+          name: document
+          path: doc/dist
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: doc/dist
+      - uses: actions/deploy-pages@v4
+        if: github.ref == 'refs/heads/main'
+  web_lint:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: doc
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+      - run: npm ci
+      - run: npm run lint
+  web_test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: npm ci
+        working-directory: doc
+      - run: npm run build -- --site http://localhost:4321
+        working-directory: doc
+      - run: npm run preview &
+        working-directory: doc
+      - run: go run . --buffer-size 8192 http://localhost:4321/muffet/
+  document:
+    needs:
+      - web_build
+      - web_lint
+      - web_test
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - run: for result in ${{ join(needs.*.result, ' ') }}; do [ $result = success ]; done
