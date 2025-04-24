@@ -48,7 +48,7 @@ jobs:
       - uses: actions/checkout@v4
       - run: npm ci
         working-directory: doc
-      - run: npm build
+      - run: npm run build
         working-directory: doc
       - run: npm start -- --site http://localhost:4321 &
         working-directory: doc
