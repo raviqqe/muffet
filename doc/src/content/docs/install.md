@@ -19,7 +19,7 @@ On macOS and Linux, you can install Muffet via [Homebrew](https://brew.sh/).
 brew install muffet
 ```
 
-### Docker
+## Docker
 
 You can install the Docker image of Muffet.
 
