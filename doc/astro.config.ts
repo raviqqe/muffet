@@ -39,11 +39,11 @@ const listItems = async (directory: string): Promise<Item[]> =>
   );
 
 export default defineConfig({
-  base: "/stak",
+  base: "/muffet",
   integrations: [
     sitemap(),
     starlight({
-      title: "Stak Scheme",
+      title: "Muffet Scheme",
       customCss: ["./src/index.css"],
       favicon: "/icon.svg",
       head: [
@@ -51,14 +51,14 @@ export default defineConfig({
           tag: "link",
           attrs: {
             rel: "manifest",
-            href: "/stak/manifest.json",
+            href: "/muffet/manifest.json",
           },
         },
         {
           tag: "meta",
           attrs: {
             property: "og:image",
-            content: "/stak/icon.svg",
+            content: "/muffet/icon.svg",
           },
         },
       ],
@@ -69,7 +69,7 @@ export default defineConfig({
         {
           icon: "github",
           label: "GitHub",
-          href: "https://github.com/raviqqe/stak",
+          href: "https://github.com/raviqqe/muffet",
         },
       ],
       sidebar: [
@@ -88,5 +88,5 @@ export default defineConfig({
   redirects: {
     "/demo": "/interpreter-demo",
   },
-  site: "https://raviqqe.github.io/stak",
+  site: "https://raviqqe.github.io/muffet",
 });
