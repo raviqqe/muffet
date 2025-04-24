@@ -52,4 +52,4 @@ Currently, we do not provide any official one. Feel free to create an issue if y
 
 ## License
 
-[MIT](LICENSE)
+[MIT](https://github.com/raviqqe/muffet/blob/main/LICENSE)
