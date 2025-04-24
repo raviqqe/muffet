@@ -43,8 +43,6 @@ jobs:
       - run: npm ci
       - run: npm run lint
   web_test:
-    needs:
-      - web_build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -54,7 +52,9 @@ jobs:
           path: doc/dist
       - run: npm ci
         working-directory: doc
-      - run: npm run preview &
+      - run: npm build
+        working-directory: doc
+      - run: npm start -- --site http://localhost:4321 &
         working-directory: doc
       - run: go run . --buffer-size 8192 http://localhost:4321/muffet/
   document:
