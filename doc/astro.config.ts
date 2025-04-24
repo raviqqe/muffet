@@ -43,7 +43,7 @@ export default defineConfig({
   integrations: [
     sitemap(),
     starlight({
-      title: "Muffet Scheme",
+      title: "Muffet",
       customCss: ["./src/index.css"],
       favicon: "/icon.svg",
       head: [
