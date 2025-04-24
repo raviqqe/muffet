@@ -16,7 +16,7 @@
     "@astrojs/starlight": "^0.34.0",
     "@biomejs/biome": "^1.9.4",
     "astro": "^5.7.5",
-    "es-toolkit": "^1.35.0"
+    "es-toolkit": "^1.36.0"
   },
   "devDependencies": {
     "@raviqqe/biome-config": "^1.0.2",
