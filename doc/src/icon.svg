@@ -1,0 +1,14 @@
+<svg viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Color+Emoji');
+
+    text {
+      dominant-baseline: central;
+      font-family: 'Noto Color Emoji', sans-serif;
+      font-size: 17px;
+      text-anchor: middle;
+    }
+  </style>
+  <text x="50%" y="50%">🕸️</text>
+  <text x="50%" y="50%">🕷️</text>
+</svg>
