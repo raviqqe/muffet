@@ -1,11 +1,1 @@
-<svg viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-  <style>
-    text {
-      dominant-baseline: central;
-      font-size: 17px;
-      text-anchor: middle;
-    }
-  </style>
-  <text x="50%" y="50%">🕸️</text>
-  <text x="50%" y="50%">🕷️</text>
-</svg>
+../src/icon.svg

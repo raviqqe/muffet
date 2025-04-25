@@ -27,7 +27,7 @@ export default defineConfig({
         },
       ],
       logo: {
-        src: "./public/icon.svg",
+        src: "./src/icon.svg",
       },
       social: [
         {
