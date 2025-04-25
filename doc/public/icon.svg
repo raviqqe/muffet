@@ -2,6 +2,7 @@
   <style>
     text {
       dominant-baseline: central;
+      font-family: 'Noto Color Emoji', sans-serif;
       font-size: 17px;
       text-anchor: middle;
     }

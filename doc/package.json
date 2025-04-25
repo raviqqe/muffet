@@ -15,6 +15,7 @@
     "@astrojs/sitemap": "^3.3.1",
     "@astrojs/starlight": "^0.34.0",
     "@biomejs/biome": "^1.9.4",
+    "@fontsource/noto-color-emoji": "^5.2.6",
     "astro": "^5.7.5",
     "es-toolkit": "^1.36.0"
   },
