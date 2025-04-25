@@ -13,7 +13,7 @@
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.3.1",
-    "@astrojs/starlight": "^0.34.0",
+    "@astrojs/starlight": "^0.34.1",
     "@biomejs/biome": "^1.9.4",
     "astro": "^5.7.5",
     "es-toolkit": "^1.36.0"
