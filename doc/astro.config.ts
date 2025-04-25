@@ -9,7 +9,7 @@ export default defineConfig({
     starlight({
       title: "Muffet",
       customCss: ["./src/index.css"],
-      favicon: "./src/icon.svg",
+      favicon: "/icon.svg",
       head: [
         {
           tag: "link",
