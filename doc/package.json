@@ -21,7 +21,7 @@
   "devDependencies": {
     "@raviqqe/biome-config": "^1.0.2",
     "@raviqqe/eslint-config": "^4.1.16",
-    "@types/node": "^22.15.2",
+    "@types/node": "^22.15.3",
     "eslint": "^9.25.1",
     "typescript": "^5.8.3"
   }
