@@ -23,10 +23,6 @@ jobs:
       - uses: actions/configure-pages@v5
       - run: npm ci
       - run: npm run build
-      - uses: actions/upload-artifact@v4
-        with:
-          name: document
-          path: doc/dist
       - uses: actions/upload-pages-artifact@v3
         with:
           path: doc/dist
