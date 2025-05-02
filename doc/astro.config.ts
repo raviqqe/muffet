@@ -25,6 +25,14 @@ export default defineConfig({
             content: "/muffet/icon.svg",
           },
         },
+        {
+          tag: "script",
+          attrs: {
+            "data-domain": "raviqqe.com",
+            defer: true,
+            src: "https://plausible.io/js/plausible.js",
+          },
+        },
       ],
       logo: {
         src: "./src/icon.svg",
