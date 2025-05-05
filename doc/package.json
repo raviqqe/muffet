@@ -22,7 +22,7 @@
     "@raviqqe/biome-config": "^1.0.2",
     "@raviqqe/eslint-config": "^4.1.16",
     "@types/node": "^22.15.3",
-    "eslint": "^9.25.1",
+    "eslint": "^9.26.0",
     "typescript": "^5.8.3"
   }
 }
