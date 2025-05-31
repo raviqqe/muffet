@@ -37,6 +37,7 @@ func TestLinkFinderFindLinks(t *testing.T) {
 		{`<track src="/foo.vtt" />`, 1},
 		{`<a href="/"><img src="/foo.png" /></a>`, 2},
 		{`<a href="/" /><a href="/" />`, 1},
+		{`<!-- <a href="/" /> -->`, 0},
 	} {
 		n, err := html.Parse(strings.NewReader(htmlWithBody(c.html)))
 		assert.Nil(t, err)
