@@ -24,7 +24,7 @@ type arguments struct {
 	// TODO Remove a short option.
 	IgnoreFragments bool   `short:"f" long:"ignore-fragments" description:"Ignore URL fragments"`
 	DnsResolver     string `long:"dns-resolver" value-name:"<address>" description:"Custom DNS resolver"`
-	Format          string `long:"format" description:"Output format" default:"text" choice:"text" choice:"json" choice:"junit"`
+	Format          string `long:"format" description:"Output format" default:"text" choice:"text" choice:"json" choice:"junit" choice:"csv"`
 	// TODO Remove this option.
 	JSONOutput bool `long:"json" description:"Output results in JSON (deprecated)"`
 	// TODO Remove this option.

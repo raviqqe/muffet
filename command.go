@@ -121,6 +121,8 @@ func (c *command) runWithError(ss []string) (bool, error) {
 		return c.printResultsInJSON(checker.Results(), args.Verbose)
 	case "junit":
 		return c.printResultsInJUnitXML(checker.Results())
+	case "csv":
+		return c.printResultsInCSV(checker.Results(), args.Verbose)
 	}
 
 	formatter := newPageResultFormatter(
@@ -192,6 +194,33 @@ func (c *command) printResultsInJUnitXML(rc <-chan *pageResult) (bool, error) {
 
 	c.print(xml.Header)
 	c.print(string(bs))
+
+	return ok, nil
+}
+
+func (c *command) printResultsInCSV(rc <-chan *pageResult, verbose bool) (bool, error) {
+	first := true
+	ok := true
+
+	for r := range rc {
+		if !r.OK() || verbose {
+			csvResult := newCSVPageResult(r, verbose)
+			output := csvResult.String()
+			
+			if first {
+				c.print(output)
+				first = false
+			} else {
+				// Skip header for subsequent results
+				lines := strings.Split(strings.TrimSpace(output), "\n")
+				if len(lines) > 1 {
+					c.print(strings.Join(lines[1:], "\n"))
+				}
+			}
+		}
+
+		ok = ok && r.OK()
+	}
 
 	return ok, nil
 }

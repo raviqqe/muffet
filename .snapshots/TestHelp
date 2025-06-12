@@ -24,7 +24,7 @@ Application Options:
       --header=<header>...                  Custom headers
   -f, --ignore-fragments                    Ignore URL fragments
       --dns-resolver=<address>              Custom DNS resolver
-      --format=[text|json|junit]            Output format (default: text)
+      --format=[text|json|junit|csv]        Output format (default: text)
       --json                                Output results in JSON (deprecated)
       --experimental-verbose-json           Include successful results in JSON
                                             (deprecated)
