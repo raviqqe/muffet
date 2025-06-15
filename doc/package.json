@@ -13,15 +13,15 @@
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.4.1",
-    "@astrojs/starlight": "^0.34.3",
+    "@astrojs/starlight": "^0.34.4",
     "@biomejs/biome": "^1.9.4",
-    "astro": "^5.9.2",
+    "astro": "^5.9.3",
     "es-toolkit": "^1.39.3"
   },
   "devDependencies": {
     "@raviqqe/biome-config": "^1.0.2",
     "@raviqqe/eslint-config": "^4.1.16",
-    "@types/node": "^24.0.0",
+    "@types/node": "^24.0.1",
     "eslint": "^9.28.0",
     "typescript": "^5.8.3"
   }
