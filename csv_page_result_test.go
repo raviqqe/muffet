@@ -75,17 +75,17 @@ func TestCSVPageResultString(t *testing.T) {
 		t.Errorf("expected 3 lines (header + 2 data), got %d", len(lines))
 	}
 
-	expectedHeader := "Page URL,Link URL,Status"
+	expectedHeader := `"Page URL","Link URL",Status`
 	if lines[0] != expectedHeader {
 		t.Errorf("expected header '%s', got '%s'", expectedHeader, lines[0])
 	}
 
-	expectedRow1 := "http://foo.com,http://foo.com/success,200"
+	expectedRow1 := `"http://foo.com","http://foo.com/success",200`
 	if lines[1] != expectedRow1 {
 		t.Errorf("expected first row '%s', got '%s'", expectedRow1, lines[1])
 	}
 
-	expectedRow2 := "http://foo.com,http://foo.com/error,404"
+	expectedRow2 := `"http://foo.com","http://foo.com/error",404`
 	if lines[2] != expectedRow2 {
 		t.Errorf("expected second row '%s', got '%s'", expectedRow2, lines[2])
 	}

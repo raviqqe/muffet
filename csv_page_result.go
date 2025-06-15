@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/csv"
 	"strconv"
 	"strings"
 )
@@ -46,16 +45,14 @@ func newCSVPageResult(r *pageResult, verbose bool) *csvPageResult {
 
 func (r *csvPageResult) String() string {
 	var buf strings.Builder
-	writer := csv.NewWriter(&buf)
 
-	// Write header
-	writer.Write([]string{"Page URL", "Link URL", "Status"})
+	buf.WriteString(`"Page URL","Link URL",Status` + "\n")
 
-	// Write data rows
 	for _, link := range r.Links {
-		writer.Write([]string{r.URL, link.URL, link.Status})
+		buf.WriteString(`"` + strings.ReplaceAll(r.URL, `"`, `""`) + `","` +
+			strings.ReplaceAll(link.URL, `"`, `""`) + `",` +
+			link.Status + "\n")
 	}
 
-	writer.Flush()
 	return buf.String()
 }
