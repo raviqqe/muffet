@@ -14,12 +14,12 @@
   "dependencies": {
     "@astrojs/sitemap": "^3.4.1",
     "@astrojs/starlight": "^0.34.4",
-    "@biomejs/biome": "^1.9.4",
+    "@biomejs/biome": "^2.0.0",
     "astro": "^5.9.4",
     "es-toolkit": "^1.39.3"
   },
   "devDependencies": {
-    "@raviqqe/biome-config": "^1.0.2",
+    "@raviqqe/biome-config": "^2.0.0",
     "@raviqqe/eslint-config": "^4.1.16",
     "@types/node": "^24.0.3",
     "eslint": "^9.29.0",
