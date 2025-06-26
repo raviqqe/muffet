@@ -35,6 +35,8 @@ func TestGetArguments(t *testing.T) {
 		{"--verbose", "https://foo.com"},
 		{"-v", "-f", "https://foo.com"},
 		{"-v", "--ignore-fragments", "https://foo.com"},
+		{"--ignore-network-errors", "all", "https://foo.com"},
+		{"--ignore-network-errors", "external", "https://foo.com"},
 		{"--one-page-only", "https://foo.com"},
 		{"--json", "https://foo.com"},
 		{"-h"},
@@ -61,6 +63,7 @@ func TestGetArgumentsError(t *testing.T) {
 		{"--max-redirections", "foo", "https://foo.com"},
 		{"-t", "foo", "https://foo.com"},
 		{"--timeout", "foo", "https://foo.com"},
+		{"--ignore-network-errors", "foo", "https://foo.com"},
 	} {
 		_, err := getArguments(ss)
 		assert.NotNil(t, err)

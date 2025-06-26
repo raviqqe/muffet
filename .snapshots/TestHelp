@@ -2,45 +2,53 @@ Usage:
   muffet.test [options] <url>
 
 Application Options:
-      --accepted-status-codes=<codes>       Accepted HTTP response status codes
-                                            (e.g. '200..300,403') (default:
-                                            200..300)
-  -b, --buffer-size=<size>                  HTTP response buffer size in bytes
-                                            (default: 4096)
-  -c, --max-connections=<count>             Maximum number of HTTP connections
-                                            (default: 512)
-      --max-connections-per-host=<count>    Maximum number of HTTP connections
-                                            per host (default: 512)
-      --max-response-body-size=<size>       Maximum response body size to read
-                                            (default: 10000000)
-  -e, --exclude=<pattern>...                Exclude URLs matched with given
-                                            regular expressions
-  -i, --include=<pattern>...                Include URLs matched with given
-                                            regular expressions
-      --follow-robots-txt                   Follow robots.txt when scraping
-                                            pages
-      --follow-sitemap-xml                  Scrape only pages listed in
-                                            sitemap.xml (deprecated)
-      --header=<header>...                  Custom headers
-  -f, --ignore-fragments                    Ignore URL fragments
-      --dns-resolver=<address>              Custom DNS resolver
-      --format=[text|json|junit]            Output format (default: text)
-      --json                                Output results in JSON (deprecated)
-      --experimental-verbose-json           Include successful results in JSON
-                                            (deprecated)
-      --junit                               Output results as JUnit XML file
-                                            (deprecated)
-  -r, --max-redirections=<count>            Maximum number of redirections
-                                            (default: 64)
-      --rate-limit=<rate>                   Max requests per second
-  -t, --timeout=<seconds>                   Timeout for HTTP requests in
-                                            seconds (default: 10)
-  -v, --verbose                             Show successful results too
-      --proxy=<host>                        HTTP proxy host
-      --skip-tls-verification               Skip TLS certificate verification
-      --one-page-only                       Only check links found in the given
-                                            URL
-      --color=[auto|always|never]           Color output (default: auto)
-  -h, --help                                Show this help
-      --version                             Show version
+      --accepted-status-codes=<codes>                Accepted HTTP response
+                                                     status codes (e.g.
+                                                     '200..300,403') (default:
+                                                     200..300)
+  -b, --buffer-size=<size>                           HTTP response buffer size
+                                                     in bytes (default: 4096)
+  -c, --max-connections=<count>                      Maximum number of HTTP
+                                                     connections (default: 512)
+      --max-connections-per-host=<count>             Maximum number of HTTP
+                                                     connections per host
+                                                     (default: 512)
+      --max-response-body-size=<size>                Maximum response body size
+                                                     to read (default: 10000000)
+  -e, --exclude=<pattern>...                         Exclude URLs matched with
+                                                     given regular expressions
+  -i, --include=<pattern>...                         Include URLs matched with
+                                                     given regular expressions
+      --follow-robots-txt                            Follow robots.txt when
+                                                     scraping pages
+      --follow-sitemap-xml                           Scrape only pages listed
+                                                     in sitemap.xml (deprecated)
+      --header=<header>...                           Custom headers
+  -f, --ignore-fragments                             Ignore URL fragments
+      --ignore-network-errors=[none|all|external]    Ignore network errors and
+                                                     timeouts (default: none)
+      --dns-resolver=<address>                       Custom DNS resolver
+      --format=[text|json|junit]                     Output format (default:
+                                                     text)
+      --json                                         Output results in JSON
+                                                     (deprecated)
+      --experimental-verbose-json                    Include successful results
+                                                     in JSON (deprecated)
+      --junit                                        Output results as JUnit
+                                                     XML file (deprecated)
+  -r, --max-redirections=<count>                     Maximum number of
+                                                     redirections (default: 64)
+      --rate-limit=<rate>                            Max requests per second
+  -t, --timeout=<seconds>                            Timeout for HTTP requests
+                                                     in seconds (default: 10)
+  -v, --verbose                                      Show successful results too
+      --proxy=<host>                                 HTTP proxy host
+      --skip-tls-verification                        Skip TLS certificate
+                                                     verification
+      --one-page-only                                Only check links found in
+                                                     the given URL
+      --color=[auto|always|never]                    Color output (default:
+                                                     auto)
+  -h, --help                                         Show this help
+      --version                                      Show version
 
