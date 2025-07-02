@@ -112,6 +112,7 @@ func (c *command) runWithError(ss []string) (bool, error) {
 		f,
 		newLinkValidator(p.URL().Hostname(), rd, sm),
 		args.OnePageOnly,
+		args.IgnoreNetworkErrors,
 	)
 
 	go checker.Check(p)
