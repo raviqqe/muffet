@@ -106,8 +106,8 @@ func (c *pageChecker) shouldIgnoreNetworkError(err error, rawURL string) bool {
 
 	u, err := url.Parse(rawURL)
 	return err == nil &&
-		c.ignoreNetworkErrors == networkErrorGroupAll ||
-		u.Hostname() != c.linkValidator.hostname
+		(c.ignoreNetworkErrors == networkErrorGroupAll ||
+			u.Hostname() != c.linkValidator.hostname)
 }
 
 func isNetworkError(err error) bool {
