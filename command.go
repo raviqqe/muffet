@@ -108,23 +108,11 @@ func (c *command) runWithError(ss []string) (bool, error) {
 		}
 	}
 
-	g := networkErrorGroupNone
-
-	switch args.IgnoreNetworkErrors {
-	case "none":
-	case "all":
-		g = networkErrorGroupAll
-	case "external":
-		g = networkErrorGroupExternal
-	default:
-		return false, fmt.Errorf("invalid network error: %v", args.IgnoreNetworkErrors)
-	}
-
 	checker := newPageChecker(
 		f,
 		newLinkValidator(p.URL().Hostname(), rd, sm),
 		args.OnePageOnly,
-		g,
+		args.IgnoreNetworkErrors,
 	)
 
 	go checker.Check(p)

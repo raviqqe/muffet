@@ -9,10 +9,10 @@ import (
 )
 
 func newTestPageChecker(c *fakeHttpClient) *pageChecker {
-	return newTestPageCheckerWithIgnore(c, networkErrorGroupNone)
+	return newTestPageCheckerWithIgnore(c, ignoreNetworkErrorsNone)
 }
 
-func newTestPageCheckerWithIgnore(c *fakeHttpClient, ignore networkErrorGroup) *pageChecker {
+func newTestPageCheckerWithIgnore(c *fakeHttpClient, ignore ignoreNetworkErrors) *pageChecker {
 	return newPageChecker(
 		newLinkFetcher(
 			c,
@@ -124,7 +124,7 @@ func TestPageCheckerDoNotCheckSamePageTwice(t *testing.T) {
 	assert.Equal(t, 1, i)
 }
 
-func TestPageCheckerIgnoreAllNetworkErrors(t *testing.T) {
+func TestPageCheckerIgnoreNetworkErrorsAll(t *testing.T) {
 	c := newTestPageCheckerWithIgnore(
 		newFakeHttpClient(
 			func(u *url.URL) (*fakeHttpResponse, error) {
@@ -138,7 +138,7 @@ func TestPageCheckerIgnoreAllNetworkErrors(t *testing.T) {
 				return nil, fakeNetError{}
 			},
 		),
-		networkErrorGroupAll,
+		ignoreNetworkErrorsAll,
 	)
 
 	go c.Check(newTestPage(t, nil, map[string]error{"http://bar.com": nil}))
@@ -148,12 +148,12 @@ func TestPageCheckerIgnoreAllNetworkErrors(t *testing.T) {
 	assert.Equal(t, 0, len(r.ErrorLinkResults))
 }
 
-func TestPageCheckerIgnoreExternalNetworkError(t *testing.T) {
+func TestPageCheckerIgnoreNetworkErrorsExternal(t *testing.T) {
 	c := newTestPageCheckerWithIgnore(
 		newFakeHttpClient(func(u *url.URL) (*fakeHttpResponse, error) {
 			return nil, fakeNetError{}
 		}),
-		networkErrorGroupExternal,
+		ignoreNetworkErrorsExternal,
 	)
 
 	go c.Check(newTestPage(t, nil, map[string]error{"http://bar.com": nil}))
@@ -163,12 +163,12 @@ func TestPageCheckerIgnoreExternalNetworkError(t *testing.T) {
 	assert.Equal(t, 0, len(r.ErrorLinkResults))
 }
 
-func TestPageCheckerDoNotIgnoreInternalNetworkError(t *testing.T) {
+func TestPageCheckerDoNotIgnoreInternalNetworkErrors(t *testing.T) {
 	c := newTestPageCheckerWithIgnore(
 		newFakeHttpClient(func(u *url.URL) (*fakeHttpResponse, error) {
 			return nil, fakeNetError{}
 		}),
-		networkErrorGroupExternal,
+		ignoreNetworkErrorsExternal,
 	)
 
 	go c.Check(newTestPage(t, nil, map[string]error{"http://foo.com/foo": nil}))
