@@ -15,10 +15,10 @@ type pageChecker struct {
 	results             chan *pageResult
 	donePages           concurrentStringSet
 	onePageOnly         bool
-	ignoreNetworkErrors ignoreNetworkErrors
+	ignoreNetworkErrors networkErrorGroup
 }
 
-func newPageChecker(f *linkFetcher, v *linkValidator, onePageOnly bool, ignore ignoreNetworkErrors) *pageChecker {
+func newPageChecker(f *linkFetcher, v *linkValidator, onePageOnly bool, ignore networkErrorGroup) *pageChecker {
 	return &pageChecker{
 		f,
 		v,
@@ -100,24 +100,14 @@ func (c *pageChecker) addPage(p page) {
 }
 
 func (c *pageChecker) shouldIgnoreNetworkError(err error, rawURL string) bool {
-	if c.ignoreNetworkErrors == ignoreNetworkErrorsNone {
+	if c.ignoreNetworkErrors == networkErrorGroupNone || !isNetworkError(err) {
 		return false
 	}
 
-	if !isNetworkError(err) {
-		return false
-	}
-
-	if c.ignoreNetworkErrors == ignoreNetworkErrorsAll {
-		return true
-	}
-
-	u, parseErr := url.Parse(rawURL)
-	if parseErr != nil {
-		return false
-	}
-
-	return u.Hostname() != c.linkValidator.hostname
+	u, err := url.Parse(rawURL)
+	return err == nil &&
+		(c.ignoreNetworkErrors == networkErrorGroupAll ||
+			u.Hostname() != c.linkValidator.hostname)
 }
 
 func isNetworkError(err error) bool {
