@@ -1,24 +1,17 @@
 package main
 
-import (
-	"context"
-	"errors"
-	"net"
-	"net/url"
-	"sync"
-)
+import "sync"
 
 type pageChecker struct {
-	fetcher             *linkFetcher
-	linkValidator       *linkValidator
-	daemonManager       *daemonManager
-	results             chan *pageResult
-	donePages           concurrentStringSet
-	onePageOnly         bool
-	ignoreNetworkErrors networkErrorGroup
+	fetcher       *linkFetcher
+	linkValidator *linkValidator
+	daemonManager *daemonManager
+	results       chan *pageResult
+	donePages     concurrentStringSet
+	onePageOnly   bool
 }
 
-func newPageChecker(f *linkFetcher, v *linkValidator, onePageOnly bool, ignore networkErrorGroup) *pageChecker {
+func newPageChecker(f *linkFetcher, v *linkValidator, onePageOnly bool) *pageChecker {
 	return &pageChecker{
 		f,
 		v,
@@ -26,7 +19,6 @@ func newPageChecker(f *linkFetcher, v *linkValidator, onePageOnly bool, ignore n
 		make(chan *pageResult, concurrency),
 		newConcurrentStringSet(),
 		onePageOnly,
-		ignore,
 	}
 }
 
@@ -63,7 +55,7 @@ func (c *pageChecker) checkPage(p page) {
 
 			if err == nil {
 				sc <- &successLinkResult{u, status}
-			} else if !c.shouldIgnoreNetworkError(err, u) {
+			} else {
 				ec <- &errorLinkResult{u, err}
 			}
 
@@ -97,20 +89,4 @@ func (c *pageChecker) addPage(p page) {
 	if !c.donePages.Add(p.URL().String()) {
 		c.daemonManager.Add(func() { c.checkPage(p) })
 	}
-}
-
-func (c *pageChecker) shouldIgnoreNetworkError(err error, rawURL string) bool {
-	if c.ignoreNetworkErrors == networkErrorGroupNone || !isNetworkError(err) {
-		return false
-	}
-
-	u, err := url.Parse(rawURL)
-	return err == nil &&
-		(c.ignoreNetworkErrors == networkErrorGroupAll ||
-			u.Hostname() != c.linkValidator.hostname)
-}
-
-func isNetworkError(err error) bool {
-	var netErr net.Error
-	return errors.As(err, &netErr) || errors.Is(err, context.DeadlineExceeded)
 }
