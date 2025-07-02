@@ -22,10 +22,10 @@ type arguments struct {
 	FollowSitemapXML       bool     `long:"follow-sitemap-xml" description:"Scrape only pages listed in sitemap.xml (deprecated)"`
 	RawHeaders             []string `long:"header" value-name:"<header>..." description:"Custom headers"`
 	// TODO Remove a short option.
-	IgnoreFragments     bool                `short:"f" long:"ignore-fragments" description:"Ignore URL fragments"`
-	IgnoreNetworkErrors ignoreNetworkErrors `long:"ignore-network-errors" description:"Ignore network errors and timeouts" choice:"none" choice:"all" choice:"external" default:"none"`
-	DnsResolver         string              `long:"dns-resolver" value-name:"<address>" description:"Custom DNS resolver"`
-	Format              string              `long:"format" description:"Output format" default:"text" choice:"text" choice:"json" choice:"junit"`
+	IgnoreFragments     bool   `short:"f" long:"ignore-fragments" description:"Ignore URL fragments"`
+	IgnoreNetworkErrors string `long:"ignore-network-errors" description:"Ignore network errors and timeouts" choice:"none" choice:"all" choice:"external" default:"none"`
+	DnsResolver         string `long:"dns-resolver" value-name:"<address>" description:"Custom DNS resolver"`
+	Format              string `long:"format" description:"Output format" default:"text" choice:"text" choice:"json" choice:"junit"`
 	// TODO Remove this option.
 	JSONOutput bool `long:"json" description:"Output results in JSON (deprecated)"`
 	// TODO Remove this option.
