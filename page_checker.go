@@ -100,24 +100,14 @@ func (c *pageChecker) addPage(p page) {
 }
 
 func (c *pageChecker) shouldIgnoreNetworkError(err error, rawURL string) bool {
-	if c.ignoreNetworkErrors == networkErrorGroupNone {
+	if c.ignoreNetworkErrors == networkErrorGroupNone || !isNetworkError(err) {
 		return false
-	}
-
-	if !isNetworkError(err) {
-		return false
-	}
-
-	if c.ignoreNetworkErrors == networkErrorGroupAll {
+	} else if c.ignoreNetworkErrors == networkErrorGroupAll {
 		return true
 	}
 
-	u, parseErr := url.Parse(rawURL)
-	if parseErr != nil {
-		return false
-	}
-
-	return u.Hostname() != c.linkValidator.hostname
+	u, err := url.Parse(rawURL)
+	return err == nil && u.Hostname() != c.linkValidator.hostname
 }
 
 func isNetworkError(err error) bool {
