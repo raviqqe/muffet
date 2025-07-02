@@ -124,7 +124,7 @@ func TestPageCheckerDoNotCheckSamePageTwice(t *testing.T) {
 	assert.Equal(t, 1, i)
 }
 
-func TestPageCheckerIgnoreNetworkErrorsAll(t *testing.T) {
+func TestPageCheckerIgnoreAllNetworkErrors(t *testing.T) {
 	c := newTestPageCheckerWithIgnore(
 		newFakeHttpClient(
 			func(u *url.URL) (*fakeHttpResponse, error) {
@@ -148,7 +148,7 @@ func TestPageCheckerIgnoreNetworkErrorsAll(t *testing.T) {
 	assert.Equal(t, 0, len(r.ErrorLinkResults))
 }
 
-func TestPageCheckerIgnoreNetworkErrorsExternal(t *testing.T) {
+func TestPageCheckerIgnoreExternalNetworkError(t *testing.T) {
 	c := newTestPageCheckerWithIgnore(
 		newFakeHttpClient(func(u *url.URL) (*fakeHttpResponse, error) {
 			return nil, fakeNetError{}
@@ -163,7 +163,7 @@ func TestPageCheckerIgnoreNetworkErrorsExternal(t *testing.T) {
 	assert.Equal(t, 0, len(r.ErrorLinkResults))
 }
 
-func TestPageCheckerDoNotIgnoreInternalNetworkErrors(t *testing.T) {
+func TestPageCheckerDoNotIgnoreInternalNetworkError(t *testing.T) {
 	c := newTestPageCheckerWithIgnore(
 		newFakeHttpClient(func(u *url.URL) (*fakeHttpResponse, error) {
 			return nil, fakeNetError{}
