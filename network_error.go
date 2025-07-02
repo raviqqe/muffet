@@ -1,9 +1,9 @@
 package main
 
-type networkError int
+type networkErrorGroup int
 
 const (
-	networkErrorNone networkError = iota
-	networkErrorAll
-	networkErrorExternal
+	networkErrorGroupNone networkErrorGroup = iota
+	networkErrorGroupAll
+	networkErrorGroupExternal
 )

@@ -108,14 +108,14 @@ func (c *command) runWithError(ss []string) (bool, error) {
 		}
 	}
 
-	ne := networkErrorNone
+	ne := networkErrorGroupNone
 
 	switch args.IgnoreNetworkErrors {
 	case "none":
 	case "all":
-		ne = networkErrorAll
+		ne = networkErrorGroupAll
 	case "external":
-		ne = networkErrorExternal
+		ne = networkErrorGroupExternal
 	default:
 		return false, fmt.Errorf("invalid network error: %v", args.IgnoreNetworkErrors)
 	}

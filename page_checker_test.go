@@ -9,10 +9,10 @@ import (
 )
 
 func newTestPageChecker(c *fakeHttpClient) *pageChecker {
-	return newTestPageCheckerWithIgnore(c, networkErrorNone)
+	return newTestPageCheckerWithIgnore(c, networkErrorGroupNone)
 }
 
-func newTestPageCheckerWithIgnore(c *fakeHttpClient, ignore networkError) *pageChecker {
+func newTestPageCheckerWithIgnore(c *fakeHttpClient, ignore networkErrorGroup) *pageChecker {
 	return newPageChecker(
 		newLinkFetcher(
 			c,
@@ -138,7 +138,7 @@ func TestPageCheckerIgnoreAllNetworkErrors(t *testing.T) {
 				return nil, fakeNetError{}
 			},
 		),
-		networkErrorAll,
+		networkErrorGroupAll,
 	)
 
 	go c.Check(newTestPage(t, nil, map[string]error{"http://bar.com": nil}))
@@ -153,7 +153,7 @@ func TestPageCheckerIgnoreExternalNetworkError(t *testing.T) {
 		newFakeHttpClient(func(u *url.URL) (*fakeHttpResponse, error) {
 			return nil, fakeNetError{}
 		}),
-		networkErrorExternal,
+		networkErrorGroupExternal,
 	)
 
 	go c.Check(newTestPage(t, nil, map[string]error{"http://bar.com": nil}))
@@ -168,7 +168,7 @@ func TestPageCheckerDoNotIgnoreInternalNetworkError(t *testing.T) {
 		newFakeHttpClient(func(u *url.URL) (*fakeHttpResponse, error) {
 			return nil, fakeNetError{}
 		}),
-		networkErrorExternal,
+		networkErrorGroupExternal,
 	)
 
 	go c.Check(newTestPage(t, nil, map[string]error{"http://foo.com/foo": nil}))
