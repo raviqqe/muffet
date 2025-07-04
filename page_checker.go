@@ -1,17 +1,24 @@
 package main
 
-import "sync"
+import (
+	"context"
+	"errors"
+	"net"
+	"net/url"
+	"sync"
+)
 
 type pageChecker struct {
-	fetcher       *linkFetcher
-	linkValidator *linkValidator
-	daemonManager *daemonManager
-	results       chan *pageResult
-	donePages     concurrentStringSet
-	onePageOnly   bool
+	fetcher        *linkFetcher
+	linkValidator  *linkValidator
+	daemonManager  *daemonManager
+	results        chan *pageResult
+	donePages      concurrentStringSet
+	onePageOnly    bool
+	ignoreTimeouts ignoreTimeoutsGroup
 }
 
-func newPageChecker(f *linkFetcher, v *linkValidator, onePageOnly bool) *pageChecker {
+func newPageChecker(f *linkFetcher, v *linkValidator, onePageOnly bool, ignoreTimeouts ignoreTimeoutsGroup) *pageChecker {
 	return &pageChecker{
 		f,
 		v,
@@ -19,6 +26,7 @@ func newPageChecker(f *linkFetcher, v *linkValidator, onePageOnly bool) *pageChe
 		make(chan *pageResult, concurrency),
 		newConcurrentStringSet(),
 		onePageOnly,
+		ignoreTimeouts,
 	}
 }
 
@@ -55,7 +63,7 @@ func (c *pageChecker) checkPage(p page) {
 
 			if err == nil {
 				sc <- &successLinkResult{u, status}
-			} else {
+			} else if !c.shouldIgnoreNetworkError(err, u) {
 				ec <- &errorLinkResult{u, err}
 			}
 
@@ -89,4 +97,24 @@ func (c *pageChecker) addPage(p page) {
 	if !c.donePages.Add(p.URL().String()) {
 		c.daemonManager.Add(func() { c.checkPage(p) })
 	}
+}
+
+func (c *pageChecker) shouldIgnoreNetworkError(err error, rawURL string) bool {
+	if c.ignoreTimeouts == ignoreTimeoutsGroupNone || !isTimeoutError(err) {
+		return false
+	}
+
+	if c.ignoreTimeouts == ignoreTimeoutsGroupAll {
+		return true
+	}
+
+	u, err := url.Parse(rawURL)
+	return err == nil &&
+		(c.ignoreTimeouts == ignoreTimeoutsGroupAll ||
+			u.Hostname() != c.linkValidator.hostname)
+}
+
+func isTimeoutError(err error) bool {
+	var netErr net.Error
+	return errors.As(err, &netErr) && netErr.Timeout() || errors.Is(err, context.DeadlineExceeded)
 }
