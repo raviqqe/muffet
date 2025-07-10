@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"context"
 	"errors"
 	"io"
 	"net/url"
@@ -11,6 +12,7 @@ import (
 
 	"github.com/bradleyjkemp/cupaloy"
 	"github.com/stretchr/testify/assert"
+	"fmt"
 )
 
 func newTestCommand(h func(*url.URL) (*fakeHttpResponse, error)) *command {
@@ -176,9 +178,11 @@ func TestCommandColorErrorMessage(t *testing.T) {
 		io.Discard,
 		b,
 		true,
-		newFakeHttpClientFactory(func(u *url.URL) (*fakeHttpResponse, error) {
-			return nil, errors.New("foo")
-		}),
+		newFakeHttpClientFactory(
+			func(u *url.URL) (*fakeHttpResponse, error) {
+				return nil, errors.New("foo")
+			},
+		),
 	)
 
 	ok := c.Run([]string{"http://foo.com"})
@@ -297,6 +301,87 @@ func TestCommandFailWithVerboseAndJUnitOptions(t *testing.T) {
 	ok := newTestCommandWithStderr(b, nil).Run(
 		[]string{"--junit", "--verbose", "http://foo.com"},
 	)
+
+	assert.False(t, ok)
+	cupaloy.SnapshotT(t, b.String())
+}
+
+func TestCommandFailWithInvalidIgnoreTimeouts(t *testing.T) {
+	b := &bytes.Buffer{}
+
+	ok := newTestCommandWithStderr(b, nil).Run(
+		[]string{"--ignore-timeouts", "some", "http://foo.com"},
+	)
+
+	assert.False(t, ok)
+	cupaloy.SnapshotT(t, b.String())
+}
+
+func TestCommandIgnoreTimeoutsAll(t *testing.T) {
+	b := &bytes.Buffer{}
+
+	ok := newCommand(
+		io.Discard,
+		b,
+		true,
+		newFakeHttpClientFactory(
+			func(u *url.URL) (*fakeHttpResponse, error) {
+				if u.String() == "http://foo.com" {
+					return newFakeHtmlResponse(
+						"http://foo.com",
+						`<html><body><a href="/foo" /></body></html>`,
+					), nil
+				}
+				return nil, fmt.Errorf("fetch failed: %w", context.DeadlineExceeded)
+			},
+		),
+	).Run([]string{"--ignore-timeouts", "all", "http://foo.com"})
+
+	assert.True(t, ok)
+}
+
+func TestCommandIgnoreTimeoutsExternal(t *testing.T) {
+	b := &bytes.Buffer{}
+
+	ok := newCommand(
+		io.Discard,
+		b,
+		true,
+		newFakeHttpClientFactory(
+			func(u *url.URL) (*fakeHttpResponse, error) {
+				if u.String() == "http://foo.com" {
+					return newFakeHtmlResponse(
+						"http://foo.com",
+						`<html><body><a href="https://bar.com" /></body></html>`,
+					), nil
+				}
+				return nil, fmt.Errorf("fetch failed: %w", context.DeadlineExceeded)
+			},
+		),
+	).Run([]string{"--ignore-timeouts", "external", "http://foo.com"})
+
+	assert.True(t, ok)
+}
+
+func TestCommandIgnoreTimeoutsNone(t *testing.T) {
+	b := &bytes.Buffer{}
+
+	ok := newCommand(
+		b,
+		nil,
+		true,
+		newFakeHttpClientFactory(
+			func(u *url.URL) (*fakeHttpResponse, error) {
+				if u.String() == "http://foo.com" {
+					return newFakeHtmlResponse(
+						"http://foo.com",
+						`<html><body><a href="https://bar.com" /></body></html>`,
+					), nil
+				}
+				return nil, fmt.Errorf("fetch failed: %w", context.DeadlineExceeded)
+			},
+		),
+	).Run([]string{"--ignore-timeouts", "none", "http://foo.com"})
 
 	assert.False(t, ok)
 	cupaloy.SnapshotT(t, b.String())

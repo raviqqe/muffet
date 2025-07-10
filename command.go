@@ -108,10 +108,23 @@ func (c *command) runWithError(ss []string) (bool, error) {
 		}
 	}
 
+	g := ignoreTimeoutsGroupNone
+
+	switch args.IgnoreTimeouts {
+	case "none":
+	case "all":
+		g = ignoreTimeoutsGroupAll
+	case "external":
+		g = ignoreTimeoutsGroupExternal
+	default:
+		return false, fmt.Errorf("invalid ignore timeouts group: %v", args.IgnoreTimeouts)
+	}
+
 	checker := newPageChecker(
 		f,
 		newLinkValidator(p.URL().Hostname(), rd, sm),
 		args.OnePageOnly,
+		g,
 	)
 
 	go checker.Check(p)
