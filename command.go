@@ -77,7 +77,8 @@ func (c *command) runWithError(ss []string) (bool, error) {
 			newHtmlPageParser(newLinkFinder(fl)),
 		},
 		linkFetcherOptions{
-			args.IgnoreFragments,
+			IgnoreFragments: args.IgnoreFragments,
+			Retries:         args.Retries,
 		},
 	)
 

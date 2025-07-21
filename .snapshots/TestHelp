@@ -23,6 +23,7 @@ Application Options:
                                             sitemap.xml (deprecated)
       --header=<header>...                  Custom headers
   -f, --ignore-fragments                    Ignore URL fragments
+      --retries=<retries>                   Retry network errors (default: 3)
       --dns-resolver=<address>              Custom DNS resolver
       --format=[text|json|junit]            Output format (default: text)
       --json                                Output results in JSON (deprecated)
