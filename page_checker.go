@@ -1,6 +1,8 @@
 package main
 
-import "sync"
+import (
+	"sync"
+)
 
 type pageChecker struct {
 	fetcher       *linkFetcher
