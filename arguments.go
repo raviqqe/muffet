@@ -23,7 +23,7 @@ type arguments struct {
 	RawHeaders             []string `long:"header" value-name:"<header>..." description:"Custom headers"`
 	// TODO Remove a short option.
 	IgnoreFragments bool   `short:"f" long:"ignore-fragments" description:"Ignore URL fragments"`
-	MaxRetries      uint   `long:"max-retries" value-name:"<count>" default:"3" description:"Maximum retry count for network errors"`
+	MaxRetries      uint   `long:"max-retries" value-name:"<count>" default:"0" description:"Maximum retry count for network errors"`
 	DnsResolver     string `long:"dns-resolver" value-name:"<address>" description:"Custom DNS resolver"`
 	Format          string `long:"format" description:"Output format" default:"text" choice:"text" choice:"json" choice:"junit"`
 	// TODO Remove this option.
