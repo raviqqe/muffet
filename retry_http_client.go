@@ -24,7 +24,6 @@ func (c *retryHttpClient) Get(u *url.URL, header http.Header) (httpResponse, err
 
 	for range c.maxCount + 1 {
 		r, err := c.client.Get(u, header)
-		e = err
 
 		if err == nil {
 			return r, nil
@@ -34,6 +33,7 @@ func (c *retryHttpClient) Get(u *url.URL, header http.Header) (httpResponse, err
 
 		time.Sleep(d)
 		d = min(retryBackoff*d, maxRetryDelay)
+		e = err
 	}
 
 	return nil, fmt.Errorf("max retry count %d exceeded: %w", c.maxCount, e)
