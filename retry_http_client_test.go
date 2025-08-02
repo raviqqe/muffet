@@ -21,18 +21,15 @@ func TestRetryHttpClientRetry(t *testing.T) {
 	u, err := url.Parse("http://foo.com/")
 	assert.Nil(t, err)
 
-	for _, tt := range []struct {
-		errorCount int
-		success    bool
-	}{
-		{errorCount: 0, success: true},
-		{errorCount: 1, success: true},
-		{errorCount: 2, success: true},
-		{errorCount: 3, success: true},
-		{errorCount: 4, success: false},
+	for errorCount, success := range map[int]bool{
+		0: true,
+		1: true,
+		2: true,
+		3: true,
+		4: false,
 	} {
 		t.Run(
-			fmt.Sprintf("%d errors", tt.errorCount),
+			fmt.Sprintf("%d errors", errorCount),
 			func(t *testing.T) {
 				count := 0
 
@@ -41,7 +38,7 @@ func TestRetryHttpClientRetry(t *testing.T) {
 						func(*url.URL) (*fakeHttpResponse, error) {
 							count++
 
-							if count <= tt.errorCount {
+							if count <= errorCount {
 								return nil, &fakeNetError{}
 							}
 
@@ -54,9 +51,9 @@ func TestRetryHttpClientRetry(t *testing.T) {
 
 				r, err := c.Get(u, nil)
 
-				assert.Equal(t, tt.success, r != nil)
-				assert.Equal(t, tt.success, err == nil)
-				assert.Equal(t, min(tt.errorCount+1, maxRetries+1), count)
+				assert.Equal(t, success, r != nil)
+				assert.Equal(t, success, err == nil)
+				assert.Equal(t, min(errorCount+1, maxRetries+1), count)
 			},
 		)
 	}
