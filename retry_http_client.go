@@ -6,12 +6,12 @@ import (
 )
 
 type retryHttpClient struct {
-	client  httpClient
-	retries uint
+	client   httpClient
+	maxCount uint
 }
 
-func newRetryHttpClient(c httpClient, retries uint) httpClient {
-	return &retryHttpClient{c, retries}
+func newRetryHttpClient(c httpClient, maxCount uint) httpClient {
+	return &retryHttpClient{c, maxCount}
 }
 
 func (c *retryHttpClient) Get(u *url.URL, header http.Header) (httpResponse, error) {
