@@ -1,4 +1,5 @@
 *.snap
+.idea
 .snapcraft
 coverage.txt
 dist
