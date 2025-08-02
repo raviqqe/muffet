@@ -8,9 +8,6 @@ import (
 	"time"
 )
 
-const maxRetryDelay = 10 * time.Second
-const retryBackoff = 2
-
 type retryHttpClient struct {
 	client       httpClient
 	maxCount     uint
