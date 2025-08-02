@@ -38,7 +38,7 @@ func TestRetryHttpClientRetry(t *testing.T) {
 
 				c := newRetryHttpClient(
 					newFakeHttpClient(
-						func(u *url.URL) (*fakeHttpResponse, error) {
+						func(*url.URL) (*fakeHttpResponse, error) {
 							count++
 
 							if count <= tt.errorCount {
@@ -94,7 +94,7 @@ func TestRetryHttpClientRetryExceededError(t *testing.T) {
 
 	c := newRetryHttpClient(
 		newFakeHttpClient(
-			func(u *url.URL) (*fakeHttpResponse, error) {
+			func(*url.URL) (*fakeHttpResponse, error) {
 				count++
 				return nil, fakeNetError{}
 			},
