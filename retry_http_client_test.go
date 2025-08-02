@@ -10,8 +10,9 @@ import (
 
 type fakeNetError struct{}
 
-func (fakeNetError) Error() string { return "network error" }
-func (fakeNetError) Timeout() bool { return true }
+func (fakeNetError) Error() string   { return "network error" }
+func (fakeNetError) Timeout() bool   { return true }
+func (fakeNetError) Temporary() bool { return true }
 
 func TestRetryHttpClientGet(t *testing.T) {
 	const maxRetries = 3
