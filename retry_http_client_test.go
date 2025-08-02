@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"net/url"
-	"sync/atomic"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -16,42 +15,48 @@ func (fakeNetError) Timeout() bool   { return true }
 func (fakeNetError) Temporary() bool { return true }
 
 func TestRetryHttpClientGet(t *testing.T) {
+	const maxRetries = 3
+
 	u, err := url.Parse("http://foo.com/foo")
 	assert.Nil(t, err)
 
 	for _, tt := range []struct {
-		errorCount       int
-		expectedRequests int
-		success          bool
+		errorCount int
+		success    bool
 	}{
-		{errorCount: 0, expectedRequests: 1, success: true},
-		{errorCount: 1, expectedRequests: 2, success: true},
-		{errorCount: 2, expectedRequests: 3, success: true},
-		{errorCount: 3, expectedRequests: 3, success: false},
+		{errorCount: 0, success: true},
+		{errorCount: 1, success: true},
+		{errorCount: 2, success: true},
+		{errorCount: 3, success: true},
+		{errorCount: 4, success: false},
 	} {
 		t.Run(
-			fmt.Sprintf("%d retries", tt.errorCount),
+			fmt.Sprintf("%d errors", tt.errorCount),
 			func(t *testing.T) {
-				var count atomic.Int32
+				count := 0
+
 				c := newRetryHttpClient(
 					newFakeHttpClient(
 						func(u *url.URL) (*fakeHttpResponse, error) {
-							if u.String() == "http://foo.com/foo" {
-								if count.Add(1) <= int32(tt.errorCount) {
-									return nil, &fakeNetError{}
-								}
-								return newFakeHtmlResponse("http://foo.com/foo", ""), nil
+							count += 1
+
+							if u.String() != "http://foo.com/foo" {
+								return newFakeHtmlResponse("http://foo.com/", ""), nil
+							} else if count <= tt.errorCount {
+								return nil, &fakeNetError{}
 							}
-							return newFakeHtmlResponse("http://foo.com/", ""), nil
+
+							return newFakeHtmlResponse("http://foo.com/foo", ""), nil
 						},
 					),
-					3,
+					maxRetries,
 				)
 
 				r, err := c.Get(u, nil)
+
 				assert.Equal(t, tt.success, r != nil)
 				assert.Equal(t, tt.success, err == nil)
-				assert.Equal(t, int32(tt.expectedRequests), count.Load())
+				assert.Equal(t, min(tt.errorCount+1, maxRetries+1), count)
 			},
 		)
 	}
