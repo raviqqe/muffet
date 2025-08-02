@@ -19,7 +19,7 @@ func newRetryHttpClient(c httpClient, maxCount uint, initialDelay time.Duration)
 }
 
 func (c *retryHttpClient) Get(u *url.URL, header http.Header) (httpResponse, error) {
-	delay := c.initialDelay
+	d := c.initialDelay
 
 	for range c.maxCount + 1 {
 		r, err := c.client.Get(u, header)
@@ -29,8 +29,8 @@ func (c *retryHttpClient) Get(u *url.URL, header http.Header) (httpResponse, err
 			return nil, err
 		}
 
-		time.Sleep(delay)
-		delay = min(retryBackoff*delay, maxRetryDelay)
+		time.Sleep(d)
+		d = min(retryBackoff*d, maxRetryDelay)
 	}
 
 	return nil, fmt.Errorf("max retry count %d exceeded", c.maxCount)
