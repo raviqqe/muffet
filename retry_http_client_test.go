@@ -104,5 +104,6 @@ func TestRetryHttpClientRetryExceededError(t *testing.T) {
 
 	assert.Nil(t, r)
 	assert.ErrorContains(t, err, "max retry count 42 exceeded: my network error")
+	assert.Equal(t, fakeNetError{}, errors.Unwrap(err))
 	assert.Equal(t, 43, count)
 }
