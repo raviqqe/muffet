@@ -5,7 +5,6 @@ import (
 	"mime"
 	"net/url"
 	"strings"
-	"time"
 )
 
 type linkFetcher struct {
@@ -57,25 +56,15 @@ func (f *linkFetcher) sendRequestWithCache(u string) (int, page, error) {
 		return r.StatusCode, r.Page, nil
 	}
 
-	attempts := 0
-	retryDelay := 500 * time.Millisecond
+	s, p, err := f.sendRequest(u)
 
-	for {
-		s, p, err := f.sendRequest(u)
-
-		if err == nil {
-			store(fetchResult{s, p})
-		} else {
-			if f.options.Retries > 0 && attempts < f.options.Retries-1 {
-				attempts++
-				time.Sleep(retryDelay)
-				retryDelay *= 2 // Exponential backoff
-				continue
-			}
-			store(err)
-		}
-		return s, p, err
+	if err == nil {
+		store(fetchResult{s, p})
+	} else {
+		store(err)
 	}
+
+	return s, p, err
 }
 
 func (f *linkFetcher) sendRequest(s string) (int, page, error) {
