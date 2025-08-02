@@ -22,8 +22,7 @@ func (c *retryHttpClient) Get(u *url.URL, header http.Header) (httpResponse, err
 	d := c.initialDelay
 
 	for range c.maxCount + 1 {
-		r, err := c.client.Get(u, header)
-		if err == nil {
+		if r, err := c.client.Get(u, header); err == nil {
 			return r, nil
 		} else if e, ok := err.(net.Error); !ok || !e.Timeout() {
 			return nil, err
