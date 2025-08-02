@@ -65,6 +65,7 @@ func (c *command) runWithError(ss []string) (bool, error) {
 					args.MaxConnectionsPerHost,
 				),
 				args.MaxRetries,
+				initialRetryDelay,
 			),
 			args.MaxRedirections,
 		),

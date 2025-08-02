@@ -16,6 +16,7 @@ func (fakeNetError) Temporary() bool { return true }
 
 func TestRetryHttpClientGet(t *testing.T) {
 	const maxRetries = 3
+	const initialRetryDelay = 1
 
 	u, err := url.Parse("http://foo.com/foo")
 	assert.Nil(t, err)
@@ -50,6 +51,7 @@ func TestRetryHttpClientGet(t *testing.T) {
 						},
 					),
 					maxRetries,
+					initialRetryDelay,
 				)
 
 				r, err := c.Get(u, nil)

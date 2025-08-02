@@ -8,21 +8,21 @@ import (
 	"time"
 )
 
-const initialRetryDelay = 500 * time.Millisecond
 const maxRetryDelay = 10 * time.Second
 const retryBackoff = 2
 
 type retryHttpClient struct {
-	client   httpClient
-	maxCount uint
+	client       httpClient
+	maxCount     uint
+	initialDelay time.Duration
 }
 
-func newRetryHttpClient(c httpClient, maxCount uint) httpClient {
-	return &retryHttpClient{c, maxCount}
+func newRetryHttpClient(c httpClient, maxCount uint, initialDelay time.Duration) httpClient {
+	return &retryHttpClient{c, maxCount, initialDelay}
 }
 
 func (c *retryHttpClient) Get(u *url.URL, header http.Header) (httpResponse, error) {
-	delay := initialRetryDelay
+	delay := c.initialDelay
 
 	for range c.maxCount + 1 {
 		r, err := c.client.Get(u, header)
