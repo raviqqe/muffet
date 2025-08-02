@@ -46,22 +46,25 @@ func (c *command) runWithError(ss []string) (bool, error) {
 
 	client := newCheckedHttpClient(
 		newRedirectHttpClient(
-			newThrottledHttpClient(
-				c.httpClientFactory.Create(
-					httpClientOptions{
-						MaxConnectionsPerHost: args.MaxConnectionsPerHost,
-						MaxResponseBodySize:   args.MaxResponseBodySize,
-						BufferSize:            args.BufferSize,
-						Proxy:                 args.Proxy,
-						SkipTLSVerification:   args.SkipTLSVerification,
-						Timeout:               time.Duration(args.Timeout) * time.Second,
-						Header:                args.Header,
-						DnsResolver:           args.DnsResolver,
-					},
+			newRetryHttpClient(
+				newThrottledHttpClient(
+					c.httpClientFactory.Create(
+						httpClientOptions{
+							MaxConnectionsPerHost: args.MaxConnectionsPerHost,
+							MaxResponseBodySize:   args.MaxResponseBodySize,
+							BufferSize:            args.BufferSize,
+							Proxy:                 args.Proxy,
+							SkipTLSVerification:   args.SkipTLSVerification,
+							Timeout:               time.Duration(args.Timeout) * time.Second,
+							Header:                args.Header,
+							DnsResolver:           args.DnsResolver,
+						},
+					),
+					args.RateLimit,
+					args.MaxConnections,
+					args.MaxConnectionsPerHost,
 				),
-				args.RateLimit,
-				args.MaxConnections,
-				args.MaxConnectionsPerHost,
+				args.MaxRetries,
 			),
 			args.MaxRedirections,
 		),
@@ -78,7 +81,6 @@ func (c *command) runWithError(ss []string) (bool, error) {
 		},
 		linkFetcherOptions{
 			IgnoreFragments: args.IgnoreFragments,
-			Retries:         args.Retries,
 		},
 	)
 
