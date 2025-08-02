@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"net/url"
 	"testing"
@@ -14,9 +15,8 @@ func (fakeNetError) Error() string   { return "network error" }
 func (fakeNetError) Timeout() bool   { return true }
 func (fakeNetError) Temporary() bool { return true }
 
-func TestRetryHttpClientGet(t *testing.T) {
+func TestRetryHttpClientRetry(t *testing.T) {
 	const maxRetries = 3
-	const initialRetryDelay = 1
 
 	u, err := url.Parse("http://foo.com/foo")
 	assert.Nil(t, err)
@@ -39,7 +39,7 @@ func TestRetryHttpClientGet(t *testing.T) {
 				c := newRetryHttpClient(
 					newFakeHttpClient(
 						func(u *url.URL) (*fakeHttpResponse, error) {
-							count += 1
+							count++
 
 							if u.String() != "http://foo.com/foo" {
 								return newFakeHtmlResponse("http://foo.com/", ""), nil
@@ -51,7 +51,7 @@ func TestRetryHttpClientGet(t *testing.T) {
 						},
 					),
 					maxRetries,
-					initialRetryDelay,
+					0,
 				)
 
 				r, err := c.Get(u, nil)
@@ -62,4 +62,28 @@ func TestRetryHttpClientGet(t *testing.T) {
 			},
 		)
 	}
+}
+
+func TestRetryHttpClientNoRetry(t *testing.T) {
+	u, err := url.Parse("http://foo.com/foo")
+	assert.Nil(t, err)
+
+	count := 0
+
+	c := newRetryHttpClient(
+		newFakeHttpClient(
+			func(u *url.URL) (*fakeHttpResponse, error) {
+				count++
+				return nil, errors.New("foo")
+			},
+		),
+		42,
+		0,
+	)
+
+	r, err := c.Get(u, nil)
+
+	assert.Nil(t, r)
+	assert.Equal(t, err, errors.New("foo"))
+	assert.Equal(t, 1, count)
 }
