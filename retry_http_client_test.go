@@ -11,7 +11,7 @@ import (
 
 type fakeNetError struct{}
 
-func (fakeNetError) Error() string   { return "network error" }
+func (fakeNetError) Error() string   { return "my network error" }
 func (fakeNetError) Timeout() bool   { return true }
 func (fakeNetError) Temporary() bool { return true }
 
@@ -103,6 +103,6 @@ func TestRetryHttpClientRetryExceededError(t *testing.T) {
 	r, err := c.Get(u, nil)
 
 	assert.Nil(t, r)
-	assert.ErrorContains(t, err, "max retry count 42 exceeded")
+	assert.ErrorContains(t, err, "max retry count 42 exceeded: my network error")
 	assert.Equal(t, 43, count)
 }
