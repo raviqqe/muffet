@@ -18,7 +18,7 @@ func (fakeNetError) Temporary() bool { return true }
 func TestRetryHttpClientRetry(t *testing.T) {
 	const maxRetries = 3
 
-	u, err := url.Parse("http://foo.com/foo")
+	u, err := url.Parse("http://foo.com/")
 	assert.Nil(t, err)
 
 	for _, tt := range []struct {
@@ -41,13 +41,11 @@ func TestRetryHttpClientRetry(t *testing.T) {
 						func(u *url.URL) (*fakeHttpResponse, error) {
 							count++
 
-							if u.String() != "http://foo.com/foo" {
-								return newFakeHtmlResponse("http://foo.com/", ""), nil
-							} else if count <= tt.errorCount {
+							if count <= tt.errorCount {
 								return nil, &fakeNetError{}
 							}
 
-							return newFakeHtmlResponse("http://foo.com/foo", ""), nil
+							return newFakeHtmlResponse("http://foo.com/", ""), nil
 						},
 					),
 					maxRetries,
@@ -65,7 +63,7 @@ func TestRetryHttpClientRetry(t *testing.T) {
 }
 
 func TestRetryHttpClientNoRetry(t *testing.T) {
-	u, err := url.Parse("http://foo.com/foo")
+	u, err := url.Parse("http://foo.com/")
 	assert.Nil(t, err)
 
 	count := 0
