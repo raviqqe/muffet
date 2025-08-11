@@ -18,7 +18,7 @@ jobs:
       run:
         working-directory: doc
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: actions/setup-node@v4
       - uses: actions/configure-pages@v5
       - run: npm ci
@@ -34,14 +34,14 @@ jobs:
       run:
         working-directory: doc
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: actions/setup-node@v4
       - run: npm ci
       - run: npm run lint
   web_test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - run: npm ci
         working-directory: doc
       - run: npm run build -- --site http://localhost:4321
