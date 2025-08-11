@@ -19,7 +19,7 @@
     "es-toolkit": "^1.39.9"
   },
   "devDependencies": {
-    "@raviqqe/biome-config": "^2.0.4",
+    "@raviqqe/biome-config": "^2.0.16",
     "@raviqqe/eslint-config": "^5.0.0",
     "@types/node": "^24.2.1",
     "eslint": "^9.33.0",
