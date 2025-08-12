@@ -7,22 +7,19 @@
     "start": "astro dev",
     "build": "tools/usage.sh && astro build",
     "preview": "astro preview",
-    "lint": "npm run lint:biome && eslint --cache src",
-    "lint:biome": "biome ci",
+    "lint": "biome ci",
     "format": "biome format --write ."
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.4.2",
     "@astrojs/starlight": "^0.35.2",
-    "@biomejs/biome": "^2.1.4",
     "astro": "^5.12.9",
     "es-toolkit": "^1.39.9"
   },
   "devDependencies": {
+    "@biomejs/biome": "^2.1.4",
     "@raviqqe/biome-config": "^2.0.16",
-    "@raviqqe/eslint-config": "^5.0.0",
     "@types/node": "^24.2.1",
-    "eslint": "^9.33.0",
     "typescript": "^5.9.2"
   }
 }
