@@ -7,43 +7,35 @@ export default defineConfig({
   integrations: [
     sitemap(),
     starlight({
-      title: "Muffet",
       customCss: ["./src/index.css"],
       favicon: "/icon.svg",
       head: [
         {
-          tag: "link",
           attrs: {
-            rel: "manifest",
             href: "/muffet/manifest.json",
+            rel: "manifest",
           },
+          tag: "link",
         },
         {
-          tag: "meta",
           attrs: {
-            property: "og:image",
             content: "/muffet/icon.svg",
+            property: "og:image",
           },
+          tag: "meta",
         },
         {
-          tag: "script",
           attrs: {
             "data-domain": "raviqqe.com",
             defer: true,
             src: "https://plausible.io/js/plausible.js",
           },
+          tag: "script",
         },
       ],
       logo: {
         src: "./src/icon.svg",
       },
-      social: [
-        {
-          icon: "github",
-          label: "GitHub",
-          href: "https://github.com/raviqqe/muffet",
-        },
-      ],
       sidebar: [
         {
           label: "Home",
@@ -58,6 +50,14 @@ export default defineConfig({
           link: "/usage",
         },
       ],
+      social: [
+        {
+          href: "https://github.com/raviqqe/muffet",
+          icon: "github",
+          label: "GitHub",
+        },
+      ],
+      title: "Muffet",
     }),
   ],
   prefetch: { prefetchAll: true },
