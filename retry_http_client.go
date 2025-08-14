@@ -36,5 +36,9 @@ func (c *retryHttpClient) Get(u *url.URL, header http.Header) (httpResponse, err
 		e = err
 	}
 
+	if c.maxCount == 0 {
+		return nil, e
+	}
+
 	return nil, fmt.Errorf("max retry count %d exceeded: %w", c.maxCount, e)
 }
