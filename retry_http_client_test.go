@@ -107,3 +107,28 @@ func TestRetryHttpClientRetryExceededError(t *testing.T) {
 	assert.Equal(t, fakeNetError{}, errors.Unwrap(err))
 	assert.Equal(t, 43, count)
 }
+
+func TestRetryHttpClientNoRetryFailure(t *testing.T) {
+	u, err := url.Parse("http://foo.com/")
+	assert.Nil(t, err)
+
+	count := 0
+
+	c := newRetryHttpClient(
+		newFakeHttpClient(
+			func(*url.URL) (*fakeHttpResponse, error) {
+				count++
+				return nil, fakeNetError{}
+			},
+		),
+		0,
+		0,
+	)
+
+	r, err := c.Get(u, nil)
+
+	assert.Nil(t, r)
+	assert.ErrorContains(t, err, "my network error")
+	assert.Equal(t, nil, errors.Unwrap(err))
+	assert.Equal(t, 1, count)
+}
