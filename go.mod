@@ -13,7 +13,7 @@ require (
 	github.com/mattn/go-colorable v0.1.14
 	github.com/mattn/go-isatty v0.0.20
 	github.com/oxffaa/gopher-parse-sitemap v0.0.0-20191021113419-005d2eb1def4
-	github.com/stretchr/testify v1.10.0
+	github.com/stretchr/testify v1.11.0
 	github.com/temoto/robotstxt v1.1.2
 	github.com/valyala/fasthttp v1.65.0
 	github.com/yhat/scrape v0.0.0-20161128144610-24b7890b0945
