@@ -19,7 +19,7 @@ jobs:
         working-directory: doc
     steps:
       - uses: actions/checkout@v5
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
       - uses: actions/configure-pages@v5
       - run: npm ci
       - run: npm run build
@@ -35,7 +35,7 @@ jobs:
         working-directory: doc
     steps:
       - uses: actions/checkout@v5
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
       - run: npm ci
       - run: npm run lint
   web_test:
