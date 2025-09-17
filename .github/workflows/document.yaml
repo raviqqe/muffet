@@ -19,10 +19,9 @@ jobs:
         working-directory: doc
     steps:
       - uses: actions/checkout@v5
-      - uses: actions/setup-node@v5
+      - uses: ./.github/actions/setup
       - uses: actions/configure-pages@v5
-      - run: npm ci
-      - run: npm run build
+      - run: node --run build
       - uses: actions/upload-pages-artifact@v4
         with:
           path: doc/dist
@@ -35,9 +34,8 @@ jobs:
         working-directory: doc
     steps:
       - uses: actions/checkout@v5
-      - uses: actions/setup-node@v5
-      - run: npm ci
-      - run: npm run lint
+      - uses: ./.github/actions/setup
+      - run: node --run lint
   web_test:
     runs-on: ubuntu-latest
     steps:
