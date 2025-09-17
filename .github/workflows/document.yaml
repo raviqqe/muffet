@@ -20,8 +20,8 @@ jobs:
     steps:
       - uses: actions/checkout@v5
       - uses: ./.github/actions/setup
-      - uses: actions/configure-pages@v5
       - run: node --run build
+      - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v4
         with:
           path: doc/dist
@@ -40,11 +40,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
-      - run: npm ci
+      - uses: ./.github/actions/setup
+      - run: node --run build -- --site http://localhost:4321
         working-directory: doc
-      - run: npm run build -- --site http://localhost:4321
-        working-directory: doc
-      - run: npm run preview &
+      - run: node --run preview &
         working-directory: doc
       - run: go run . --buffer-size 8192 http://localhost:4321/muffet/
   document:
