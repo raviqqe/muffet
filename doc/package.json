@@ -16,7 +16,7 @@
   "dependencies": {
     "@astrojs/sitemap": "^3.6.0",
     "@astrojs/starlight": "^0.35.3",
-    "astro": "^5.13.8",
+    "astro": "^5.13.9",
     "es-toolkit": "^1.39.10"
   },
   "devDependencies": {
