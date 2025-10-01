@@ -13,10 +13,10 @@ importers:
         version: 3.6.0
       '@astrojs/starlight':
         specifier: ^0.36.0
-        version: 0.36.0(astro@5.14.1(@types/node@24.6.0)(rollup@4.52.2)(typescript@5.9.2))
+        version: 0.36.0(astro@5.14.1(@types/node@24.6.0)(rollup@4.52.2)(typescript@5.9.3))
       astro:
         specifier: ^5.14.1
-        version: 5.14.1(@types/node@24.6.0)(rollup@4.52.2)(typescript@5.9.2)
+        version: 5.14.1(@types/node@24.6.0)(rollup@4.52.2)(typescript@5.9.3)
       es-toolkit:
         specifier: ^1.39.10
         version: 1.39.10
@@ -34,8 +34,8 @@ importers:
         specifier: ^0.34.4
         version: 0.34.4
       typescript:
-        specifier: ^5.9.2
-        version: 5.9.2
+        specifier: ^5.9.3
+        version: 5.9.3
 
 packages:
 
@@ -1649,8 +1649,8 @@ packages:
     resolution: {integrity: sha512-TeTSQ6H5YHvpqVwBRcnLDCBnDOHWYu7IvGbHT6N8AOymcr9PJGjc1GTtiWZTYg0NCgYwvnYWEkVChQAr9bjfwA==}
     engines: {node: '>=16'}
 
-  typescript@5.9.2:
-    resolution: {integrity: sha512-CWBzXQrc/qOkhidw1OzBTQuYRbfyxDXJMVJ1XNwUHGROVmuaeiEm3OslpZ1RV96d7SKKjZKrSJu3+t/xlw3R9A==}
+  typescript@5.9.3:
+    resolution: {integrity: sha512-jl1vZzPDinLr9eUt3J/t7V6FgNEw9QjvBPdysz9KfQDD41fQrC2Y4vKQdiaUpFT4bXlb1RHhLpp8wtm6M5TgSw==}
     engines: {node: '>=14.17'}
     hasBin: true
 
@@ -1947,12 +1947,12 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@astrojs/mdx@4.3.5(astro@5.14.1(@types/node@24.6.0)(rollup@4.52.2)(typescript@5.9.2))':
+  '@astrojs/mdx@4.3.5(astro@5.14.1(@types/node@24.6.0)(rollup@4.52.2)(typescript@5.9.3))':
     dependencies:
       '@astrojs/markdown-remark': 6.3.6
       '@mdx-js/mdx': 3.1.1
       acorn: 8.15.0
-      astro: 5.14.1(@types/node@24.6.0)(rollup@4.52.2)(typescript@5.9.2)
+      astro: 5.14.1(@types/node@24.6.0)(rollup@4.52.2)(typescript@5.9.3)
       es-module-lexer: 1.7.0
       estree-util-visit: 2.0.0
       hast-util-to-html: 9.0.5
@@ -1976,17 +1976,17 @@ snapshots:
       stream-replace-string: 2.0.0
       zod: 3.25.76
 
-  '@astrojs/starlight@0.36.0(astro@5.14.1(@types/node@24.6.0)(rollup@4.52.2)(typescript@5.9.2))':
+  '@astrojs/starlight@0.36.0(astro@5.14.1(@types/node@24.6.0)(rollup@4.52.2)(typescript@5.9.3))':
     dependencies:
       '@astrojs/markdown-remark': 6.3.6
-      '@astrojs/mdx': 4.3.5(astro@5.14.1(@types/node@24.6.0)(rollup@4.52.2)(typescript@5.9.2))
+      '@astrojs/mdx': 4.3.5(astro@5.14.1(@types/node@24.6.0)(rollup@4.52.2)(typescript@5.9.3))
       '@astrojs/sitemap': 3.6.0
       '@pagefind/default-ui': 1.4.0
       '@types/hast': 3.0.4
       '@types/js-yaml': 4.0.9
       '@types/mdast': 4.0.4
-      astro: 5.14.1(@types/node@24.6.0)(rollup@4.52.2)(typescript@5.9.2)
-      astro-expressive-code: 0.41.3(astro@5.14.1(@types/node@24.6.0)(rollup@4.52.2)(typescript@5.9.2))
+      astro: 5.14.1(@types/node@24.6.0)(rollup@4.52.2)(typescript@5.9.3)
+      astro-expressive-code: 0.41.3(astro@5.14.1(@types/node@24.6.0)(rollup@4.52.2)(typescript@5.9.3))
       bcp-47: 2.1.0
       hast-util-from-html: 2.0.3
       hast-util-select: 6.0.4
@@ -2525,12 +2525,12 @@ snapshots:
 
   astring@1.9.0: {}
 
-  astro-expressive-code@0.41.3(astro@5.14.1(@types/node@24.6.0)(rollup@4.52.2)(typescript@5.9.2)):
+  astro-expressive-code@0.41.3(astro@5.14.1(@types/node@24.6.0)(rollup@4.52.2)(typescript@5.9.3)):
     dependencies:
-      astro: 5.14.1(@types/node@24.6.0)(rollup@4.52.2)(typescript@5.9.2)
+      astro: 5.14.1(@types/node@24.6.0)(rollup@4.52.2)(typescript@5.9.3)
       rehype-expressive-code: 0.41.3
 
-  astro@5.14.1(@types/node@24.6.0)(rollup@4.52.2)(typescript@5.9.2):
+  astro@5.14.1(@types/node@24.6.0)(rollup@4.52.2)(typescript@5.9.3):
     dependencies:
       '@astrojs/compiler': 2.13.0
       '@astrojs/internal-helpers': 0.7.3
@@ -2580,7 +2580,7 @@ snapshots:
       smol-toml: 1.4.2
       tinyexec: 0.3.2
       tinyglobby: 0.2.15
-      tsconfck: 3.1.6(typescript@5.9.2)
+      tsconfck: 3.1.6(typescript@5.9.3)
       ultrahtml: 1.6.0
       unifont: 0.5.2
       unist-util-visit: 5.0.0
@@ -2593,7 +2593,7 @@ snapshots:
       yocto-spinner: 0.2.3
       zod: 3.25.76
       zod-to-json-schema: 3.24.6(zod@3.25.76)
-      zod-to-ts: 1.2.0(typescript@5.9.2)(zod@3.25.76)
+      zod-to-ts: 1.2.0(typescript@5.9.3)(zod@3.25.76)
     optionalDependencies:
       sharp: 0.34.4
     transitivePeerDependencies:
@@ -4052,15 +4052,15 @@ snapshots:
 
   trough@2.2.0: {}
 
-  tsconfck@3.1.6(typescript@5.9.2):
+  tsconfck@3.1.6(typescript@5.9.3):
     optionalDependencies:
-      typescript: 5.9.2
+      typescript: 5.9.3
 
   tslib@2.8.1: {}
 
   type-fest@4.41.0: {}
 
-  typescript@5.9.2: {}
+  typescript@5.9.3: {}
 
   ufo@1.6.1: {}
 
@@ -4223,9 +4223,9 @@ snapshots:
     dependencies:
       zod: 3.25.76
 
-  zod-to-ts@1.2.0(typescript@5.9.2)(zod@3.25.76):
+  zod-to-ts@1.2.0(typescript@5.9.3)(zod@3.25.76):
     dependencies:
-      typescript: 5.9.2
+      typescript: 5.9.3
       zod: 3.25.76
 
   zod@3.25.76: {}
