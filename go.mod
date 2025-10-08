@@ -15,10 +15,10 @@ require (
 	github.com/oxffaa/gopher-parse-sitemap v0.0.0-20191021113419-005d2eb1def4
 	github.com/stretchr/testify v1.11.1
 	github.com/temoto/robotstxt v1.1.2
-	github.com/valyala/fasthttp v1.66.0
+	github.com/valyala/fasthttp v1.67.0
 	github.com/yhat/scrape v0.0.0-20161128144610-24b7890b0945
 	go.uber.org/ratelimit v0.3.1
-	golang.org/x/net v0.44.0
+	golang.org/x/net v0.45.0
 )
 
 require (
