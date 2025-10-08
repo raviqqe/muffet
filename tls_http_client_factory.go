@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+	"os"
 	"time"
 
 	tls_client "github.com/bogdanfinn/tls-client"
@@ -28,7 +30,8 @@ func (*tls_http_client_factory) Create(o httpClientOptions) httpClient {
 
 	client, err := tls_client.NewHttpClient(tls_client.NewLogger(), opts...)
 	if err != nil {
-		//todo
+		fmt.Fprintf(os.Stderr, "failed to create http client: %v\n", err)
+		os.Exit(1)
 	}
 
 	return newTlsHttpClient(

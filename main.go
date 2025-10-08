@@ -9,7 +9,6 @@ import (
 )
 
 func main() {
-	//for testing if works set to always use tlsHttpClientFactory, probably should set to a flag to use this or fasthttp
 	ok := newCommand(
 		colorable.NewColorableStdout(),
 		os.Stderr,
