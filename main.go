@@ -9,24 +9,12 @@ import (
 )
 
 func main() {
-	//change to nicer implementation later, for testing
-	useTls := false
-	for _, a := range os.Args[1:] {
-		if a == "--use-tls-client" {
-			useTls = true
-		}
-	}
-	var factory httpClientFactory
-	factory = newFasthttpHttpClientFactory()
-	if useTls {
-		factory = newTlsHttpClientFactory()
-	}
-
+	//for testing if works set to always use tlsHttpClientFactory, probably should set to a flag to use this or fasthttp
 	ok := newCommand(
 		colorable.NewColorableStdout(),
 		os.Stderr,
 		isatty.IsTerminal(os.Stdout.Fd()),
-		factory,
+		newTlsHttpClientFactory(),
 	).Run(os.Args[1:])
 
 	if !ok {
