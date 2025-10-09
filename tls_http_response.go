@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"io"
 	"net/url"
 
@@ -17,8 +18,18 @@ func newTlsHttpResponse(url *url.URL, response *fh.Response) httpResponse {
 }
 
 func (r *tlsHttpResponse) Body() ([]byte, error) {
-	defer r.response.Body.Close()
-	return io.ReadAll(r.response.Body)
+	var err error
+	defer func() {
+		if cerr := r.response.Body.Close(); cerr != nil {
+			if err != nil {
+				err = errors.Join(err, cerr)
+			} else {
+				err = cerr
+			}
+		}
+	}()
+	b, err := io.ReadAll(r.response.Body)
+	return b, err
 }
 
 func (r *tlsHttpResponse) Header(str string) string {
