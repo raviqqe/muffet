@@ -13,7 +13,7 @@ func main() {
 		colorable.NewColorableStdout(),
 		os.Stderr,
 		isatty.IsTerminal(os.Stdout.Fd()),
-		newFasthttpHttpClientFactory(),
+		newTlsHttpClientFactory(),
 	).Run(os.Args[1:])
 
 	if !ok {
