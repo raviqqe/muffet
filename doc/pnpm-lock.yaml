@@ -18,8 +18,8 @@ importers:
         specifier: ^5.14.1
         version: 5.14.1(@types/node@24.7.0)(rollup@4.52.2)(typescript@5.9.3)
       es-toolkit:
-        specifier: ^1.39.10
-        version: 1.39.10
+        specifier: ^1.40.0
+        version: 1.40.0
     devDependencies:
       '@biomejs/biome':
         specifier: ^2.2.5
@@ -925,8 +925,8 @@ packages:
   es-module-lexer@1.7.0:
     resolution: {integrity: sha512-jEQoCwk8hyb2AZziIOLhDqpm5+2ww5uIE6lkO/6jcOCusfk6LhMHpXXfBLXTZ7Ydyt0j4VoUQv6uGNYbdW+kBA==}
 
-  es-toolkit@1.39.10:
-    resolution: {integrity: sha512-E0iGnTtbDhkeczB0T+mxmoVlT4YNweEKBLq7oaU4p11mecdsZpNWOglI4895Vh4usbQ+LsJiuLuI2L0Vdmfm2w==}
+  es-toolkit@1.40.0:
+    resolution: {integrity: sha512-8o6w0KFmU0CiIl0/Q/BCEOabF2IJaELM1T2PWj6e8KqzHv1gdx+7JtFnDwOx1kJH/isJ5NwlDG1nCr1HrRF94Q==}
 
   esast-util-from-estree@2.0.0:
     resolution: {integrity: sha512-4CyanoAudUSBAn5K13H4JhsMH6L9ZP7XbLVe/dKybkxMO7eDyLsT8UHl9TRNrU2Gr9nz+FovfSIjuXWJ81uVwQ==}
@@ -2766,7 +2766,7 @@ snapshots:
 
   es-module-lexer@1.7.0: {}
 
-  es-toolkit@1.39.10: {}
+  es-toolkit@1.40.0: {}
 
   esast-util-from-estree@2.0.0:
     dependencies:
