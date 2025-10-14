@@ -13,10 +13,10 @@ importers:
         version: 3.6.0
       '@astrojs/starlight':
         specifier: ^0.36.0
-        version: 0.36.0(astro@5.14.4(@types/node@24.7.2)(rollup@4.52.4)(typescript@5.9.3))
+        version: 0.36.0(astro@5.14.5(@types/node@24.7.2)(rollup@4.52.4)(typescript@5.9.3))
       astro:
-        specifier: ^5.14.4
-        version: 5.14.4(@types/node@24.7.2)(rollup@4.52.4)(typescript@5.9.3)
+        specifier: ^5.14.5
+        version: 5.14.5(@types/node@24.7.2)(rollup@4.52.4)(typescript@5.9.3)
       es-toolkit:
         specifier: ^1.40.0
         version: 1.40.0
@@ -745,8 +745,8 @@ packages:
     peerDependencies:
       astro: ^4.0.0-beta || ^5.0.0-beta || ^3.3.0
 
-  astro@5.14.4:
-    resolution: {integrity: sha512-yqgMAO2Whi9GmZkByyiPcG7CiiPr0Me0iBSorMa6M0g+wQk/ewnIqUyr7T/uFCPTQndoKwucnYFTrf0yfb0urw==}
+  astro@5.14.5:
+    resolution: {integrity: sha512-EHt7y3+nHYyKzBats1AL3N4Pyrvqyr+zXBC7njUa9Tfe+gsiHlunaw+lXitTT/DDVwO2R/f/qVG7Xc6rl0b2KQ==}
     engines: {node: 18.20.8 || ^20.3.0 || >=22.0.0, npm: '>=9.6.5', pnpm: '>=7.1.0'}
     hasBin: true
 
@@ -907,8 +907,8 @@ packages:
     resolution: {integrity: sha512-2QF/g9/zTaPDc3BjNcVTGoBbXBgYfMTTceLaYcFJ/W9kggFUkhxD/hMEeuLKbugyef9SqAx8cpgwlIP/jinUTA==}
     engines: {node: '>=4'}
 
-  emoji-regex@10.5.0:
-    resolution: {integrity: sha512-lb49vf1Xzfx080OKA0o6l8DQQpV+6Vg95zyCJX9VB/BqKYlhG7N4wgROUUHRA+ZPUefLnteQOad7z1kT2bV7bg==}
+  emoji-regex@10.6.0:
+    resolution: {integrity: sha512-toUI84YS5YmxW219erniWD0CIVOo46xGKColeNQRgOzDorgBi1v4D71/OFzgD9GO2UGKIv1C3Sp8DAn0+j5w7A==}
 
   emoji-regex@8.0.0:
     resolution: {integrity: sha512-MSjYzcWNOA0ewAHpz0MxpYFvwg6yjy1NG3xteoqz644VCo/RPgnr1/GGt+ic3iJTzQ8Eu3TdM14SawnVUmGE6A==}
@@ -1770,8 +1770,8 @@ packages:
   vfile@6.0.3:
     resolution: {integrity: sha512-KzIbH/9tXat2u30jf+smMwFCsno4wHVdNmzFyL+T/L3UGqqk6JKfVqOFOZEpZSHADH1k40ab6NUIXZq422ov3Q==}
 
-  vite@6.3.6:
-    resolution: {integrity: sha512-0msEVHJEScQbhkbVTb/4iHZdJ6SXp/AvxL2sjwYQFfBqleHtnCqv1J3sa9zbWz/6kW1m9Tfzn92vW+kZ1WV6QA==}
+  vite@6.3.7:
+    resolution: {integrity: sha512-mQYaKepA0NGMBsz8Xktt3tJUG5ELE2iT7IJ+ssXI6nxVdE2sFc/d/6w/JByqMLvWg8hNKHpPgzjgOkrhpKFnrA==}
     engines: {node: ^18.0.0 || ^20.0.0 || >=22.0.0}
     hasBin: true
     peerDependencies:
@@ -1929,12 +1929,12 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@astrojs/mdx@4.3.5(astro@5.14.4(@types/node@24.7.2)(rollup@4.52.4)(typescript@5.9.3))':
+  '@astrojs/mdx@4.3.5(astro@5.14.5(@types/node@24.7.2)(rollup@4.52.4)(typescript@5.9.3))':
     dependencies:
       '@astrojs/markdown-remark': 6.3.6
       '@mdx-js/mdx': 3.1.1
       acorn: 8.15.0
-      astro: 5.14.4(@types/node@24.7.2)(rollup@4.52.4)(typescript@5.9.3)
+      astro: 5.14.5(@types/node@24.7.2)(rollup@4.52.4)(typescript@5.9.3)
       es-module-lexer: 1.7.0
       estree-util-visit: 2.0.0
       hast-util-to-html: 9.0.5
@@ -1958,17 +1958,17 @@ snapshots:
       stream-replace-string: 2.0.0
       zod: 3.25.76
 
-  '@astrojs/starlight@0.36.0(astro@5.14.4(@types/node@24.7.2)(rollup@4.52.4)(typescript@5.9.3))':
+  '@astrojs/starlight@0.36.0(astro@5.14.5(@types/node@24.7.2)(rollup@4.52.4)(typescript@5.9.3))':
     dependencies:
       '@astrojs/markdown-remark': 6.3.6
-      '@astrojs/mdx': 4.3.5(astro@5.14.4(@types/node@24.7.2)(rollup@4.52.4)(typescript@5.9.3))
+      '@astrojs/mdx': 4.3.5(astro@5.14.5(@types/node@24.7.2)(rollup@4.52.4)(typescript@5.9.3))
       '@astrojs/sitemap': 3.6.0
       '@pagefind/default-ui': 1.4.0
       '@types/hast': 3.0.4
       '@types/js-yaml': 4.0.9
       '@types/mdast': 4.0.4
-      astro: 5.14.4(@types/node@24.7.2)(rollup@4.52.4)(typescript@5.9.3)
-      astro-expressive-code: 0.41.3(astro@5.14.4(@types/node@24.7.2)(rollup@4.52.4)(typescript@5.9.3))
+      astro: 5.14.5(@types/node@24.7.2)(rollup@4.52.4)(typescript@5.9.3)
+      astro-expressive-code: 0.41.3(astro@5.14.5(@types/node@24.7.2)(rollup@4.52.4)(typescript@5.9.3))
       bcp-47: 2.1.0
       hast-util-from-html: 2.0.3
       hast-util-select: 6.0.4
@@ -2503,12 +2503,12 @@ snapshots:
 
   astring@1.9.0: {}
 
-  astro-expressive-code@0.41.3(astro@5.14.4(@types/node@24.7.2)(rollup@4.52.4)(typescript@5.9.3)):
+  astro-expressive-code@0.41.3(astro@5.14.5(@types/node@24.7.2)(rollup@4.52.4)(typescript@5.9.3)):
     dependencies:
-      astro: 5.14.4(@types/node@24.7.2)(rollup@4.52.4)(typescript@5.9.3)
+      astro: 5.14.5(@types/node@24.7.2)(rollup@4.52.4)(typescript@5.9.3)
       rehype-expressive-code: 0.41.3
 
-  astro@5.14.4(@types/node@24.7.2)(rollup@4.52.4)(typescript@5.9.3):
+  astro@5.14.5(@types/node@24.7.2)(rollup@4.52.4)(typescript@5.9.3):
     dependencies:
       '@astrojs/compiler': 2.13.0
       '@astrojs/internal-helpers': 0.7.4
@@ -2564,8 +2564,8 @@ snapshots:
       unist-util-visit: 5.0.0
       unstorage: 1.17.1
       vfile: 6.0.3
-      vite: 6.3.6(@types/node@24.7.2)
-      vitefu: 1.1.1(vite@6.3.6(@types/node@24.7.2))
+      vite: 6.3.7(@types/node@24.7.2)
+      vitefu: 1.1.1(vite@6.3.7(@types/node@24.7.2))
       xxhash-wasm: 1.1.0
       yargs-parser: 21.1.1
       yocto-spinner: 0.2.3
@@ -2727,7 +2727,7 @@ snapshots:
 
   dset@3.1.4: {}
 
-  emoji-regex@10.5.0: {}
+  emoji-regex@10.6.0: {}
 
   emoji-regex@8.0.0: {}
 
@@ -3979,7 +3979,7 @@ snapshots:
 
   string-width@7.2.0:
     dependencies:
-      emoji-regex: 10.5.0
+      emoji-regex: 10.6.0
       get-east-asian-width: 1.4.0
       strip-ansi: 7.1.2
 
@@ -4135,7 +4135,7 @@ snapshots:
       '@types/unist': 3.0.3
       vfile-message: 4.0.3
 
-  vite@6.3.6(@types/node@24.7.2):
+  vite@6.3.7(@types/node@24.7.2):
     dependencies:
       esbuild: 0.25.10
       fdir: 6.5.0(picomatch@4.0.3)
@@ -4147,9 +4147,9 @@ snapshots:
       '@types/node': 24.7.2
       fsevents: 2.3.3
 
-  vitefu@1.1.1(vite@6.3.6(@types/node@24.7.2)):
+  vitefu@1.1.1(vite@6.3.7(@types/node@24.7.2)):
     optionalDependencies:
-      vite: 6.3.6(@types/node@24.7.2)
+      vite: 6.3.7(@types/node@24.7.2)
 
   web-namespaces@2.0.1: {}
 
