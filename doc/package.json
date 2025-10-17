@@ -22,7 +22,7 @@
   "devDependencies": {
     "@biomejs/biome": "^2.2.6",
     "@raviqqe/biome-config": "^2.0.18",
-    "@types/node": "^24.8.0",
+    "@types/node": "^24.8.1",
     "sharp": "^0.34.4",
     "typescript": "^5.9.3"
   },
