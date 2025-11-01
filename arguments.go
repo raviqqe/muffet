@@ -3,8 +3,10 @@ package main
 import (
 	"bytes"
 	"errors"
+	"fmt"
 	"net/http"
 	"regexp"
+	"runtime"
 	"strings"
 
 	"github.com/jessevdk/go-flags"
@@ -21,6 +23,7 @@ type arguments struct {
 	FollowRobotsTxt        bool     `long:"follow-robots-txt" description:"Follow robots.txt when scraping pages"`
 	FollowSitemapXML       bool     `long:"follow-sitemap-xml" description:"Scrape only pages listed in sitemap.xml (deprecated)"`
 	RawHeaders             []string `long:"header" value-name:"<header>..." description:"Custom headers"`
+	DropUserAgent          bool     `long:"drop-user-agent" description:"Do not send a User-Agent header, even if manually specified"`
 	// TODO Remove a short option.
 	IgnoreFragments bool   `short:"f" long:"ignore-fragments" description:"Ignore URL fragments"`
 	MaxRetries      uint   `long:"max-retries" value-name:"<count>" default:"0" description:"Maximum retry count for network errors"`
@@ -75,7 +78,7 @@ func getArguments(ss []string) (*arguments, error) {
 		return nil, err
 	}
 
-	args.Header, err = parseHeaders(args.RawHeaders)
+	args.Header, err = parseHeaders(args.RawHeaders, args.DropUserAgent)
 	if err != nil {
 		return nil, err
 	}
@@ -120,8 +123,12 @@ func compileRegexps(regexps []string) ([]*regexp.Regexp, error) {
 	return rs, nil
 }
 
-func parseHeaders(headers []string) (http.Header, error) {
-	h := make(http.Header, len(headers))
+func parseHeaders(headers []string, dropUserAgent bool) (http.Header, error) {
+	h := make(http.Header, len(headers) + 1) // +1: default User-Agent
+	uaHeaderName := "User-Agent"
+
+	// Add a default User-Agent
+	h.Add(uaHeaderName, fmt.Sprintf("%s/%s (%s; %s)", agentName, version, getOSName(), runtime.GOARCH))
 
 	for _, s := range headers {
 		i := strings.IndexRune(s, ':')
@@ -133,6 +140,15 @@ func parseHeaders(headers []string) (http.Header, error) {
 		h.Add(s[:i], strings.TrimSpace(s[i+1:]))
 	}
 
+	if dropUserAgent {
+		target := strings.ToLower(uaHeaderName)
+		for k := range h {
+			if strings.ToLower(k) == target {
+				delete(h, k)
+			}
+		}
+	}
+
 	return h, nil
 }
 
@@ -142,5 +158,30 @@ func reconcileDeprecatedArguments(args *arguments) {
 		args.Verbose = args.Verbose || args.VerboseJSON
 	} else if args.JUnitOutput {
 		args.Format = "junit"
+	}
+}
+
+func getOSName() string {
+	switch os := strings.ToLower(runtime.GOOS); os {
+	case "android":
+		return "Android"
+	case "darwin":
+		return "macOS"
+	case "dragonfly":
+		return "DragonFly BSD"
+	case "freebsd":
+		return "FreeBSD"
+	case "linux":
+		return "Linux"
+	case "netbsd":
+		return "NetBSD"
+	case "openbsd":
+		return "OpenBSD"
+	case "solaris":
+		return "Solaris"
+	case "windows":
+		return "Windows"
+	default:
+		return os
 	}
 }
