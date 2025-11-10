@@ -10,7 +10,7 @@ jobs:
     steps:
       - uses: actions/checkout@v5
       - run: go build
-      - uses: golangci/golangci-lint-action@v8
+      - uses: golangci/golangci-lint-action@v9
       - run: go test -race -covermode atomic -coverprofile coverage.txt
       - uses: codecov/codecov-action@v5
   docker_test:
