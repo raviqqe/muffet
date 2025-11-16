@@ -159,6 +159,7 @@ func TestLinkFinderFindEmbeddedImageInSrcSet(t *testing.T) {
 	assert.Nil(t, err)
 
 	n, err := html.Parse(strings.NewReader(
+		// spell-checker: disable-next-line
 		htmlWithBody(`<source srcset="data:svg+xml,%3Csvg%3E%3C%2Fsvg%3E, http://foo.com/foo.png" />`)),
 	)
 	assert.Nil(t, err)
