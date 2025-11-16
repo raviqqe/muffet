@@ -154,6 +154,23 @@ func TestLinkFinderFindMultipleLinksInSrcSet(t *testing.T) {
 	assert.Nil(t, err)
 }
 
+func TestLinkFinderFindEmbeddedImageInSrcSet(t *testing.T) {
+	b, err := url.Parse("http://foo.com")
+	assert.Nil(t, err)
+
+	n, err := html.Parse(strings.NewReader(
+		// spell-checker: disable-next-line
+		htmlWithBody(`<source srcset="data:svg+xml,%3Csvg%3E%3C%2Fsvg%3E, http://foo.com/foo.png" />`)),
+	)
+	assert.Nil(t, err)
+
+	ls := newTestLinkFinder().Find(n, b)
+
+	err, ok := ls["http://foo.com/foo.png"]
+	assert.True(t, ok)
+	assert.Nil(t, err)
+}
+
 func TestLinkFinderFindMultipleLinksInSrcSetWithDescriptors(t *testing.T) {
 	b, err := url.Parse("http://foo.com")
 	assert.Nil(t, err)
