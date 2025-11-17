@@ -17,7 +17,7 @@
     "@astrojs/sitemap": "^3.6.0",
     "@astrojs/starlight": "^0.36.2",
     "astro": "^5.15.6",
-    "es-toolkit": "^1.41.0"
+    "es-toolkit": "^1.42.0"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.3.5",
