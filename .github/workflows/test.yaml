@@ -8,7 +8,7 @@ jobs:
   go_test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - run: go build
       - uses: golangci/golangci-lint-action@v9
       - run: go test -race -covermode atomic -coverprofile coverage.txt
@@ -16,21 +16,21 @@ jobs:
   docker_test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - uses: docker/setup-buildx-action@v3
       - run: docker build -t muffet .
       - run: docker run muffet --verbose --buffer-size 8192 https://raviqqe.github.io/muffet
   spell_check:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - uses: streetsidesoftware/cspell-action@v8
         with:
           files: "**/*.{md,go}"
   readme:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - uses: raviqqe/markdown-link-check@main
   test:
     needs:
