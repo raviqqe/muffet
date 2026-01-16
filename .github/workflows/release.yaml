@@ -37,10 +37,10 @@ jobs:
             ${{ steps.metadata.outputs.repository }}:latest
             ${{ steps.metadata.outputs.version && format('{0}:{1}', steps.metadata.outputs.repository, steps.metadata.outputs.version) || '' }}
       # spell-checker: disable-next-line
-      - uses: peter-evans/dockerhub-description@v5.0.0
+      - uses: peter-evans/dockerhub-description@1b9a80c056b620d92cedb9d9b5a223409c68ddfa # v5.0.0
         with:
-          username: ${{ vars.DOCKER_USER }}
-          password: ${{ secrets.DOCKER_TOKEN }}
+          username: ${{ vars.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_ACCESS_TOKEN }}
           repository: ${{ steps.metadata.outputs.repository }}
           short-description: The miniature, embeddable R7RS Scheme implementation
         if: github.ref == 'refs/heads/main'
