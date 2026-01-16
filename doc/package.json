@@ -14,7 +14,7 @@
     "format": "biome format --write ."
   },
   "dependencies": {
-    "@astrojs/sitemap": "^3.6.1",
+    "@astrojs/sitemap": "^3.7.0",
     "@astrojs/starlight": "^0.37.3",
     "astro": "^5.16.9",
     "es-toolkit": "^1.44.0"
