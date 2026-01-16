@@ -33,17 +33,21 @@ jobs:
           username: ${{ vars.DOCKER_USER }}
           password: ${{ secrets.DOCKER_TOKEN }}
         if: ${{ github.ref == 'refs/heads/main' }}
+      - id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: raviqqe/muffet
       - uses: docker/build-push-action@v6
         with:
           platforms: linux/386,linux/amd64,linux/arm,linux/arm64
           push: ${{ github.ref == 'refs/heads/main' }}
-          tags: ${{ steps.metadata.outputs.tags }}
+          tags: ${{ steps.meta.outputs.tags }}
       # spell-checker: disable-next-line
       - uses: peter-evans/dockerhub-description@1b9a80c056b620d92cedb9d9b5a223409c68ddfa # v5.0.0
         with:
           username: ${{ vars.DOCKER_USER }}
           password: ${{ secrets.DOCKER_TOKEN }}
-          repository: ${{ steps.metadata.outputs.repository }}
+          repository: ${{ steps.meta.outputs.repository }}
           short-description: Fast website link checker in Go
         if: github.ref == 'refs/heads/main'
   release:
