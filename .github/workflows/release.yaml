@@ -37,7 +37,7 @@ jobs:
       - id: meta
         run: |
           (
-            echo repository=${{ vars.DOCKER_USER || 'test' }}/${{ matrix.image.binary }}
+            echo repository=${{ vars.DOCKER_USER || 'test' }}/muffet
             echo version=$(git tag --points-at | sed s/^v//)
           ) >> ${{ github.output }}
       - uses: docker/build-push-action@v6
