@@ -22,6 +22,7 @@ jobs:
   docker_release:
     needs: go_release
     runs-on: ubuntu-latest
+    environment: ${{ github.ref == 'refs/heads/main' && 'release' || '' }}
     steps:
       - uses: actions/checkout@v6
         with:
