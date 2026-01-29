@@ -13,10 +13,10 @@ importers:
         version: 3.7.0
       '@astrojs/starlight':
         specifier: ^0.37.4
-        version: 0.37.4(astro@5.16.16(@types/node@25.1.0)(rollup@4.57.0)(typescript@5.9.3))
+        version: 0.37.4(astro@5.17.0(@types/node@25.1.0)(rollup@4.57.0)(typescript@5.9.3))
       astro:
-        specifier: ^5.16.16
-        version: 5.16.16(@types/node@25.1.0)(rollup@4.57.0)(typescript@5.9.3)
+        specifier: ^5.17.0
+        version: 5.17.0(@types/node@25.1.0)(rollup@4.57.0)(typescript@5.9.3)
       es-toolkit:
         specifier: ^1.44.0
         version: 1.44.0
@@ -759,8 +759,8 @@ packages:
     peerDependencies:
       astro: ^4.0.0-beta || ^5.0.0-beta || ^3.3.0 || ^6.0.0-beta
 
-  astro@5.16.16:
-    resolution: {integrity: sha512-MFlFvQ84ixaHyqB3uGwMhNHdBLZ3vHawyq3PqzQS2TNWiNfQrxp5ag6S3lX+Cvnh0MUcXX+UnJBPMBHjP1/1ZQ==}
+  astro@5.17.0:
+    resolution: {integrity: sha512-6ltLRcs2WrVBMEcgHLntabSdJqz+z2PxzCS2Iw20g60y6hP2AXVn53Y7PCCIprMHsGXEkk1h+PoTkgKp4dDugA==}
     engines: {node: 18.20.8 || ^20.3.0 || >=22.0.0, npm: '>=9.6.5', pnpm: '>=7.1.0'}
     hasBin: true
 
@@ -1926,12 +1926,12 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@astrojs/mdx@4.3.13(astro@5.16.16(@types/node@25.1.0)(rollup@4.57.0)(typescript@5.9.3))':
+  '@astrojs/mdx@4.3.13(astro@5.17.0(@types/node@25.1.0)(rollup@4.57.0)(typescript@5.9.3))':
     dependencies:
       '@astrojs/markdown-remark': 6.3.10
       '@mdx-js/mdx': 3.1.1
       acorn: 8.15.0
-      astro: 5.16.16(@types/node@25.1.0)(rollup@4.57.0)(typescript@5.9.3)
+      astro: 5.17.0(@types/node@25.1.0)(rollup@4.57.0)(typescript@5.9.3)
       es-module-lexer: 1.7.0
       estree-util-visit: 2.0.0
       hast-util-to-html: 9.0.5
@@ -1955,17 +1955,17 @@ snapshots:
       stream-replace-string: 2.0.0
       zod: 3.25.76
 
-  '@astrojs/starlight@0.37.4(astro@5.16.16(@types/node@25.1.0)(rollup@4.57.0)(typescript@5.9.3))':
+  '@astrojs/starlight@0.37.4(astro@5.17.0(@types/node@25.1.0)(rollup@4.57.0)(typescript@5.9.3))':
     dependencies:
       '@astrojs/markdown-remark': 6.3.10
-      '@astrojs/mdx': 4.3.13(astro@5.16.16(@types/node@25.1.0)(rollup@4.57.0)(typescript@5.9.3))
+      '@astrojs/mdx': 4.3.13(astro@5.17.0(@types/node@25.1.0)(rollup@4.57.0)(typescript@5.9.3))
       '@astrojs/sitemap': 3.7.0
       '@pagefind/default-ui': 1.4.0
       '@types/hast': 3.0.4
       '@types/js-yaml': 4.0.9
       '@types/mdast': 4.0.4
-      astro: 5.16.16(@types/node@25.1.0)(rollup@4.57.0)(typescript@5.9.3)
-      astro-expressive-code: 0.41.6(astro@5.16.16(@types/node@25.1.0)(rollup@4.57.0)(typescript@5.9.3))
+      astro: 5.17.0(@types/node@25.1.0)(rollup@4.57.0)(typescript@5.9.3)
+      astro-expressive-code: 0.41.6(astro@5.17.0(@types/node@25.1.0)(rollup@4.57.0)(typescript@5.9.3))
       bcp-47: 2.1.0
       hast-util-from-html: 2.0.3
       hast-util-select: 6.0.4
@@ -2510,12 +2510,12 @@ snapshots:
 
   astring@1.9.0: {}
 
-  astro-expressive-code@0.41.6(astro@5.16.16(@types/node@25.1.0)(rollup@4.57.0)(typescript@5.9.3)):
+  astro-expressive-code@0.41.6(astro@5.17.0(@types/node@25.1.0)(rollup@4.57.0)(typescript@5.9.3)):
     dependencies:
-      astro: 5.16.16(@types/node@25.1.0)(rollup@4.57.0)(typescript@5.9.3)
+      astro: 5.17.0(@types/node@25.1.0)(rollup@4.57.0)(typescript@5.9.3)
       rehype-expressive-code: 0.41.6
 
-  astro@5.16.16(@types/node@25.1.0)(rollup@4.57.0)(typescript@5.9.3):
+  astro@5.17.0(@types/node@25.1.0)(rollup@4.57.0)(typescript@5.9.3):
     dependencies:
       '@astrojs/compiler': 2.13.0
       '@astrojs/internal-helpers': 0.7.5
