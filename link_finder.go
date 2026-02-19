@@ -83,7 +83,7 @@ func (f linkFinder) parseLinks(n *html.Node, a string) []string {
 
 	switch a {
 	case "srcset":
-		for _, s := range strings.Split(s, ",") {
+		for s := range strings.SplitSeq(s, ", ") {
 			ss = append(ss, f.trimUrl(imageDescriptorPattern.ReplaceAllString(s, "$1")))
 		}
 	case "content":
