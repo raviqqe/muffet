@@ -1,8 +1,6 @@
 module github.com/raviqqe/muffet/v2
 
-go 1.24.0
-
-toolchain go1.24.1
+go 1.25.0
 
 require (
 	github.com/andybalholm/brotli v1.2.0
@@ -18,7 +16,7 @@ require (
 	github.com/valyala/fasthttp v1.69.0
 	github.com/yhat/scrape v0.0.0-20161128144610-24b7890b0945
 	go.uber.org/ratelimit v0.3.1
-	golang.org/x/net v0.50.0
+	golang.org/x/net v0.51.0
 )
 
 require (
