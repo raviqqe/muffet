@@ -12,6 +12,7 @@
     "fasthttp",
     "fasthttp",
     "fasthttpproxy",
+    "gomod",
     "goreleaser",
     "iframe",
     "isatty",

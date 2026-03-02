@@ -1,4 +1,4 @@
-FROM golang AS build
+FROM golang:1.26.0 AS build
 ADD . /app
 WORKDIR /app
 RUN CGO_ENABLED=0 GOOS=linux go install .
