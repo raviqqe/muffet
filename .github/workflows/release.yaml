@@ -40,7 +40,7 @@ jobs:
             echo repository=${{ secrets.DOCKER_USER || 'test' }}/muffet
             echo version=$(git tag --points-at | sed s/^v//)
           ) >> ${{ github.output }}
-      - uses: docker/build-push-action@v6
+      - uses: docker/build-push-action@v7
         with:
           platforms: linux/386,linux/amd64,linux/arm,linux/arm64,linux/riscv64
           push: ${{ github.ref == 'refs/heads/main' }}
