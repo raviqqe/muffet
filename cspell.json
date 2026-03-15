@@ -11,7 +11,6 @@
     "cupaloy",
     "errcheck",
     "fasthttp",
-    "fasthttp",
     "fasthttpproxy",
     "golangci",
     "gomod",
