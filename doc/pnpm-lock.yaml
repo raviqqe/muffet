@@ -13,10 +13,10 @@ importers:
         version: 3.7.2
       '@astrojs/starlight':
         specifier: ^0.37.7
-        version: 0.37.7(astro@5.18.1(@types/node@25.5.0)(rollup@4.59.0)(typescript@5.9.3))
+        version: 0.37.7(astro@5.18.1(@types/node@25.5.2)(rollup@4.59.0)(typescript@5.9.3))
       astro:
         specifier: ^5.18.1
-        version: 5.18.1(@types/node@25.5.0)(rollup@4.59.0)(typescript@5.9.3)
+        version: 5.18.1(@types/node@25.5.2)(rollup@4.59.0)(typescript@5.9.3)
       es-toolkit:
         specifier: ^1.45.1
         version: 1.45.1
@@ -28,8 +28,8 @@ importers:
         specifier: ^2.0.24
         version: 2.0.24(@biomejs/biome@2.4.10)
       '@types/node':
-        specifier: ^25.5.0
-        version: 25.5.0
+        specifier: ^25.5.2
+        version: 25.5.2
       sharp:
         specifier: ^0.34.5
         version: 0.34.5
@@ -885,11 +885,11 @@ packages:
   '@types/nlcst@2.0.3':
     resolution: {integrity: sha512-vSYNSDe6Ix3q+6Z7ri9lyWqgGhJTmzRjZRqyq15N0Z/1/UnVsno9G/N40NBijoYx2seFDIl0+B2mgAb9mezUCA==}
 
-  '@types/node@24.12.0':
-    resolution: {integrity: sha512-GYDxsZi3ChgmckRT9HPU0WEhKLP08ev/Yfcq2AstjrDASOYCSXeyjDsHg4v5t4jOj7cyDX3vmprafKlWIG9MXQ==}
+  '@types/node@24.12.2':
+    resolution: {integrity: sha512-A1sre26ke7HDIuY/M23nd9gfB+nrmhtYyMINbjI1zHJxYteKR6qSMX56FsmjMcDb3SMcjJg5BiRRgOCC/yBD0g==}
 
-  '@types/node@25.5.0':
-    resolution: {integrity: sha512-jp2P3tQMSxWugkCUKLRPVUpGaL5MVFwF8RDuSRztfwgN1wmqJeMSbKlnEtQqU8UrhTmzEmZdu2I6v2dpp7XIxw==}
+  '@types/node@25.5.2':
+    resolution: {integrity: sha512-tO4ZIRKNC+MDWV4qKVZe3Ql/woTnmHDr5JD8UI5hn2pwBrHEwOEMZK7WlNb5RKB6EoJ02gwmQS9OrjuFnZYdpg==}
 
   '@types/sax@1.2.7':
     resolution: {integrity: sha512-rO73L89PJxeYM3s3pPPjiPgVVcymqU490g0YO5n5By0k2Erzj6tay/4lr1CHAAU4JyOWd1rpQ8bCf6cZfHU96A==}
@@ -2169,12 +2169,12 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@astrojs/mdx@4.3.13(astro@5.18.1(@types/node@25.5.0)(rollup@4.59.0)(typescript@5.9.3))':
+  '@astrojs/mdx@4.3.13(astro@5.18.1(@types/node@25.5.2)(rollup@4.59.0)(typescript@5.9.3))':
     dependencies:
       '@astrojs/markdown-remark': 6.3.10
       '@mdx-js/mdx': 3.1.1
       acorn: 8.16.0
-      astro: 5.18.1(@types/node@25.5.0)(rollup@4.59.0)(typescript@5.9.3)
+      astro: 5.18.1(@types/node@25.5.2)(rollup@4.59.0)(typescript@5.9.3)
       es-module-lexer: 1.7.0
       estree-util-visit: 2.0.0
       hast-util-to-html: 9.0.5
@@ -2198,17 +2198,17 @@ snapshots:
       stream-replace-string: 2.0.0
       zod: 4.3.6
 
-  '@astrojs/starlight@0.37.7(astro@5.18.1(@types/node@25.5.0)(rollup@4.59.0)(typescript@5.9.3))':
+  '@astrojs/starlight@0.37.7(astro@5.18.1(@types/node@25.5.2)(rollup@4.59.0)(typescript@5.9.3))':
     dependencies:
       '@astrojs/markdown-remark': 6.3.10
-      '@astrojs/mdx': 4.3.13(astro@5.18.1(@types/node@25.5.0)(rollup@4.59.0)(typescript@5.9.3))
+      '@astrojs/mdx': 4.3.13(astro@5.18.1(@types/node@25.5.2)(rollup@4.59.0)(typescript@5.9.3))
       '@astrojs/sitemap': 3.7.2
       '@pagefind/default-ui': 1.4.0
       '@types/hast': 3.0.4
       '@types/js-yaml': 4.0.9
       '@types/mdast': 4.0.4
-      astro: 5.18.1(@types/node@25.5.0)(rollup@4.59.0)(typescript@5.9.3)
-      astro-expressive-code: 0.41.7(astro@5.18.1(@types/node@25.5.0)(rollup@4.59.0)(typescript@5.9.3))
+      astro: 5.18.1(@types/node@25.5.2)(rollup@4.59.0)(typescript@5.9.3)
+      astro-expressive-code: 0.41.7(astro@5.18.1(@types/node@25.5.2)(rollup@4.59.0)(typescript@5.9.3))
       bcp-47: 2.1.0
       hast-util-from-html: 2.0.3
       hast-util-select: 6.0.4
@@ -2784,17 +2784,17 @@ snapshots:
     dependencies:
       '@types/unist': 3.0.3
 
-  '@types/node@24.12.0':
+  '@types/node@24.12.2':
     dependencies:
       undici-types: 7.16.0
 
-  '@types/node@25.5.0':
+  '@types/node@25.5.2':
     dependencies:
       undici-types: 7.18.2
 
   '@types/sax@1.2.7':
     dependencies:
-      '@types/node': 25.5.0
+      '@types/node': 25.5.2
 
   '@types/unist@2.0.11': {}
 
@@ -2833,12 +2833,12 @@ snapshots:
 
   astring@1.9.0: {}
 
-  astro-expressive-code@0.41.7(astro@5.18.1(@types/node@25.5.0)(rollup@4.59.0)(typescript@5.9.3)):
+  astro-expressive-code@0.41.7(astro@5.18.1(@types/node@25.5.2)(rollup@4.59.0)(typescript@5.9.3)):
     dependencies:
-      astro: 5.18.1(@types/node@25.5.0)(rollup@4.59.0)(typescript@5.9.3)
+      astro: 5.18.1(@types/node@25.5.2)(rollup@4.59.0)(typescript@5.9.3)
       rehype-expressive-code: 0.41.7
 
-  astro@5.18.1(@types/node@25.5.0)(rollup@4.59.0)(typescript@5.9.3):
+  astro@5.18.1(@types/node@25.5.2)(rollup@4.59.0)(typescript@5.9.3):
     dependencies:
       '@astrojs/compiler': 2.13.1
       '@astrojs/internal-helpers': 0.7.6
@@ -2895,8 +2895,8 @@ snapshots:
       unist-util-visit: 5.1.0
       unstorage: 1.17.4
       vfile: 6.0.3
-      vite: 6.4.1(@types/node@25.5.0)
-      vitefu: 1.1.2(vite@6.4.1(@types/node@25.5.0))
+      vite: 6.4.1(@types/node@25.5.2)
+      vitefu: 1.1.2(vite@6.4.1(@types/node@25.5.2))
       xxhash-wasm: 1.1.0
       yargs-parser: 21.1.1
       yocto-spinner: 0.2.3
@@ -4339,7 +4339,7 @@ snapshots:
 
   sitemap@9.0.1:
     dependencies:
-      '@types/node': 24.12.0
+      '@types/node': 24.12.2
       '@types/sax': 1.2.7
       arg: 5.0.2
       sax: 1.6.0
@@ -4521,7 +4521,7 @@ snapshots:
       '@types/unist': 3.0.3
       vfile-message: 4.0.3
 
-  vite@6.4.1(@types/node@25.5.0):
+  vite@6.4.1(@types/node@25.5.2):
     dependencies:
       esbuild: 0.25.12
       fdir: 6.5.0(picomatch@4.0.4)
@@ -4530,12 +4530,12 @@ snapshots:
       rollup: 4.59.0
       tinyglobby: 0.2.15
     optionalDependencies:
-      '@types/node': 25.5.0
+      '@types/node': 25.5.2
       fsevents: 2.3.3
 
-  vitefu@1.1.2(vite@6.4.1(@types/node@25.5.0)):
+  vitefu@1.1.2(vite@6.4.1(@types/node@25.5.2)):
     optionalDependencies:
-      vite: 6.4.1(@types/node@25.5.0)
+      vite: 6.4.1(@types/node@25.5.2)
 
   web-namespaces@2.0.1: {}
 
