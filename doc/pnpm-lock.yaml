@@ -2007,8 +2007,8 @@ packages:
   vfile@6.0.3:
     resolution: {integrity: sha512-KzIbH/9tXat2u30jf+smMwFCsno4wHVdNmzFyL+T/L3UGqqk6JKfVqOFOZEpZSHADH1k40ab6NUIXZq422ov3Q==}
 
-  vite@6.4.1:
-    resolution: {integrity: sha512-+Oxm7q9hDoLMyJOYfUYBuHQo+dkAloi33apOPP56pzj+vsdJDzr+j1NISE5pyaAuKL4A3UD34qd0lx5+kfKp2g==}
+  vite@6.4.2:
+    resolution: {integrity: sha512-2N/55r4JDJ4gdrCvGgINMy+HH3iRpNIz8K6SFwVsA+JbQScLiC+clmAxBgwiSPgcG9U15QmvqCGWzMbqda5zGQ==}
     engines: {node: ^18.0.0 || ^20.0.0 || >=22.0.0}
     hasBin: true
     peerDependencies:
@@ -2895,8 +2895,8 @@ snapshots:
       unist-util-visit: 5.1.0
       unstorage: 1.17.4
       vfile: 6.0.3
-      vite: 6.4.1(@types/node@25.5.2)
-      vitefu: 1.1.2(vite@6.4.1(@types/node@25.5.2))
+      vite: 6.4.2(@types/node@25.5.2)
+      vitefu: 1.1.2(vite@6.4.2(@types/node@25.5.2))
       xxhash-wasm: 1.1.0
       yargs-parser: 21.1.1
       yocto-spinner: 0.2.3
@@ -4521,7 +4521,7 @@ snapshots:
       '@types/unist': 3.0.3
       vfile-message: 4.0.3
 
-  vite@6.4.1(@types/node@25.5.2):
+  vite@6.4.2(@types/node@25.5.2):
     dependencies:
       esbuild: 0.25.12
       fdir: 6.5.0(picomatch@4.0.4)
@@ -4533,9 +4533,9 @@ snapshots:
       '@types/node': 25.5.2
       fsevents: 2.3.3
 
-  vitefu@1.1.2(vite@6.4.1(@types/node@25.5.2)):
+  vitefu@1.1.2(vite@6.4.2(@types/node@25.5.2)):
     optionalDependencies:
-      vite: 6.4.1(@types/node@25.5.2)
+      vite: 6.4.2(@types/node@25.5.2)
 
   web-namespaces@2.0.1: {}
 
