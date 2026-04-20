@@ -5,7 +5,7 @@ go 1.25.0
 require (
 	github.com/andybalholm/brotli v1.2.1
 	github.com/bradleyjkemp/cupaloy v2.3.0+incompatible
-	github.com/breml/rootcerts v0.3.4
+	github.com/breml/rootcerts v0.3.5
 	github.com/jessevdk/go-flags v1.6.1
 	github.com/logrusorgru/aurora/v3 v3.0.0
 	github.com/mattn/go-colorable v0.1.14
