@@ -16,3 +16,8 @@ updates:
     directory: /doc
     schedule:
       interval: daily
+    groups:
+      astro:
+        patterns:
+          - astro
+          - "@astrojs/*"
