@@ -3,7 +3,7 @@ package main
 import "time"
 
 const (
-	version           = "2.11.2"
+	version           = "2.11.3"
 	agentName         = "muffet"
 	concurrency       = 1024
 	tcpTimeout        = 5 * time.Second
