@@ -21,7 +21,7 @@
     "@raviqqe/biome-config": "^2.0.26",
     "@types/node": "^25.6.0",
     "sharp": "^0.34.5",
-    "typescript": "^5.9.3"
+    "typescript": "^6.0.3"
   },
   "engines": {
     "node": ">=25.6.1"
