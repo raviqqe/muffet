@@ -12,8 +12,8 @@
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.2",
-    "@astrojs/starlight": "^0.39.0",
-    "astro": "^6.3.0",
+    "@astrojs/starlight": "^0.39.1",
+    "astro": "^6.3.1",
     "es-toolkit": "^1.46.1"
   },
   "devDependencies": {
