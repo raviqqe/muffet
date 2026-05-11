@@ -12,7 +12,7 @@
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.2",
-    "@astrojs/starlight": "^0.39.1",
+    "@astrojs/starlight": "^0.39.2",
     "astro": "^6.3.1",
     "es-toolkit": "^1.46.1"
   },
