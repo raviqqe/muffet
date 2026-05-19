@@ -12,7 +12,7 @@ jobs:
       - run: go build
       - uses: golangci/golangci-lint-action@1e7e51e771db61008b38414a730f564565cf7c20 # v9.2.0
       - run: go test -race -covermode atomic -coverprofile coverage.txt
-      - uses: codecov/codecov-action@57e3a136b779b570ffcdbf80b3bdc90e7fab3de2 # v6.0.0
+      - uses: codecov/codecov-action@e79a6962e0d4c0c17b229090214935d2e33f8354 # v6.0.1
   docker_test:
     runs-on: ubuntu-latest
     steps:
