@@ -191,6 +191,57 @@ func TestLinkFinderFindMultipleLinksInSrcSetWithDescriptors(t *testing.T) {
 	assert.Nil(t, err)
 }
 
+func TestLinkFinderFindLinksInMultilineSrcSet(t *testing.T) {
+	b, err := url.Parse("http://foo.com")
+	assert.Nil(t, err)
+
+	n, err := html.Parse(strings.NewReader(
+		htmlWithBody(`<source srcset="foo.png 100w,
+			bar.png 200w" />`)),
+	)
+	assert.Nil(t, err)
+
+	ls := newTestLinkFinder().Find(n, b)
+
+	err, ok := ls["http://foo.com/foo.png"]
+	assert.True(t, ok)
+	assert.Nil(t, err)
+
+	err, ok = ls["http://foo.com/bar.png"]
+	assert.True(t, ok)
+	assert.Nil(t, err)
+
+	assert.Len(t, ls, 2)
+}
+
+func TestParseSrcSet(t *testing.T) {
+	for _, c := range []struct {
+		input string
+		urls  []string
+	}{
+		{"", []string{}},
+		{"foo.png", []string{"foo.png"}},
+		{"  foo.png  ", []string{"foo.png"}},
+		{"foo.png,", []string{"foo.png"}},
+		{"foo.png, bar.png", []string{"foo.png", "bar.png"}},
+		{"foo.png 100w, bar.png 200w", []string{"foo.png", "bar.png"}},
+		{"foo.png\t2x", []string{"foo.png"}},
+		{"foo.png, , bar.png", []string{"foo.png", "bar.png"}},
+		{
+			"foo.png 100w,\n\t\t\tbar.png 200w",
+			[]string{"foo.png", "bar.png"},
+		},
+		{
+			// spell-checker: disable-next-line
+			"data:svg+xml,%3Csvg%3E%3C%2Fsvg%3E, http://foo.com/foo.png",
+			// spell-checker: disable-next-line
+			[]string{"data:svg+xml,%3Csvg%3E%3C%2Fsvg%3E", "http://foo.com/foo.png"},
+		},
+	} {
+		assert.Equal(t, c.urls, parseSrcSet(c.input))
+	}
+}
+
 func TestLinkFinderFindMetaTags(t *testing.T) {
 	b, err := url.Parse("http://foo.com")
 	assert.Nil(t, err)
