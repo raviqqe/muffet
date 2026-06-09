@@ -191,6 +191,27 @@ func TestLinkFinderFindMultipleLinksInSrcSetWithDescriptors(t *testing.T) {
 	assert.Nil(t, err)
 }
 
+func TestLinkFinderFindLinksInMultilineSrcSet(t *testing.T) {
+	b, err := url.Parse("http://foo.com")
+	assert.Nil(t, err)
+
+	for _, srcset := range []string{
+		"foo.png 100w,\n            bar.png 200w",
+		"foo.png 100w,\n\t\t\tbar.png 200w",
+		"foo.png 100w,    bar.png 200w",
+	} {
+		n, err := html.Parse(strings.NewReader(
+			htmlWithBody(fmt.Sprintf(`<source srcset="%s" />`, srcset))),
+		)
+		assert.Nil(t, err)
+
+		assert.Equal(t, map[string]error{
+			"http://foo.com/foo.png": nil,
+			"http://foo.com/bar.png": nil,
+		}, newTestLinkFinder().Find(n, b))
+	}
+}
+
 func TestLinkFinderFindMetaTags(t *testing.T) {
 	b, err := url.Parse("http://foo.com")
 	assert.Nil(t, err)

@@ -1,5 +1,3 @@
-ignoredBuiltDependencies:
-  - esbuild
-
-onlyBuiltDependencies:
-  - sharp
+allowBuilds:
+  esbuild: false
+  sharp: false

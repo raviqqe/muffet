@@ -25,6 +25,8 @@ var atomToAttributes = map[atom.Atom][]string{
 
 var imageDescriptorPattern = regexp.MustCompile(`(\S)\s+\S+\s*$`)
 
+var srcSetSeparatorPattern = regexp.MustCompile(`,\s+`)
+
 type linkFinder struct {
 	linkFilterer linkFilterer
 }
@@ -83,7 +85,7 @@ func (f linkFinder) parseLinks(n *html.Node, a string) []string {
 
 	switch a {
 	case "srcset":
-		for s := range strings.SplitSeq(s, ", ") {
+		for _, s := range srcSetSeparatorPattern.Split(s, -1) {
 			ss = append(ss, f.trimUrl(imageDescriptorPattern.ReplaceAllString(s, "$1")))
 		}
 	case "content":
