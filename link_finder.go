@@ -2,6 +2,7 @@ package main
 
 import (
 	"net/url"
+	"regexp"
 	"strings"
 	"unicode"
 
@@ -21,6 +22,10 @@ var atomToAttributes = map[atom.Atom][]string{
 	atom.Track:  {"src"},
 	atom.Meta:   {"content"},
 }
+
+var imageDescriptorPattern = regexp.MustCompile(`(\S)\s+\S+\s*$`)
+
+var srcSetSeparatorPattern = regexp.MustCompile(`,\s+`)
 
 type linkFinder struct {
 	linkFilterer linkFilterer
@@ -80,7 +85,9 @@ func (f linkFinder) parseLinks(n *html.Node, a string) []string {
 
 	switch a {
 	case "srcset":
-		ss = append(ss, parseSrcSet(s)...)
+		for _, s := range srcSetSeparatorPattern.Split(s, -1) {
+			ss = append(ss, f.trimUrl(imageDescriptorPattern.ReplaceAllString(s, "$1")))
+		}
 	case "content":
 		switch scrape.Attr(n, "property") {
 		case "og:image", "og:audio", "og:video", "og:image:url", "og:image:secure_url", "twitter:image":
@@ -91,62 +98,6 @@ func (f linkFinder) parseLinks(n *html.Node, a string) []string {
 	}
 
 	return ss
-}
-
-// parseSrcSet extracts the URLs of an image candidate list following the
-// syntax of the `srcset` attribute defined by the HTML specification. URLs are
-// separated by commas but may themselves contain commas, so each candidate is
-// a run of non-whitespace characters whose trailing comma, if any, acts as the
-// separator and whose optional descriptor is discarded.
-func parseSrcSet(s string) []string {
-	ss := []string{}
-
-	for i := 0; i < len(s); {
-		for i < len(s) && (isAsciiWhitespace(s[i]) || s[i] == ',') {
-			i++
-		}
-
-		start := i
-
-		for i < len(s) && !isAsciiWhitespace(s[i]) {
-			i++
-		}
-
-		if start == i {
-			continue
-		}
-
-		u := s[start:i]
-
-		if strings.HasSuffix(u, ",") {
-			ss = append(ss, strings.TrimRight(u, ","))
-			continue
-		}
-
-		ss = append(ss, u)
-
-		for depth := 0; i < len(s) && !(depth == 0 && s[i] == ','); i++ {
-			switch s[i] {
-			case '(':
-				depth++
-			case ')':
-				if depth > 0 {
-					depth--
-				}
-			}
-		}
-	}
-
-	return ss
-}
-
-func isAsciiWhitespace(b byte) bool {
-	switch b {
-	case '\t', '\n', '\f', '\r', ' ':
-		return true
-	}
-
-	return false
 }
 
 func (linkFinder) trimUrl(s string) string {
