@@ -20,7 +20,7 @@
     "@biomejs/biome": "^2.4.16",
     "@raviqqe/biome-config": "^2.0.26",
     "@types/node": "^26.0.0",
-    "sharp": "^0.34.5",
+    "sharp": "^0.35.2",
     "typescript": "^6.0.3"
   },
   "engines": {
