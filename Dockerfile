@@ -1,4 +1,4 @@
-FROM golang:1.26.5@sha256:d52df9c279840adf958d017ebb275651ed8338b953d39817bc3633a2e6b1bbcc AS build
+FROM golang:1.26.5@sha256:ae5a2316d12f3e78fd99177dad452e6ad4f240af2d71d57b480c3477f250fec6 AS build
 ADD . /app
 WORKDIR /app
 RUN CGO_ENABLED=0 GOOS=linux go install .
