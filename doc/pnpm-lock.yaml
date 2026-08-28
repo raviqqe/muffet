@@ -13,10 +13,10 @@ importers:
         version: 3.7.3
       '@astrojs/starlight':
         specifier: ^0.41.7
-        version: 0.41.7(@astrojs/markdown-remark@7.2.2)(astro@7.2.5(@emnapi/core@1.11.1)(@emnapi/runtime@1.11.1)(@types/node@26.2.0))(typescript@7.0.2)
+        version: 0.41.7(@astrojs/markdown-remark@7.2.2)(astro@7.2.5(@emnapi/core@1.11.1)(@emnapi/runtime@1.11.1)(@types/node@26.3.0))(typescript@7.0.2)
       astro:
         specifier: ^7.2.5
-        version: 7.2.5(@emnapi/core@1.11.1)(@emnapi/runtime@1.11.1)(@types/node@26.2.0)
+        version: 7.2.5(@emnapi/core@1.11.1)(@emnapi/runtime@1.11.1)(@types/node@26.3.0)
       es-toolkit:
         specifier: ^1.51.0
         version: 1.51.0
@@ -28,11 +28,11 @@ importers:
         specifier: ^2.0.27
         version: 2.0.27(@biomejs/biome@2.5.10)
       '@types/node':
-        specifier: ^26.2.0
-        version: 26.2.0
+        specifier: ^26.3.0
+        version: 26.3.0
       sharp:
         specifier: ^0.35.3
-        version: 0.35.3(@types/node@26.2.0)
+        version: 0.35.3(@types/node@26.3.0)
       typescript:
         specifier: ^7.0.2
         version: 7.0.2
@@ -909,8 +909,8 @@ packages:
   '@types/node@24.13.3':
     resolution: {integrity: sha512-Dh8vAsV36ig5wa9OX4pXvMc9D3Veibfw2wix0CUwYODLD8nkj9UsLjASr49nPg+2eKzxhBV+v7L8pXvT4e639Q==}
 
-  '@types/node@26.2.0':
-    resolution: {integrity: sha512-5IviulTZeRNp2vAJ514cc/HUlY5nZ9fCbq9DMyC52BrhFZACo3nI0R7qBxhQmo/d27NFe96ur/b7Wwxklda+kg==}
+  '@types/node@26.3.0':
+    resolution: {integrity: sha512-L3fgrnchriRC2ExBflb8j4uZZURHZfQsmQeyVzhjcHW4kkwVyo8/0h1B2MVzMTrYUJYu6G7EWs14hW/L9putqw==}
 
   '@types/sax@1.2.7':
     resolution: {integrity: sha512-rO73L89PJxeYM3s3pPPjiPgVVcymqU490g0YO5n5By0k2Erzj6tay/4lr1CHAAU4JyOWd1rpQ8bCf6cZfHU96A==}
@@ -2394,13 +2394,13 @@ snapshots:
       github-slugger: 2.0.0
       satteri: 0.10.5
 
-  '@astrojs/mdx@7.0.5(@astrojs/markdown-satteri@0.3.5)(astro@7.2.5(@emnapi/core@1.11.1)(@emnapi/runtime@1.11.1)(@types/node@26.2.0))':
+  '@astrojs/mdx@7.0.5(@astrojs/markdown-satteri@0.3.5)(astro@7.2.5(@emnapi/core@1.11.1)(@emnapi/runtime@1.11.1)(@types/node@26.3.0))':
     dependencies:
       '@astrojs/internal-helpers': 0.10.2
       '@astrojs/markdown-remark': 7.2.2
       '@mdx-js/mdx': 3.1.1
       acorn: 8.18.0
-      astro: 7.2.5(@emnapi/core@1.11.1)(@emnapi/runtime@1.11.1)(@types/node@26.2.0)
+      astro: 7.2.5(@emnapi/core@1.11.1)(@emnapi/runtime@1.11.1)(@types/node@26.3.0)
       es-module-lexer: 2.3.2
       estree-util-visit: 2.0.0
       hast-util-to-html: 9.0.5
@@ -2426,17 +2426,17 @@ snapshots:
       stream-replace-string: 2.0.0
       zod: 4.4.3
 
-  '@astrojs/starlight@0.41.7(@astrojs/markdown-remark@7.2.2)(astro@7.2.5(@emnapi/core@1.11.1)(@emnapi/runtime@1.11.1)(@types/node@26.2.0))(typescript@7.0.2)':
+  '@astrojs/starlight@0.41.7(@astrojs/markdown-remark@7.2.2)(astro@7.2.5(@emnapi/core@1.11.1)(@emnapi/runtime@1.11.1)(@types/node@26.3.0))(typescript@7.0.2)':
     dependencies:
       '@astrojs/markdown-satteri': 0.3.5
-      '@astrojs/mdx': 7.0.5(@astrojs/markdown-satteri@0.3.5)(astro@7.2.5(@emnapi/core@1.11.1)(@emnapi/runtime@1.11.1)(@types/node@26.2.0))
+      '@astrojs/mdx': 7.0.5(@astrojs/markdown-satteri@0.3.5)(astro@7.2.5(@emnapi/core@1.11.1)(@emnapi/runtime@1.11.1)(@types/node@26.3.0))
       '@astrojs/sitemap': 3.7.3
       '@pagefind/default-ui': 1.5.2
       '@types/hast': 3.0.5
       '@types/js-yaml': 4.0.9
       '@types/mdast': 4.0.4
-      astro: 7.2.5(@emnapi/core@1.11.1)(@emnapi/runtime@1.11.1)(@types/node@26.2.0)
-      astro-expressive-code: 0.44.1(astro@7.2.5(@emnapi/core@1.11.1)(@emnapi/runtime@1.11.1)(@types/node@26.2.0))
+      astro: 7.2.5(@emnapi/core@1.11.1)(@emnapi/runtime@1.11.1)(@types/node@26.3.0)
+      astro-expressive-code: 0.44.1(astro@7.2.5(@emnapi/core@1.11.1)(@emnapi/runtime@1.11.1)(@types/node@26.3.0))
       bcp-47: 2.1.1
       hast-util-from-html: 2.0.3
       hast-util-select: 6.0.4
@@ -3025,13 +3025,13 @@ snapshots:
     dependencies:
       undici-types: 7.18.2
 
-  '@types/node@26.2.0':
+  '@types/node@26.3.0':
     dependencies:
       undici-types: 8.3.0
 
   '@types/sax@1.2.7':
     dependencies:
-      '@types/node': 26.2.0
+      '@types/node': 26.3.0
 
   '@types/unist@2.0.11': {}
 
@@ -3128,13 +3128,13 @@ snapshots:
 
   astring@1.9.0: {}
 
-  astro-expressive-code@0.44.1(astro@7.2.5(@emnapi/core@1.11.1)(@emnapi/runtime@1.11.1)(@types/node@26.2.0)):
+  astro-expressive-code@0.44.1(astro@7.2.5(@emnapi/core@1.11.1)(@emnapi/runtime@1.11.1)(@types/node@26.3.0)):
     dependencies:
-      astro: 7.2.5(@emnapi/core@1.11.1)(@emnapi/runtime@1.11.1)(@types/node@26.2.0)
+      astro: 7.2.5(@emnapi/core@1.11.1)(@emnapi/runtime@1.11.1)(@types/node@26.3.0)
       rehype-expressive-code: 0.44.1
       url-extras: 0.1.0
 
-  astro@7.2.5(@emnapi/core@1.11.1)(@emnapi/runtime@1.11.1)(@types/node@26.2.0):
+  astro@7.2.5(@emnapi/core@1.11.1)(@emnapi/runtime@1.11.1)(@types/node@26.3.0):
     dependencies:
       '@astrojs/compiler-rs': 0.4.0(@emnapi/core@1.11.1)(@emnapi/runtime@1.11.1)
       '@astrojs/internal-helpers': 0.10.4
@@ -3184,13 +3184,13 @@ snapshots:
       ultrahtml: 1.7.0
       unifont: 0.7.5
       unstorage: 1.17.5
-      vite: 8.2.2(@types/node@26.2.0)(esbuild@0.28.2)
-      vitefu: 1.1.3(vite@8.2.2(@types/node@26.2.0)(esbuild@0.28.2))
+      vite: 8.2.2(@types/node@26.3.0)(esbuild@0.28.2)
+      vitefu: 1.1.3(vite@8.2.2(@types/node@26.3.0)(esbuild@0.28.2))
       xxhash-wasm: 1.1.0
       yargs-parser: 22.0.0
       zod: 4.4.3
     optionalDependencies:
-      sharp: 0.35.3(@types/node@26.2.0)
+      sharp: 0.35.3(@types/node@26.3.0)
     transitivePeerDependencies:
       - '@azure/app-configuration'
       - '@azure/cosmos'
@@ -4618,7 +4618,7 @@ snapshots:
 
   semver@7.8.5: {}
 
-  sharp@0.35.3(@types/node@26.2.0):
+  sharp@0.35.3(@types/node@26.3.0):
     dependencies:
       '@img/colour': 1.1.0
       detect-libc: 2.1.2
@@ -4649,7 +4649,7 @@ snapshots:
       '@img/sharp-win32-arm64': 0.35.3
       '@img/sharp-win32-ia32': 0.35.3
       '@img/sharp-win32-x64': 0.35.3
-      '@types/node': 26.2.0
+      '@types/node': 26.3.0
 
   shiki@4.4.3:
     dependencies:
@@ -4853,7 +4853,7 @@ snapshots:
       '@types/unist': 3.0.3
       vfile-message: 4.0.3
 
-  vite@8.2.2(@types/node@26.2.0)(esbuild@0.28.2):
+  vite@8.2.2(@types/node@26.3.0)(esbuild@0.28.2):
     dependencies:
       lightningcss: 1.33.0
       picomatch: 4.0.7
@@ -4861,13 +4861,13 @@ snapshots:
       rolldown: 1.2.5
       tinyglobby: 0.2.17
     optionalDependencies:
-      '@types/node': 26.2.0
+      '@types/node': 26.3.0
       esbuild: 0.28.2
       fsevents: 2.3.3
 
-  vitefu@1.1.3(vite@8.2.2(@types/node@26.2.0)(esbuild@0.28.2)):
+  vitefu@1.1.3(vite@8.2.2(@types/node@26.3.0)(esbuild@0.28.2)):
     optionalDependencies:
-      vite: 8.2.2(@types/node@26.2.0)(esbuild@0.28.2)
+      vite: 8.2.2(@types/node@26.3.0)(esbuild@0.28.2)
 
   web-namespaces@2.0.1: {}
 
