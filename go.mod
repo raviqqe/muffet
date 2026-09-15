@@ -1,6 +1,6 @@
 module github.com/raviqqe/muffet/v2
 
-go 1.25.0
+go 1.26.0
 
 require (
 	github.com/andybalholm/brotli v1.2.4
@@ -16,7 +16,7 @@ require (
 	github.com/valyala/fasthttp v1.74.0
 	github.com/yhat/scrape v0.0.0-20161128144610-24b7890b0945
 	go.uber.org/ratelimit v0.3.1
-	golang.org/x/net v0.58.0
+	golang.org/x/net v0.59.0
 )
 
 require (
@@ -27,6 +27,6 @@ require (
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	go.yaml.in/yaml/v3 v3.0.5 // indirect
-	golang.org/x/sys v0.47.0 // indirect
-	golang.org/x/text v0.41.0 // indirect
+	golang.org/x/sys v0.48.0 // indirect
+	golang.org/x/text v0.42.0 // indirect
 )
