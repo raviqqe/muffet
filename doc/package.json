@@ -17,7 +17,7 @@
     "es-toolkit": "^1.52.0"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.5.13",
+    "@biomejs/biome": "^2.5.14",
     "@raviqqe/biome-config": "^2.0.27",
     "@types/node": "^26.6.1",
     "sharp": "^0.35.4",
