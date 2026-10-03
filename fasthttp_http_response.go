@@ -1,6 +1,8 @@
 package main
 
 import (
+	"strings"
+
 	"github.com/valyala/fasthttp"
 )
 
@@ -26,13 +28,19 @@ func (r fasthttpHttpResponse) Header(key string) string {
 }
 
 func (r fasthttpHttpResponse) Body() ([]byte, error) {
-	switch string(r.response.Header.Peek("Content-Encoding")) {
+	switch strings.ToLower(strings.TrimSpace(string(r.response.Header.Peek("Content-Encoding")))) {
 	case "gzip":
-		return r.response.BodyGunzip()
+		if bs, err := r.response.BodyGunzip(); err == nil {
+			return bs, nil
+		}
 	case "deflate":
-		return r.response.BodyInflate()
+		if bs, err := r.response.BodyInflate(); err == nil {
+			return bs, nil
+		}
 	case "br":
-		return r.response.BodyUnbrotli()
+		if bs, err := r.response.BodyUnbrotli(); err == nil {
+			return bs, nil
+		}
 	}
 
 	return r.response.Body(), nil
