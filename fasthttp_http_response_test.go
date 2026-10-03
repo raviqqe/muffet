@@ -64,3 +64,36 @@ func TestFastHttpResponseDecodeBrotliBody(t *testing.T) {
 	assert.Nil(t, err)
 	assert.Equal(t, "foo", string(bs))
 }
+
+func TestFastHttpResponseDecodeInvalidGzipBody(t *testing.T) {
+	r := fasthttp.Response{}
+	r.Header.Add("Content-Encoding", "gzip")
+	r.SetBody([]byte("foo"))
+
+	bs, err := newFasthttpHttpResponse(nil, &r).Body()
+
+	assert.Nil(t, err)
+	assert.Equal(t, "foo", string(bs))
+}
+
+func TestFastHttpResponseDecodeInvalidDeflateBody(t *testing.T) {
+	r := fasthttp.Response{}
+	r.Header.Add("Content-Encoding", "deflate")
+	r.SetBody([]byte("foo"))
+
+	bs, err := newFasthttpHttpResponse(nil, &r).Body()
+
+	assert.Nil(t, err)
+	assert.Equal(t, "foo", string(bs))
+}
+
+func TestFastHttpResponseDecodeInvalidBrotliBody(t *testing.T) {
+	r := fasthttp.Response{}
+	r.Header.Add("Content-Encoding", "br")
+	r.SetBody([]byte("foo"))
+
+	bs, err := newFasthttpHttpResponse(nil, &r).Body()
+
+	assert.Nil(t, err)
+	assert.Equal(t, "foo", string(bs))
+}
