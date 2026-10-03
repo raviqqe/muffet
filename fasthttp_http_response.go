@@ -1,6 +1,11 @@
 package main
 
 import (
+	"bytes"
+	"compress/flate"
+	"io"
+	"strings"
+
 	"github.com/valyala/fasthttp"
 )
 
@@ -26,11 +31,24 @@ func (r fasthttpHttpResponse) Header(key string) string {
 }
 
 func (r fasthttpHttpResponse) Body() ([]byte, error) {
-	switch string(r.response.Header.Peek("Content-Encoding")) {
+	switch strings.ToLower(strings.TrimSpace(string(r.response.Header.Peek("Content-Encoding")))) {
 	case "gzip":
 		return r.response.BodyGunzip()
 	case "deflate":
-		return r.response.BodyInflate()
+		bs, err := r.response.BodyInflate()
+		if err == nil {
+			return bs, nil
+		}
+
+		zr := flate.NewReader(bytes.NewReader(r.response.Body()))
+		defer zr.Close()
+
+		raw, flateErr := io.ReadAll(zr)
+		if flateErr == nil {
+			return raw, nil
+		}
+
+		return nil, err
 	case "br":
 		return r.response.BodyUnbrotli()
 	}
