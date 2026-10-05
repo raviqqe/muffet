@@ -38,14 +38,8 @@ func (r fasthttpHttpResponse) Body() ([]byte, error) {
 		bs, err := r.response.BodyInflate()
 		if err == nil {
 			return bs, nil
-		}
-
-		zr := flate.NewReader(bytes.NewReader(r.response.Body()))
-		defer zr.Close()
-
-		raw, flateErr := io.ReadAll(zr)
-		if flateErr == nil {
-			return raw, nil
+		} else if bs, err := io.ReadAll(flate.NewReader(bytes.NewReader(r.response.Body()))); err == nil {
+			return bs, nil
 		}
 
 		return nil, err
