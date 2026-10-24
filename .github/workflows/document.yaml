@@ -45,7 +45,7 @@ jobs:
         working-directory: doc
       - run: node --run preview &
         working-directory: doc
-      - run: go run . --buffer-size 8192 http://localhost:4321/muffet/
+      - run: go run . --buffer-size 16384 http://localhost:4321/muffet/
   document:
     needs:
       - web_build
