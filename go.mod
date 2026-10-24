@@ -2,6 +2,8 @@ module github.com/raviqqe/muffet/v2
 
 go 1.26.0
 
+toolchain go1.27.3
+
 require (
 	github.com/andybalholm/brotli v1.2.6
 	github.com/bradleyjkemp/cupaloy v2.3.0+incompatible
