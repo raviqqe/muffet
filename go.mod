@@ -5,7 +5,7 @@ go 1.26.0
 toolchain go1.27.3
 
 require (
-	github.com/andybalholm/brotli v1.2.6
+	github.com/andybalholm/brotli v1.2.7
 	github.com/bradleyjkemp/cupaloy v2.3.0+incompatible
 	github.com/breml/rootcerts v0.3.7
 	github.com/jessevdk/go-flags v1.6.1
