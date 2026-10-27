@@ -18,8 +18,8 @@ importers:
         specifier: ^7.4.2
         version: 7.4.2(@types/node@26.6.5)(esbuild@0.28.2)(yaml@2.9.1)
       es-toolkit:
-        specifier: ^1.52.0
-        version: 1.52.0
+        specifier: ^1.53.0
+        version: 1.53.0
     devDependencies:
       '@biomejs/biome':
         specifier: ^2.5.15
@@ -1188,8 +1188,8 @@ packages:
   es-module-lexer@3.0.4:
     resolution: {integrity: sha512-BldNY5mwkVu+cQ5Ymn3e6hB9Sx8XHx4ZevWbiUyZbfKxJxYO27Hf0wfzkxIaD5CAJMaGl3YspKELj0ff/7nCMA==}
 
-  es-toolkit@1.52.0:
-    resolution: {integrity: sha512-XTNEJQh1tY1ZJVcf6ayP/2n4ZPyaHlW2FWs7xvw5ddPuhUVjLD3olQVQS7kf58JbAB48iL0uL/jerTrjtV3lDA==}
+  es-toolkit@1.53.0:
+    resolution: {integrity: sha512-3+AYXp9fmJ/UhHBMYj2/U+RaUouMD90SzoItyDOB2Za7W6dB7fQApFGnZPl2MF6K8/Tv1koh1JyirSx/kju6Pw==}
 
   esbuild@0.28.2:
     resolution: {integrity: sha512-HKVLS8dvII+xoKW9kmqxbRKrnWEXfJJr/FZhhJmiqIB0e053QNYFqOBouTMO/k5sID4MvCiUCvv8b9M4h32wIA==}
@@ -2919,7 +2919,7 @@ snapshots:
 
   es-module-lexer@3.0.4: {}
 
-  es-toolkit@1.52.0: {}
+  es-toolkit@1.53.0: {}
 
   esbuild@0.28.2:
     optionalDependencies:
