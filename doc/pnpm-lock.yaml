@@ -25,8 +25,8 @@ importers:
         specifier: ^2.5.15
         version: 2.5.15
       '@raviqqe/biome-config':
-        specifier: ^2.0.27
-        version: 2.0.27(@biomejs/biome@2.5.15)
+        specifier: ^2.0.28
+        version: 2.0.28(@biomejs/biome@2.5.15)
       '@types/node':
         specifier: ^26.6.5
         version: 26.6.5
@@ -688,8 +688,8 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@raviqqe/biome-config@2.0.27':
-    resolution: {integrity: sha512-UZWiCOgQDkUZb9qkJ9Y5rvlqjWMK/EIquQw31gs6RZbi1NiD0aWNCIJXAZiClfpl1faIy0Y6Bp7trlJx/SxYAA==}
+  '@raviqqe/biome-config@2.0.28':
+    resolution: {integrity: sha512-qs3eWBQx5TH07YuRN42uZSCtML5k9fUXsmTs5Tpu2oCNI+6TMhDop3PWiTfE5PD3WNpT/rHJMGEQ0ST2DXaxKQ==}
     engines: {node: '>=25.2.1'}
     peerDependencies:
       '@biomejs/biome': ^2.1.4
@@ -2453,7 +2453,7 @@ snapshots:
   '@pagefind/windows-x64@1.5.2':
     optional: true
 
-  '@raviqqe/biome-config@2.0.27(@biomejs/biome@2.5.15)':
+  '@raviqqe/biome-config@2.0.28(@biomejs/biome@2.5.15)':
     dependencies:
       '@biomejs/biome': 2.5.15
 
