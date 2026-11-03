@@ -13,18 +13,18 @@
   "dependencies": {
     "@astrojs/sitemap": "^3.7.4",
     "@astrojs/starlight": "^0.42.8",
-    "astro": "^7.4.4",
+    "astro": "^7.4.5",
     "es-toolkit": "^1.53.1"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.5.15",
-    "@raviqqe/biome-config": "^2.0.27",
+    "@biomejs/biome": "^2.6.4",
+    "@raviqqe/biome-config": "^2.0.29",
     "@types/node": "^26.6.6",
     "sharp": "^0.35.5",
     "typescript": "^7.0.2"
   },
   "engines": {
-    "node": ">=26.3.0"
+    "node": "^26.13.0"
   },
-  "packageManager": "pnpm@11.5.2+sha512.71c631e382066efc25625d5cf029075de07b61b37f6e27350fbd84b1bda5864c8c1967adc280776b45c30a715c0359a3be08fef42d5bb09e2b99029979692916"
+  "packageManager": "pnpm@12.17.0+sha512.b8d223ebec04b580a89ed206daa71d1bccb6a1ee1d52efa95cc3b0db75271561df8f0d8e2c43add39c5ec08018af7a8a95108e7090f95a29f88727b7a40fd53d"
 }
