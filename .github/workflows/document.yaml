@@ -18,14 +18,14 @@ jobs:
       run:
         working-directory: doc
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-      - uses: ./.github/actions/setup
+      - uses: actions/checkout@v7.0.1
+      - uses: $/.github/actions/setup
       - run: node --run build
-      - uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d # v6.0.0
-      - uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
+      - uses: actions/configure-pages@v6.0.0
+      - uses: actions/upload-pages-artifact@v5.0.0
         with:
           path: doc/dist
-      - uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5.0.1
+      - uses: actions/deploy-pages@v5.0.1
         if: github.ref == 'refs/heads/main'
   web_lint:
     runs-on: ubuntu-latest
@@ -33,14 +33,14 @@ jobs:
       run:
         working-directory: doc
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-      - uses: ./.github/actions/setup
+      - uses: actions/checkout@v7.0.1
+      - uses: $/.github/actions/setup
       - run: node --run lint
   web_test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-      - uses: ./.github/actions/setup
+      - uses: actions/checkout@v7.0.1
+      - uses: $/.github/actions/setup
       - run: node --run build -- --site http://localhost:4321
         working-directory: doc
       - run: node --run preview &

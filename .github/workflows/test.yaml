@@ -8,30 +8,30 @@ jobs:
   go_test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/checkout@v7.0.1
       - run: go build
-      - uses: golangci/golangci-lint-action@ba0d7d2ec06a0ea1cb5fa41b2e4a3ab91d21278a # v9.3.0
+      - uses: golangci/golangci-lint-action@v9.3.0
       - run: go test -race -covermode atomic -coverprofile coverage.txt
-      - uses: codecov/codecov-action@303a32d7a59b442fa8d48b6a1cc6825c09c847a5 # v7.1.1
+      - uses: codecov/codecov-action@v7.1.1
   docker_test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-      - uses: docker/setup-buildx-action@594f3bf4285d9ea8dc53c9a0c9c4092420091003 # v4.4.0
+      - uses: actions/checkout@v7.0.1
+      - uses: docker/setup-buildx-action@v4.4.0
       - run: docker build -t muffet .
       - run: docker run muffet --verbose --buffer-size 16384 https://raviqqe.github.io/muffet
   spell_check:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-      - uses: streetsidesoftware/cspell-action@ce1816e4ce36532956ac6e983737392774b6e169 # v9.2.0
+      - uses: actions/checkout@v7.0.1
+      - uses: streetsidesoftware/cspell-action@v9.2.0
         with:
           files: "**/*.{md,go}"
   readme:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-      - uses: raviqqe/markdown-link-check@7cc7ee84bd8a34196095dc004324cd7c134c01f7 # v1.0.5
+      - uses: actions/checkout@v7.0.1
+      - uses: raviqqe/markdown-link-check@v1.0.5
   test:
     needs:
       - go_test
