@@ -5,4 +5,5 @@ RUN CGO_ENABLED=0 GOOS=linux go install .
 
 FROM scratch
 COPY --from=build /go/bin/muffet /muffet
+USER 65534:65534
 ENTRYPOINT ["/muffet"]
