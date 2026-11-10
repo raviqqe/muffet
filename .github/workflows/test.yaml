@@ -17,7 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7.0.1
-      - uses: docker/setup-buildx-action@v4.4.0
+      - uses: docker/setup-buildx-action@v4.4.1
       - run: docker build -t muffet .
       - run: docker run muffet --verbose --buffer-size 16384 https://raviqqe.github.io/muffet
   spell_check:
