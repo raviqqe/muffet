@@ -111,10 +111,8 @@ func (linkFinder) trimUrl(s string) string {
 	}, s)
 }
 
-// parseSrcSet returns the URLs of image candidates in a srcset attribute
-// following https://html.spec.whatwg.org/multipage/images.html#parsing-a-srcset-attribute.
-// A URL ends at whitespace, so it may contain commas. A comma after a URL or
-// a descriptor separates candidates, with or without whitespace around it.
+// parseSrcSet returns URLs of image candidates in a srcset attribute.
+// https://html.spec.whatwg.org/multipage/images.html#parsing-a-srcset-attribute
 func parseSrcSet(s string) []string {
 	ss := []string{}
 
@@ -145,8 +143,6 @@ func parseSrcSet(s string) []string {
 
 const srcSetSpaces = " \t\n\f\r"
 
-// skipSrcSetDescriptors skips descriptors up to and including the comma that
-// ends the current image candidate. Commas in parentheses do not end it.
 func skipSrcSetDescriptors(s string) string {
 	inParens := false
 
