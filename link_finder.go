@@ -2,7 +2,6 @@ package main
 
 import (
 	"net/url"
-	"regexp"
 	"strings"
 	"unicode"
 
@@ -22,10 +21,6 @@ var atomToAttributes = map[atom.Atom][]string{
 	atom.Track:  {"src"},
 	atom.Meta:   {"content"},
 }
-
-var imageDescriptorPattern = regexp.MustCompile(`(\S)\s+\S+\s*$`)
-
-var srcSetSeparatorPattern = regexp.MustCompile(`,\s+`)
 
 type linkFinder struct {
 	linkFilterer linkFilterer
@@ -85,8 +80,8 @@ func (f linkFinder) parseLinks(n *html.Node, a string) []string {
 
 	switch a {
 	case "srcset":
-		for _, s := range srcSetSeparatorPattern.Split(s, -1) {
-			ss = append(ss, f.trimUrl(imageDescriptorPattern.ReplaceAllString(s, "$1")))
+		for _, s := range parseSrcSet(s) {
+			ss = append(ss, f.trimUrl(s))
 		}
 	case "content":
 		switch scrape.Attr(n, "property") {
@@ -114,4 +109,57 @@ func (linkFinder) trimUrl(s string) string {
 
 		return r
 	}, s)
+}
+
+// parseSrcSet returns the URLs of image candidates in a srcset attribute
+// following https://html.spec.whatwg.org/multipage/images.html#parsing-a-srcset-attribute.
+// A URL ends at whitespace, so it may contain commas. A comma after a URL or
+// a descriptor separates candidates, with or without whitespace around it.
+func parseSrcSet(s string) []string {
+	ss := []string{}
+
+	for {
+		s = strings.TrimLeft(s, srcSetSpaces+",")
+
+		if s == "" {
+			return ss
+		}
+
+		i := strings.IndexAny(s, srcSetSpaces)
+		if i < 0 {
+			i = len(s)
+		}
+
+		u := s[:i]
+		s = s[i:]
+
+		if t := strings.TrimRight(u, ","); t != u {
+			ss = append(ss, t)
+			continue
+		}
+
+		ss = append(ss, u)
+		s = skipSrcSetDescriptors(strings.TrimLeft(s, srcSetSpaces))
+	}
+}
+
+const srcSetSpaces = " \t\n\f\r"
+
+// skipSrcSetDescriptors skips descriptors up to and including the comma that
+// ends the current image candidate. Commas in parentheses do not end it.
+func skipSrcSetDescriptors(s string) string {
+	inParens := false
+
+	for i, r := range s {
+		switch {
+		case inParens:
+			inParens = r != ')'
+		case r == '(':
+			inParens = true
+		case r == ',':
+			return s[i+1:]
+		}
+	}
+
+	return ""
 }
