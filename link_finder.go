@@ -14,7 +14,7 @@ var atomToAttributes = map[atom.Atom][]string{
 	atom.A:      {"href"},
 	atom.Frame:  {"src"},
 	atom.Iframe: {"src"},
-	atom.Img:    {"src"},
+	atom.Img:    {"src", "srcset"},
 	atom.Link:   {"href"},
 	atom.Script: {"src"},
 	atom.Source: {"src", "srcset"},

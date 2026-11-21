@@ -29,6 +29,8 @@ func TestLinkFinderFindLinks(t *testing.T) {
 		// TODO: Test <frame> tag.
 		{`<iframe src="/iframe"></iframe>`, 1},
 		{`<img src="/foo.jpg" />`, 1},
+		{`<img srcset="/foo.png" />`, 1},
+		{`<img src="/foo.png" srcset="/bar.png" />`, 2},
 		{`<link href="/link" />`, 1},
 		{`<script src="/foo.js"></script>`, 1},
 		{`<source src="/foo.png" />`, 1},
