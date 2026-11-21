@@ -212,6 +212,43 @@ func TestLinkFinderFindLinksInMultilineSrcSet(t *testing.T) {
 	}
 }
 
+func TestLinkFinderFindLinksInSrcSetWithoutSpaceAfterComma(t *testing.T) {
+	b, err := url.Parse("http://foo.com")
+	assert.Nil(t, err)
+
+	for _, srcset := range []string{
+		"foo.png 100w,bar.png 200w",
+		"foo.png 1x ,bar.png 2x",
+		"foo.png 1x , bar.png 2x",
+		"foo.png, bar.png 2x,",
+	} {
+		n, err := html.Parse(strings.NewReader(
+			htmlWithBody(fmt.Sprintf(`<source srcset="%s" />`, srcset))),
+		)
+		assert.Nil(t, err)
+
+		assert.Equal(t, map[string]error{
+			"http://foo.com/foo.png": nil,
+			"http://foo.com/bar.png": nil,
+		}, newTestLinkFinder().Find(n, b), srcset)
+	}
+}
+
+func TestLinkFinderFindLinkWithCommaInSrcSet(t *testing.T) {
+	b, err := url.Parse("http://foo.com")
+	assert.Nil(t, err)
+
+	n, err := html.Parse(strings.NewReader(
+		htmlWithBody(`<source srcset="/image/w=640,q=75/foo.png 640w,/image/w=750,q=75/foo.png 750w" />`)),
+	)
+	assert.Nil(t, err)
+
+	assert.Equal(t, map[string]error{
+		"http://foo.com/image/w=640,q=75/foo.png": nil,
+		"http://foo.com/image/w=750,q=75/foo.png": nil,
+	}, newTestLinkFinder().Find(n, b))
+}
+
 func TestLinkFinderFindMetaTags(t *testing.T) {
 	b, err := url.Parse("http://foo.com")
 	assert.Nil(t, err)
