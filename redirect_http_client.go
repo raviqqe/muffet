@@ -28,11 +28,13 @@ func (c *redirectHttpClient) Get(u *url.URL, header http.Header) (httpResponse, 
 	}
 
 	for i := range c.maxRedirections + 1 {
+		h := header.Clone()
+
 		for _, c := range cj.Cookies(u) {
-			header.Add("cookie", c.String())
+			h.Add("cookie", c.String())
 		}
 
-		r, err := c.client.Get(u, header)
+		r, err := c.client.Get(u, h)
 		if err != nil && i == 0 {
 			return nil, err
 		} else if err != nil {
@@ -47,12 +49,12 @@ func (c *redirectHttpClient) Get(u *url.URL, header http.Header) (httpResponse, 
 			return nil, errors.New("location header not set")
 		}
 
+		cj.SetCookies(u, parseCookies(r.Header("set-cookie")))
+
 		u, err = u.Parse(s)
 		if err != nil {
 			return nil, err
 		}
-
-		cj.SetCookies(u, parseCookies(r.Header("set-cookie")))
 	}
 
 	return nil, errors.New("too many redirections")

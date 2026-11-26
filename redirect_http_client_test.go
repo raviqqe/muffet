@@ -2,6 +2,7 @@ package main
 
 import (
 	"errors"
+	"net/http"
 	"net/url"
 	"strconv"
 	"testing"
@@ -264,4 +265,81 @@ func TestRedirectHttpClientFailAfterRedirect(t *testing.T) {
 
 	assert.Nil(t, r)
 	assert.Contains(t, err.Error(), "following redirect http://foo.com/foo")
+}
+
+type headerRecordingHttpClient struct {
+	handler func(*url.URL) *fakeHttpResponse
+	headers map[string]http.Header
+}
+
+func (c *headerRecordingHttpClient) Get(u *url.URL, h http.Header) (httpResponse, error) {
+	c.headers[u.String()] = h.Clone()
+
+	return c.handler(u), nil
+}
+
+func TestRedirectHttpClientSendCookies(t *testing.T) {
+	u, err := url.Parse("http://foo.com/a")
+
+	assert.Nil(t, err)
+
+	c := &headerRecordingHttpClient{
+		func(u *url.URL) *fakeHttpResponse {
+			switch u.String() {
+			case "http://foo.com/a":
+				return newFakeHttpResponse(
+					300,
+					"",
+					nil,
+					map[string]string{"location": "/b", "set-cookie": "foo=bar"},
+				)
+			case "http://foo.com/b":
+				return newFakeHttpResponse(
+					300,
+					"",
+					nil,
+					map[string]string{"location": "/c"},
+				)
+			}
+
+			return newFakeHtmlResponse("", "")
+		},
+		map[string]http.Header{},
+	}
+
+	r, err := newRedirectHttpClient(c, 42).Get(u, nil)
+
+	assert.Nil(t, err)
+	assert.Equal(t, 200, r.StatusCode())
+	assert.Equal(t, []string(nil), c.headers["http://foo.com/a"].Values("cookie"))
+	assert.Equal(t, []string{"foo=bar"}, c.headers["http://foo.com/b"].Values("cookie"))
+	assert.Equal(t, []string{"foo=bar"}, c.headers["http://foo.com/c"].Values("cookie"))
+}
+
+func TestRedirectHttpClientDoNotSendCookiesToOtherHosts(t *testing.T) {
+	u, err := url.Parse("http://foo.com")
+
+	assert.Nil(t, err)
+
+	c := &headerRecordingHttpClient{
+		func(u *url.URL) *fakeHttpResponse {
+			if u.Host == "foo.com" {
+				return newFakeHttpResponse(
+					300,
+					"",
+					nil,
+					map[string]string{"location": "http://bar.com", "set-cookie": "foo=bar"},
+				)
+			}
+
+			return newFakeHtmlResponse("", "")
+		},
+		map[string]http.Header{},
+	}
+
+	r, err := newRedirectHttpClient(c, 42).Get(u, nil)
+
+	assert.Nil(t, err)
+	assert.Equal(t, 200, r.StatusCode())
+	assert.Equal(t, []string(nil), c.headers["http://bar.com"].Values("cookie"))
 }
