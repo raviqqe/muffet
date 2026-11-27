@@ -25,6 +25,7 @@
     "nolint",
     "oxffaa",
     "preconnect",
+    "publicsuffix",
     "ratelimit",
     "raviqqe",
     "redirections",

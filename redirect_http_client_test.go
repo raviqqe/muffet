@@ -343,3 +343,47 @@ func TestRedirectHttpClientDoNotSendCookiesToOtherHosts(t *testing.T) {
 	assert.Equal(t, 200, r.StatusCode())
 	assert.Equal(t, []string(nil), c.headers["http://bar.com"].Values("cookie"))
 }
+
+func TestRedirectHttpClientSendCookiesWithAttributes(t *testing.T) {
+	for _, x := range []struct {
+		name, source, cookie, target string
+		cookies                      []string
+	}{
+		{"path", "http://foo.com/foo/bar", "foo=bar; Path=/", "http://foo.com/baz", []string{"foo=bar"}},
+		{"other path", "http://foo.com", "foo=bar; Path=/foo", "http://foo.com/bar", nil},
+		{"domain", "http://foo.com", "foo=bar; Domain=foo.com", "http://bar.foo.com", []string{"foo=bar"}},
+		{"public suffix domain", "http://foo.co.uk", "foo=bar; Domain=co.uk", "http://bar.co.uk", nil},
+		{"secure", "https://foo.com", "foo=bar; Secure", "https://foo.com/foo", []string{"foo=bar"}},
+		{"secure over HTTP", "https://foo.com", "foo=bar; Secure", "http://foo.com", nil},
+		{"expired", "http://foo.com", "foo=bar; Max-Age=0", "http://foo.com/foo", nil},
+		{"invalid", "http://foo.com", "foo", "http://foo.com/foo", nil},
+	} {
+		t.Run(x.name, func(t *testing.T) {
+			u, err := url.Parse(x.source)
+
+			assert.Nil(t, err)
+
+			c := &headerRecordingHttpClient{
+				func(u *url.URL) *fakeHttpResponse {
+					if u.String() == x.source {
+						return newFakeHttpResponse(
+							300,
+							"",
+							nil,
+							map[string]string{"location": x.target, "set-cookie": x.cookie},
+						)
+					}
+
+					return newFakeHtmlResponse("", "")
+				},
+				map[string]http.Header{},
+			}
+
+			r, err := newRedirectHttpClient(c, 42).Get(u, nil)
+
+			assert.Nil(t, err)
+			assert.Equal(t, 200, r.StatusCode())
+			assert.Equal(t, x.cookies, c.headers[x.target].Values("cookie"))
+		})
+	}
+}
