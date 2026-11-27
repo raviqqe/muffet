@@ -30,6 +30,16 @@ func (r fasthttpHttpResponse) Header(key string) string {
 	return string(r.response.Header.Peek(key))
 }
 
+func (r fasthttpHttpResponse) Headers(key string) []string {
+	ss := []string{}
+
+	for _, bs := range r.response.Header.PeekAll(key) {
+		ss = append(ss, string(bs))
+	}
+
+	return ss
+}
+
 func (r fasthttpHttpResponse) Body() ([]byte, error) {
 	switch strings.ToLower(strings.TrimSpace(string(r.response.Header.Peek("Content-Encoding")))) {
 	case "gzip":

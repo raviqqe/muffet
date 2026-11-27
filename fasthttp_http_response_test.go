@@ -12,6 +12,24 @@ import (
 	"github.com/valyala/fasthttp"
 )
 
+func TestFastHttpResponseHeaders(t *testing.T) {
+	r := fasthttp.Response{}
+	r.Header.Add("Set-Cookie", "foo=bar; Path=/")
+	r.Header.Add("Set-Cookie", "baz=blah; Secure")
+
+	assert.Equal(
+		t,
+		[]string{"foo=bar; Path=/", "baz=blah; Secure"},
+		newFasthttpHttpResponse(nil, &r).Headers("set-cookie"),
+	)
+}
+
+func TestFastHttpResponseHeadersNotSet(t *testing.T) {
+	r := fasthttp.Response{}
+
+	assert.Equal(t, []string{}, newFasthttpHttpResponse(nil, &r).Headers("set-cookie"))
+}
+
 func TestFastHttpResponseDecodeGzipBody(t *testing.T) {
 	b := bytes.Buffer{}
 	w := gzip.NewWriter(&b)

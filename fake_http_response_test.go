@@ -53,6 +53,14 @@ func (r *fakeHttpResponse) Header(name string) string {
 	return ""
 }
 
+func (r *fakeHttpResponse) Headers(name string) []string {
+	if v, ok := r.headers[strings.ToLower(name)]; ok {
+		return []string{v}
+	}
+
+	return nil
+}
+
 func (r *fakeHttpResponse) Body() ([]byte, error) {
 	return r.body, nil
 }

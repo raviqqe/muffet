@@ -6,6 +6,8 @@ import (
 	"net/http"
 	"net/http/cookiejar"
 	"net/url"
+
+	"golang.org/x/net/publicsuffix"
 )
 
 type redirectHttpClient struct {
@@ -22,7 +24,7 @@ func (c *redirectHttpClient) Get(u *url.URL, header http.Header) (httpResponse, 
 		header = http.Header{}
 	}
 
-	cj, err := cookiejar.New(nil)
+	cj, err := cookiejar.New(&cookiejar.Options{PublicSuffixList: publicsuffix.List})
 	if err != nil {
 		return nil, err
 	}
@@ -49,7 +51,7 @@ func (c *redirectHttpClient) Get(u *url.URL, header http.Header) (httpResponse, 
 			return nil, errors.New("location header not set")
 		}
 
-		cj.SetCookies(u, parseCookies(r.Header("set-cookie")))
+		cj.SetCookies(u, parseCookies(r.Headers("set-cookie")))
 
 		u, err = u.Parse(s)
 		if err != nil {
@@ -60,8 +62,14 @@ func (c *redirectHttpClient) Get(u *url.URL, header http.Header) (httpResponse, 
 	return nil, errors.New("too many redirections")
 }
 
-func parseCookies(s string) []*http.Cookie {
-	h := http.Header{}
-	h.Add("cookie", s)
-	return (&http.Request{Header: h}).Cookies()
+func parseCookies(ss []string) []*http.Cookie {
+	cs := make([]*http.Cookie, 0, len(ss))
+
+	for _, s := range ss {
+		if c, err := http.ParseSetCookie(s); err == nil {
+			cs = append(cs, c)
+		}
+	}
+
+	return cs
 }
